@@ -1,0 +1,11 @@
+psutil>=5.9.0
+py-cpuinfo>=9.0.0
+GPUtil>=1.4.0
+pytest>=7.4.0
+pytest-mock>=3.12.0
+
+# Optional — install only the ones matching your hardware:
+# pynvml>=11.5.0           # NVIDIA (alternative: nvidia-ml-py)
+# amdsmi                   # AMD ROCm 5.6+ (ships with ROCm, not on PyPI)
+# pyobjc-framework-Metal   # Apple Silicon (macOS only)
+# intel-extension-for-pytorch  # Intel Arc

@@ -1,0 +1,9 @@
+hardware_profile.json
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+*.egg-info/
+.pytest_cache/
