@@ -538,7 +538,7 @@ class TestProcessManager:
             pm.stream_async(on_token=lambda t, _: received.append(t))
             pm.wait_for_completion(timeout_sec=5.0)
 
-        assert [r.strip() for r in received if r.strip()] == tokens
+        assert "".join(received).replace("\n", "") == "".join(tokens)
 
     def test_wait_sync_returns_stdout_and_stderr(self, fake_llama_exe):
         """wait_sync() must return (stdout, stderr, returncode)."""
