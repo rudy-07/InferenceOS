@@ -40,6 +40,7 @@ from kv_manager import IntelligentKVManager, KVDecision, KVPolicyConfig
 from layer_placement.placement_plan import PlacementPlan
 from memory_budget import BudgetConfig, BudgetDecision, MemoryBudgetManager
 from runtime_health import RuntimeHealth, RuntimeHealthMonitor
+from runtime_kb import ExecutionRecord, HardwareFingerprint, ModelFingerprint, RuntimeKnowledgeBase
 from runtime_learning import LearningRecommendation, RuntimeLearningEngine
 from scheduler import (
     ContextDecision,
@@ -219,6 +220,7 @@ class InferenceSession:
         self.budget_manager = MemoryBudgetManager()
         self.runtime_health: Optional[RuntimeHealth] = None
         self.budget_decision: Optional[BudgetDecision] = None
+        self.rkb = RuntimeKnowledgeBase(base_dir=self.config.rkb_dir)
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -522,6 +524,30 @@ class InferenceSession:
                 success=success,
                 duration_sec=total_wall_ms / 1000.0,
             )
+
+        # Record execution in Runtime Knowledge Base (RKB)
+        if self.config.enable_rkb:
+            gpus = self.hw_profile.get("gpus", [])
+            gpu_name = gpus[0].get("name", "GPU") if gpus else "CPU"
+            rkb_record = ExecutionRecord(
+                record_id=str(uuid.uuid4())[:8],
+                hardware_fp=HardwareFingerprint(gpu_name=gpu_name, backend=self.backend_info.name),
+                model_fp=ModelFingerprint(model_name=self.plan.model_name),
+                backend=self.backend_info.name,
+                gpu_layers=self.plan.total_layers,
+                microbatch_size=selected_microbatch or 512,
+                context_length=self.config.context_length,
+                memory_used_mb=getattr(stats, "gpu_vram_used_mb", 0.0),
+                eval_tps=getattr(stats, "eval_tps", 0.0),
+                ttft_ms=getattr(stats, "time_to_first_token_ms", 0.0),
+                latency_ms=total_wall_ms,
+                gpu_utilization_pct=getattr(stats, "gpu_utilization_pct", 0.0),
+                health_status=runtime_health.status if runtime_health else "Good",
+                success=success,
+            )
+            self.rkb.record_execution(rkb_record)
+            if self.config.verbose_rkb:
+                print(self.rkb.format_cli_output(gpu_name=gpu_name, model_name=self.plan.model_name))
 
         # Record post-inference performance telemetry feedback
         if decision is not None and stats is not None:

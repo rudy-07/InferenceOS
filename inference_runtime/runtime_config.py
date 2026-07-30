@@ -177,6 +177,11 @@ class RuntimeConfig:
     verbose_health_monitor: bool = False
     verbose_budget_manager: bool = False
 
+    # Runtime Knowledge Base (RKB)
+    enable_rkb: bool = True
+    rkb_dir: str = "~/.inferenceos/knowledge"
+    verbose_rkb: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -272,6 +277,10 @@ class RuntimeConfig:
             "budget_policy_mode": self.budget_policy_mode,
             "verbose_health_monitor": self.verbose_health_monitor,
             "verbose_budget_manager": self.verbose_budget_manager,
+            # Runtime Knowledge Base (RKB)
+            "enable_rkb": self.enable_rkb,
+            "rkb_dir": self.rkb_dir,
+            "verbose_rkb": self.verbose_rkb,
         }
 
     @classmethod
