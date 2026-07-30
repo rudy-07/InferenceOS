@@ -36,6 +36,7 @@ from .backend_selector import BackendInfo, BackendSelector
 from .process_manager import ProcessManager
 from .runtime_config import RuntimeConfig
 from .stats_collector import RuntimeStats, StatsCollector
+from kv_manager import IntelligentKVManager, KVDecision, KVPolicyConfig
 from layer_placement.placement_plan import PlacementPlan
 from runtime_learning import LearningRecommendation, RuntimeLearningEngine
 from scheduler import (
@@ -84,6 +85,8 @@ class InferenceResult:
         Adaptive memory scheduling decision metadata.
     learning_recommendation : Optional[LearningRecommendation]
         Adaptive Runtime Intelligence recommendation metadata.
+    kv_decision : Optional[KVDecision]
+        Intelligent KV Manager decision metadata.
     """
     generated_text: str
     stats: RuntimeStats
@@ -96,6 +99,7 @@ class InferenceResult:
     context_decision: Optional[ContextDecision] = None
     memory_decision: Optional[MemoryDecision] = None
     learning_recommendation: Optional[LearningRecommendation] = None
+    kv_decision: Optional[KVDecision] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = {
@@ -113,6 +117,8 @@ class InferenceResult:
             d["memory_decision"] = self.memory_decision.to_dict()
         if self.learning_recommendation is not None:
             d["learning_recommendation"] = self.learning_recommendation.to_dict()
+        if self.kv_decision is not None:
+            d["kv_decision"] = self.kv_decision.to_dict()
         return d
 
 
@@ -195,6 +201,8 @@ class InferenceSession:
         self.memory_decision: Optional[MemoryDecision] = None
         self.learning_engine = RuntimeLearningEngine()
         self.learning_recommendation: Optional[LearningRecommendation] = None
+        self.kv_manager = IntelligentKVManager()
+        self.kv_decision: Optional[KVDecision] = None
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -258,6 +266,37 @@ class InferenceSession:
                 self.config.manual_microbatch = memory_decision.suggested_microbatch_override
             if memory_decision.suggested_context_override and self.config.manual_context is None:
                 self.config.manual_context = memory_decision.suggested_context_override
+
+        # Intelligent KV Manager Evaluation
+        kv_decision: Optional[KVDecision] = None
+        if self.config.enable_kv_manager:
+            kv_cfg = KVPolicyConfig(
+                enabled=self.config.enable_kv_manager,
+                compression_enabled=self.config.kv_compression_enabled,
+                eviction_enabled=self.config.kv_eviction_enabled,
+                compression_mode=self.config.kv_compression_mode,
+                eviction_policy=self.config.kv_eviction_policy,
+                verbose=self.config.verbose_kv_manager,
+            )
+            gpus = self.hw_profile.get("gpus", [])
+            free_vram = gpus[0].get("vram_free_mb", 8000.0) if gpus else 8000.0
+            tot_vram = gpus[0].get("vram_total_mb", 16384.0) if gpus else 16384.0
+            press_level = memory_decision.pressure_level if memory_decision else "Low"
+
+            kv_decision = self.kv_manager.evaluate_kv_state(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                context_length=self.config.context_length,
+                vram_free_mb=free_vram,
+                vram_total_mb=tot_vram,
+                pressure_level=press_level,
+                learning_recommendation=learning_rec,
+                config_override=kv_cfg,
+            )
+            self.kv_decision = kv_decision
 
         # Dynamic Context Scheduling
         context_decision: Optional[ContextDecision] = None
@@ -404,6 +443,7 @@ class InferenceSession:
             context_decision=context_decision,
             memory_decision=memory_decision,
             learning_recommendation=learning_rec,
+            kv_decision=kv_decision,
         )
         self._last_result = result
 

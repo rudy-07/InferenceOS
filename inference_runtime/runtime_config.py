@@ -162,6 +162,14 @@ class RuntimeConfig:
     enable_runtime_learning: bool = True
     verbose_learning_engine: bool = False
 
+    # Intelligent KV Manager
+    enable_kv_manager: bool = True
+    kv_compression_enabled: bool = True
+    kv_eviction_enabled: bool = True
+    kv_compression_mode: str = "adaptive"  # disabled | lossless | balanced | aggressive | adaptive
+    kv_eviction_policy: str = "adaptive"    # lru | fifo | lfu | adaptive
+    verbose_kv_manager: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -244,6 +252,13 @@ class RuntimeConfig:
             # Runtime Learning Engine & ARTI
             "enable_runtime_learning": self.enable_runtime_learning,
             "verbose_learning_engine": self.verbose_learning_engine,
+            # Intelligent KV Manager
+            "enable_kv_manager": self.enable_kv_manager,
+            "kv_compression_enabled": self.kv_compression_enabled,
+            "kv_eviction_enabled": self.kv_eviction_enabled,
+            "kv_compression_mode": self.kv_compression_mode,
+            "kv_eviction_policy": self.kv_eviction_policy,
+            "verbose_kv_manager": self.verbose_kv_manager,
         }
 
     @classmethod
