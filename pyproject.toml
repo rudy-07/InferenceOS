@@ -1,24 +1,88 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "inferenceos"
 version = "1.0.0"
-description = "Operating System for Local AI Inference"
+description = "The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference"
 readme = "README.md"
 requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "InferenceOS Team", email = "maintainers@inferenceos.org" }
+]
+keywords = [
+    "llm",
+    "inference",
+    "llama-cpp",
+    "vllm",
+    "gguf",
+    "cuda",
+    "vulkan",
+    "rocm",
+    "metal",
+    "ai-operating-system",
+    "adaptive-runtime",
+    "layer-placement",
+    "kv-cache",
+    "cli"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
 dependencies = [
     "psutil>=5.9.0",
     "py-cpuinfo>=9.0.0",
     "GPUtil>=1.4.0",
     "rich>=13.0.0",
-    "prompt_toolkit>=3.0.0",
+    "prompt_toolkit>=3.0.0"
 ]
+
+[project.urls]
+Homepage = "https://github.com/rudy-07/InferenceOS"
+Documentation = "https://github.com/rudy-07/InferenceOS/tree/main/docs"
+Repository = "https://github.com/rudy-07/InferenceOS.git"
+Issues = "https://github.com/rudy-07/InferenceOS/issues"
+Changelog = "https://github.com/rudy-07/InferenceOS/blob/main/CHANGELOG.md"
 
 [project.scripts]
 inferenceos = "cli.main:cli_main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["cli*", "inferenceos*", "async_scheduler*", "igpu_support*", "inference_runtime*", "layer_migration*", "layer_placement*", "memory_manager*", "orchestrator*", "profiler*", "runtime_memory*", "runtime_profiler*", "setup*"]
+include = [
+    "cli*",
+    "inferenceos*",
+    "async_scheduler*",
+    "igpu_support*",
+    "inference_runtime*",
+    "kv_manager*",
+    "layer_migration*",
+    "layer_placement*",
+    "memory_budget*",
+    "memory_manager*",
+    "optimizer*",
+    "orchestrator*",
+    "performance_intelligence*",
+    "profiler*",
+    "runtime_health*",
+    "runtime_kb*",
+    "runtime_learning*",
+    "runtime_memory*",
+    "runtime_profiler*",
+    "scheduler*",
+    "server*",
+    "setup*"
+]
