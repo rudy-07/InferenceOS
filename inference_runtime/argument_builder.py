@@ -70,6 +70,7 @@ class ArgumentBuilder:
         config: RuntimeConfig,
         backend: BackendInfo,
         log_file: Optional[Path] = None,
+        microbatch: Optional[int] = None,
     ) -> List[str]:
         """
         Build the complete subprocess argument list.
@@ -89,6 +90,8 @@ class ArgumentBuilder:
         log_file : Path, optional
             If provided, adds ``--log-file <path>`` so llama.cpp writes its
             timing statistics to a parseable file (in addition to stderr).
+        microbatch : int, optional
+            Dynamically scheduled microbatch size (prefill ubatch size).
 
         Returns
         -------
@@ -122,9 +125,11 @@ class ArgumentBuilder:
         args.extend(["-t", str(config.threads)])
 
         # ---- Batch size (prompt + generation) ----
-        args.extend(["-b", str(config.batch_size)])
-        # Ubatch = micro-batch used during prompt processing; match batch_size
-        args.extend(["-ub", str(config.batch_size)])
+        effective_ubatch = microbatch if (microbatch and microbatch > 0) else config.batch_size
+        effective_batch = max(config.batch_size, effective_ubatch)
+        args.extend(["-b", str(effective_batch)])
+        # Ubatch = micro-batch size used during prompt processing
+        args.extend(["-ub", str(effective_ubatch)])
 
         # ---- Sampling ----
         args.extend(["--temp", str(config.temp)])
@@ -177,38 +182,16 @@ class ArgumentBuilder:
         backend: BackendInfo,
         n_predict: int = 128,
         log_file: Optional[Path] = None,
+        microbatch: Optional[int] = None,
     ) -> List[str]:
         """
-        Build arguments for a benchmark-mode run (fixed synthetic prompt,
-        shorter generation, no human-readable output prefix).
-
-        Parameters
-        ----------
-        model_path : Path
-            Path to the GGUF model.
-        plan : PlacementPlan
-            Phase 3 placement plan.
-        config : RuntimeConfig
-            Base runtime configuration (n_predict overridden by ``n_predict`` arg).
-        backend : BackendInfo
-            Resolved backend.
-        n_predict : int
-            Tokens to generate during benchmark. Default 128.
-        log_file : Path, optional
-            Path for llama.cpp log output.
-
-        Returns
-        -------
-        List[str]
-            Complete argument list for benchmark subprocess.
+        Build arguments for a benchmark-mode run.
         """
-        # Benchmark uses a deterministic prompt
         benchmark_prompt = (
             "The transformer architecture revolutionized natural language processing by "
             "introducing self-attention mechanisms that allow models to"
         )
 
-        # Clone config with benchmark-specific overrides
         import copy
         bench_config = copy.copy(config)
         bench_config.n_predict = n_predict
@@ -221,6 +204,7 @@ class ArgumentBuilder:
             config=bench_config,
             backend=backend,
             log_file=log_file,
+            microbatch=microbatch,
         )
 
     def describe(

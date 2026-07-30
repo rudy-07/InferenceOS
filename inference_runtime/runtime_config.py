@@ -131,6 +131,38 @@ class RuntimeConfig:
     profiler_sample_interval_ms: float = 100.0
     export_profile_html: bool = False
 
+    # Dynamic Microbatch Scheduler
+    enable_dynamic_microbatch: bool = True
+    min_microbatch: int = 128
+    max_microbatch: int = 2048
+    microbatch_safety_margin: float = 0.15
+    microbatch_aggressiveness: float = 1.0
+    microbatch_optimization_goal: str = "throughput"  # throughput | latency | balanced
+    manual_microbatch: Optional[int] = None
+    verbose_microbatch_scheduler: bool = False
+
+    # Dynamic Context Scheduler
+    enable_dynamic_context: bool = True
+    min_context: int = 512
+    max_context: int = 131072
+    context_safety_margin: float = 0.15
+    context_optimization_goal: str = "maximum_context"  # maximum_context | maximum_speed | balanced
+    manual_context: Optional[int] = None
+    verbose_context_scheduler: bool = False
+
+    # Adaptive Memory Scheduler
+    enable_adaptive_memory_scheduler: bool = True
+    vram_safety_margin: float = 0.15
+    ram_safety_margin: float = 0.15
+    memory_strategy: str = "auto"  # auto | conservative | balanced | aggressive
+    oom_prevention: str = "strict"  # strict | balanced | disabled
+    verbose_memory_scheduler: bool = False
+
+    # Runtime Learning Engine & ARTI
+    enable_runtime_learning: bool = True
+    verbose_learning_engine: bool = False
+
+
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
         if self.threads == -1:
@@ -185,6 +217,33 @@ class RuntimeConfig:
             "enable_profiler": self.enable_profiler,
             "profiler_sample_interval_ms": self.profiler_sample_interval_ms,
             "export_profile_html": self.export_profile_html,
+            # Microbatch Scheduler
+            "enable_dynamic_microbatch": self.enable_dynamic_microbatch,
+            "min_microbatch": self.min_microbatch,
+            "max_microbatch": self.max_microbatch,
+            "microbatch_safety_margin": self.microbatch_safety_margin,
+            "microbatch_aggressiveness": self.microbatch_aggressiveness,
+            "microbatch_optimization_goal": self.microbatch_optimization_goal,
+            "manual_microbatch": self.manual_microbatch,
+            "verbose_microbatch_scheduler": self.verbose_microbatch_scheduler,
+            # Context Scheduler
+            "enable_dynamic_context": self.enable_dynamic_context,
+            "min_context": self.min_context,
+            "max_context": self.max_context,
+            "context_safety_margin": self.context_safety_margin,
+            "context_optimization_goal": self.context_optimization_goal,
+            "manual_context": self.manual_context,
+            "verbose_context_scheduler": self.verbose_context_scheduler,
+            # Memory Scheduler
+            "enable_adaptive_memory_scheduler": self.enable_adaptive_memory_scheduler,
+            "vram_safety_margin": self.vram_safety_margin,
+            "ram_safety_margin": self.ram_safety_margin,
+            "memory_strategy": self.memory_strategy,
+            "oom_prevention": self.oom_prevention,
+            "verbose_memory_scheduler": self.verbose_memory_scheduler,
+            # Runtime Learning Engine & ARTI
+            "enable_runtime_learning": self.enable_runtime_learning,
+            "verbose_learning_engine": self.verbose_learning_engine,
         }
 
     @classmethod

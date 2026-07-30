@@ -37,6 +37,18 @@ from .process_manager import ProcessManager
 from .runtime_config import RuntimeConfig
 from .stats_collector import RuntimeStats, StatsCollector
 from layer_placement.placement_plan import PlacementPlan
+from runtime_learning import LearningRecommendation, RuntimeLearningEngine
+from scheduler import (
+    ContextDecision,
+    ContextScheduler,
+    ContextSchedulerConfig,
+    MemoryDecision,
+    MemoryScheduler,
+    MemorySchedulerConfig,
+    MicrobatchScheduler,
+    SchedulerConfig,
+    SchedulingDecision,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -64,6 +76,14 @@ class InferenceResult:
         The exact CLI argument list used to launch the subprocess.
     backend : str
         Backend name used for this run (e.g. "vulkan", "cuda", "cpu").
+    scheduling_decision : Optional[SchedulingDecision]
+        Microbatch scheduling decision metadata.
+    context_decision : Optional[ContextDecision]
+        Dynamic context scheduling decision metadata.
+    memory_decision : Optional[MemoryDecision]
+        Adaptive memory scheduling decision metadata.
+    learning_recommendation : Optional[LearningRecommendation]
+        Adaptive Runtime Intelligence recommendation metadata.
     """
     generated_text: str
     stats: RuntimeStats
@@ -72,15 +92,28 @@ class InferenceResult:
     success: bool
     args: List[str] = field(default_factory=list)
     backend: str = "unknown"
+    scheduling_decision: Optional[SchedulingDecision] = None
+    context_decision: Optional[ContextDecision] = None
+    memory_decision: Optional[MemoryDecision] = None
+    learning_recommendation: Optional[LearningRecommendation] = None
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
+        d = {
             "generated_text": self.generated_text,
             "stats": self.stats.to_dict(),
             "exit_code": self.exit_code,
             "success": self.success,
             "backend": self.backend,
         }
+        if self.scheduling_decision is not None:
+            d["scheduling_decision"] = self.scheduling_decision.to_dict()
+        if self.context_decision is not None:
+            d["context_decision"] = self.context_decision.to_dict()
+        if self.memory_decision is not None:
+            d["memory_decision"] = self.memory_decision.to_dict()
+        if self.learning_recommendation is not None:
+            d["learning_recommendation"] = self.learning_recommendation.to_dict()
+        return d
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +187,14 @@ class InferenceSession:
         self._pcie_bandwidth_gbps = pcie_bw_gbps
         self._last_result: Optional[InferenceResult] = None
         self.memory_budget: Optional[Any] = None
+        self.microbatch_scheduler = MicrobatchScheduler()
+        self.scheduling_decision: Optional[SchedulingDecision] = None
+        self.context_scheduler = ContextScheduler()
+        self.context_decision: Optional[ContextDecision] = None
+        self.memory_scheduler = MemoryScheduler()
+        self.memory_decision: Optional[MemoryDecision] = None
+        self.learning_engine = RuntimeLearningEngine()
+        self.learning_recommendation: Optional[LearningRecommendation] = None
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -169,27 +210,119 @@ class InferenceSession:
     ) -> InferenceResult:
         """
         Execute a single inference pass with the given prompt.
-
-        Runs the full pipeline:
-        1. Build CLI args from plan + config + backend
-        2. Launch subprocess with async streaming
-        3. Start OS utilization sampling
-        4. Wait for completion
-        5. Parse stderr timing + finalize statistics
-
-        Parameters
-        ----------
-        prompt : str
-            The input prompt for the model.
-        on_token : callable, optional
-            Called for each generated token as it arrives (streaming UX).
-            Signature: ``(token_text: str) -> None``.
-
-        Returns
-        -------
-        InferenceResult
-            Generated text, statistics, and process metadata.
         """
+        # Adaptive Runtime Intelligence (ARTI) Recommendation
+        learning_rec: Optional[LearningRecommendation] = None
+        if self.config.enable_runtime_learning:
+            learning_rec = self.learning_engine.get_recommendation(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                hw_profile=self.hw_profile,
+                requested_context=min(self.config.context_length, self.plan.context_length),
+                backend=self.backend_info.name,
+            )
+            self.learning_recommendation = learning_rec
+            if self.config.verbose_learning_engine:
+                gpu_name = self.hw_profile.get("gpus", [{}])[0].get("name", "GPU") if self.hw_profile.get("gpus") else "CPU"
+                print(learning_rec.format_cli_output(gpu_name=gpu_name, model_name=self.plan.model_name))
+
+        # Adaptive Memory Scheduling
+        memory_decision: Optional[MemoryDecision] = None
+        if self.config.enable_adaptive_memory_scheduler:
+            mem_cfg = MemorySchedulerConfig(
+                enabled=self.config.enable_adaptive_memory_scheduler,
+                vram_safety_margin=self.config.vram_safety_margin,
+                ram_safety_margin=self.config.ram_safety_margin,
+                memory_strategy=self.config.memory_strategy,
+                oom_prevention=self.config.oom_prevention,
+                verbose=self.config.verbose_memory_scheduler,
+            )
+            memory_decision = self.memory_scheduler.schedule_memory(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                requested_context=min(self.config.context_length, self.plan.context_length),
+                memory_plan=self.memory_budget,
+                layer_placement=self.plan,
+                backend=self.backend_info,
+                hw_profile=self.hw_profile,
+                config_override=mem_cfg,
+            )
+            self.memory_decision = memory_decision
+            if memory_decision.suggested_microbatch_override and self.config.manual_microbatch is None:
+                self.config.manual_microbatch = memory_decision.suggested_microbatch_override
+            if memory_decision.suggested_context_override and self.config.manual_context is None:
+                self.config.manual_context = memory_decision.suggested_context_override
+
+        # Dynamic Context Scheduling
+        context_decision: Optional[ContextDecision] = None
+        if self.config.enable_dynamic_context:
+            ctx_cfg = ContextSchedulerConfig(
+                enabled=self.config.enable_dynamic_context,
+                min_context=self.config.min_context,
+                max_context=self.config.max_context,
+                safety_margin=self.config.context_safety_margin,
+                optimization_goal=self.config.context_optimization_goal,
+                manual_override=self.config.manual_context,
+                verbose=self.config.verbose_context_scheduler,
+            )
+            req_ctx = min(self.config.context_length, self.plan.context_length)
+            context_decision = self.context_scheduler.schedule_context(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                requested_context=req_ctx,
+                memory_plan=self.memory_budget,
+                layer_placement=self.plan,
+                backend=self.backend_info,
+                hw_profile=self.hw_profile,
+                config_override=ctx_cfg,
+                override_context=self.config.manual_context,
+            )
+            self.context_decision = context_decision
+            self.config.context_length = context_decision.effective_context
+            if context_decision.suggested_microbatch and self.config.manual_microbatch is None:
+                self.config.manual_microbatch = context_decision.suggested_microbatch
+
+        # Dynamic Microbatch Scheduling
+        decision: Optional[SchedulingDecision] = None
+        selected_microbatch: Optional[int] = None
+        if self.config.enable_dynamic_microbatch:
+            sched_cfg = SchedulerConfig(
+                enabled=self.config.enable_dynamic_microbatch,
+                min_microbatch=self.config.min_microbatch,
+                max_microbatch=self.config.max_microbatch,
+                safety_margin=self.config.microbatch_safety_margin,
+                aggressiveness=self.config.microbatch_aggressiveness,
+                optimization_goal=self.config.microbatch_optimization_goal,
+                manual_override=self.config.manual_microbatch,
+                verbose=self.config.verbose_microbatch_scheduler,
+            )
+            eff_ctx = min(self.config.context_length, self.plan.context_length)
+            decision = self.microbatch_scheduler.select_microbatch(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                context_length=eff_ctx,
+                memory_plan=self.memory_budget,
+                layer_placement=self.plan,
+                hw_profile=self.hw_profile,
+                backend=self.backend_info,
+                config_override=sched_cfg,
+                override_microbatch=self.config.manual_microbatch,
+            )
+            self.scheduling_decision = decision
+            selected_microbatch = decision.microbatch
+
         # Build argument list
         args = self._arg_builder.build(
             model_path=self.model_path,
@@ -197,6 +330,7 @@ class InferenceSession:
             plan=self.plan,
             config=self.config,
             backend=self.backend_info,
+            microbatch=selected_microbatch,
         )
 
         # Initialize stats collector
@@ -266,8 +400,57 @@ class InferenceSession:
             success=success,
             args=args,
             backend=self.backend_info.name,
+            scheduling_decision=decision,
+            context_decision=context_decision,
+            memory_decision=memory_decision,
+            learning_recommendation=learning_rec,
         )
         self._last_result = result
+
+        # Record post-inference execution telemetry into Runtime Learning Engine
+        if self.config.enable_runtime_learning:
+            self.learning_engine.record_execution(
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                hw_profile=self.hw_profile,
+                stats=stats,
+                args=args,
+                backend=self.backend_info.name,
+                n_gpu_layers=self.backend_info.n_gpu_layers,
+                n_cpu_layers=self.plan.n_cpu_layers,
+                n_igpu_layers=self.plan.n_igpu_layers,
+                microbatch_size=selected_microbatch or 512,
+                context_length=self.config.context_length,
+                scheduler_decisions={
+                    "microbatch": decision.to_dict() if decision else None,
+                    "context": context_decision.to_dict() if context_decision else None,
+                    "memory": memory_decision.to_dict() if memory_decision else None,
+                },
+                warnings=getattr(stats, "warnings", []),
+                success=success,
+                duration_sec=total_wall_ms / 1000.0,
+            )
+
+        # Record post-inference performance telemetry feedback
+        if decision is not None and stats is not None:
+            eff_mb = selected_microbatch or self.config.batch_size
+            self.microbatch_scheduler.record_runtime_feedback(
+                prompt_tps=stats.prompt_eval_tps,
+                eval_tps=stats.eval_tps,
+                actual_vram_mb=0.0,
+                actual_ram_mb=0.0,
+                gpu_util_pct=stats.avg_gpu_util_pct,
+                cpu_util_pct=stats.avg_cpu_util_pct,
+                ttft_ms=stats.prompt_eval_ms,
+                microbatch=eff_mb,
+                context_length=min(self.config.context_length, self.plan.context_length),
+                model_name=self.plan.model_name,
+                backend=self.backend_info.name,
+            )
+
         return result
 
     @property
