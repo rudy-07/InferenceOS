@@ -1,5 +1,5 @@
 ---
-name: 🐛 Bug Report
+name: Bug Report
 about: Create a report to help us improve InferenceOS
 title: '[BUG] '
 labels: 'bug'

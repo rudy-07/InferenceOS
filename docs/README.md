@@ -1,10 +1,10 @@
-# 📚 InferenceOS Documentation Hub
+# InferenceOS Documentation Hub
 
 Welcome to the official technical documentation for **InferenceOS** — the hardware-agnostic, adaptive operating system for local Large Language Model (LLM) inference.
 
 ---
 
-## 🧭 Navigation Index
+## Navigation Index
 
 ### 1. Architecture & Design Philosophy
 - **[Architecture Overview](architecture/overview.md)**: Control plane, system layers, and design philosophy.

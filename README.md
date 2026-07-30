@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ InferenceOS
+# InferenceOS
 
 ### *The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference*
 
@@ -14,29 +14,29 @@
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 [![Documentation](https://img.shields.io/badge/Docs-Complete-blueviolet.svg)](docs/)
 
-[Overview](#-overview) •
-[Why InferenceOS](#-why-inferenceos) •
-[Architecture](#-architecture-overview) •
-[Feature Matrix](#-feature-comparison) •
-[Quick Start](#-quick-start) •
-[CLI Reference](#-cli-command-reference) •
+[Overview](#overview) •
+[Why InferenceOS](#why-inferenceos) •
+[Architecture](#architecture-overview) •
+[Feature Matrix](#feature-comparison) •
+[Quick Start](#quick-start) •
+[CLI Reference](#cli-command-reference) •
 [Docs](docs/) •
-[Roadmap](#-roadmap) •
+[Roadmap](#roadmap) •
 [Contributing](CONTRIBUTING.md)
 
 ---
 
 </div>
 
-## 📌 Overview
+## Overview
 
 **InferenceOS** is an open-source, hardware-aware operating system and control plane designed for local Large Language Model (LLM) inference. Built on an architectural fork of [`llama.cpp`](https://github.com/ggerganov/llama.cpp), InferenceOS bridges high-performance C++ tensor execution kernels with intelligent, dynamic Python runtime orchestration.
 
-While traditional inference runtimes rely on static offload configs and fixed microbatch sizes, **InferenceOS dynamically adapts execution in real time**. It profiles your hardware capabilities (NVIDIA, AMD, Apple Silicon, Intel Arc, and integrated GPUs), optimizes layer placement using integer linear programming cost models, dynamically sizes prefill microbatches to eliminate OOM errors, monitors live VRAM pressure to execute hysteresis-controlled layer migrations, compresses KV caches using attention-sink eviction policies (H2O, StreamingLLM), and records telemetry in a persistent SQLite Runtime Learning database.
+While traditional inference runtimes rely on static offload configs and fixed microbatch sizes, **InferenceOS dynamically adapts execution in real time**. It profiles system hardware capabilities (NVIDIA, AMD, Apple Silicon, Intel Arc, and integrated GPUs), optimizes layer placement using integer linear programming cost models, dynamically sizes prefill microbatches to eliminate OOM errors, monitors live VRAM pressure to execute hysteresis-controlled layer migrations, compresses KV caches using attention-sink eviction policies (H2O, StreamingLLM), and records telemetry in a persistent SQLite Runtime Learning database.
 
 ---
 
-## 💡 Why InferenceOS Exists
+## Why InferenceOS Exists
 
 Local LLM deployment faces critical hardware boundaries:
 1. **Heterogeneous System Memory**: Modern systems mix fast VRAM, system RAM, and unified iGPU memory across PCIe interconnects. Static layer offloading leads to underutilized GPUs or out-of-memory crashes.
@@ -48,19 +48,19 @@ Local LLM deployment faces critical hardware boundaries:
 
 ---
 
-## ✨ Key Innovations & Features
+## Key Innovations & Features
 
-- 🖥️ **Hardware Profiler**: Multi-vendor detection engine (NVIDIA `pynvml`/`nvidia-smi`, AMD `amdsmi`/`rocm-smi`, Apple Metal `sysctl`, Intel oneAPI/`wmic`) generating system capability profiles with automatic backend and quantization recommendations.
-- ⚡ **Dynamic Microbatch Scheduler**: Prefill batch scheduler using multi-heuristic scoring (VRAM headroom, prompt TPS, GPU occupancy, PCIe boundary crossings) to maximize ingestion throughput while maintaining memory safety.
-- 🔄 **Live Hysteresis Layer Migration**: Real-time layer offload coordinator that migrates layers between dGPU, iGPU, and CPU during active inference under dynamic memory pressure.
-- 🧠 **KV Cache Manager**: Advanced memory management supporting FP16/Q8_0/Q4_0 cache quantization and attention-sink eviction strategies (H2O Heavy-Hitter Oracle, StreamingLLM, LRU, FIFO).
-- 📊 **Runtime Learning & Knowledge Base**: SQLite-backed feedback database recording execution telemetry (TTFT, prompt t/s, eval t/s, OOM history) and predicting optimal settings via ML regression models.
-- 🌐 **OpenAI & Ollama API Server**: High-throughput FastAPI HTTP server supporting `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, and Ollama `/api/*` endpoints with streaming Server-Sent Events (SSE).
-- 🛠️ **21-Command Rich CLI**: Interactive terminal suite including `chat`, `run`, `serve`, `benchmark`, `optimize`, `doctor`, `inspect`, `monitor`, `hardware`, and `placement`.
+- **Hardware Profiler**: Multi-vendor detection engine (NVIDIA `pynvml`/`nvidia-smi`, AMD `amdsmi`/`rocm-smi`, Apple Metal `sysctl`, Intel oneAPI/`wmic`) generating system capability profiles with automatic backend and quantization recommendations.
+- **Dynamic Microbatch Scheduler**: Prefill batch scheduler using multi-heuristic scoring (VRAM headroom, prompt TPS, GPU occupancy, PCIe boundary crossings) to maximize ingestion throughput while maintaining memory safety.
+- **Live Hysteresis Layer Migration**: Real-time layer offload coordinator that migrates layers between dGPU, iGPU, and CPU during active inference under dynamic memory pressure.
+- **KV Cache Manager**: Advanced memory management supporting FP16/Q8_0/Q4_0 cache quantization and attention-sink eviction strategies (H2O Heavy-Hitter Oracle, StreamingLLM, LRU, FIFO).
+- **Runtime Learning & Knowledge Base**: SQLite-backed feedback database recording execution telemetry (TTFT, prompt t/s, eval t/s, OOM history) and predicting optimal settings via ML regression models.
+- **OpenAI & Ollama API Server**: High-throughput FastAPI HTTP server supporting `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, and Ollama `/api/*` endpoints with streaming Server-Sent Events (SSE).
+- **21-Command Rich CLI**: Interactive terminal suite including `chat`, `run`, `serve`, `benchmark`, `optimize`, `doctor`, `inspect`, `monitor`, `hardware`, and `placement`.
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 InferenceOS separates low-level tensor execution from high-level scheduling, memory policy enforcement, and runtime learning.
 
@@ -139,36 +139,36 @@ sequenceDiagram
 
 ---
 
-## 📊 Feature Comparison
+## Feature Comparison
 
 | Feature / Capability | InferenceOS | llama.cpp | Ollama | vLLM | ONNX Runtime |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **GGUF Tensor Kernels** | ✅ Core | ✅ Native | ✅ Native | ❌ | ❌ |
-| **Hardware Auto-Profiling** | ✅ Multi-Vendor | ❌ Manual | 🟡 Basic | 🟡 Basic | 🟡 Basic |
-| **Dynamic Microbatch Prefill** | ✅ Automated | ❌ Fixed (`-b`) | ❌ Fixed | ✅ Paged | ❌ Fixed |
-| **Live Hysteresis Layer Migration** | ✅ Automated | ❌ Static | ❌ Static | ❌ | ❌ |
-| **iGPU & Unified Memory Modeling** | ✅ Specialized | 🟡 Basic | ❌ | ❌ | 🟡 Basic |
-| **KV Cache Compression (H2O/Sinks)** | ✅ Dynamic | 🟡 Basic | ❌ | ✅ Paged | ❌ |
-| **Runtime Learning (SQLite ML)** | ✅ Built-in | ❌ | ❌ | ❌ | ❌ |
-| **OpenAI & Ollama Dual API Server** | ✅ Native | 🟡 OpenAI | ✅ Ollama | 🟡 OpenAI | ❌ |
-| **21-Command Rich Terminal TUI** | ✅ Built-in | 🟡 Simple CLI | 🟡 Simple CLI | ❌ | ❌ |
+| **GGUF Tensor Kernels** | Core | Native | Native | No | No |
+| **Hardware Auto-Profiling** | Multi-Vendor | Manual | Basic | Basic | Basic |
+| **Dynamic Microbatch Prefill** | Automated | Fixed (`-b`) | Fixed | Paged | Fixed |
+| **Live Hysteresis Layer Migration** | Automated | Static | Static | No | No |
+| **iGPU & Unified Memory Modeling** | Specialized | Basic | No | No | Basic |
+| **KV Cache Compression (H2O/Sinks)** | Dynamic | Basic | No | Paged | No |
+| **Runtime Learning (SQLite ML)** | Built-in | No | No | No | No |
+| **OpenAI & Ollama Dual API Server** | Native | OpenAI | Ollama | OpenAI | No |
+| **21-Command Rich Terminal TUI** | Built-in | Simple CLI | Simple CLI | No | No |
 
 ---
 
-## 💻 Supported Hardware & Backends
+## Supported Hardware & Backends
 
 | Vendor | Hardware Architecture | Recommended Backend | Supported Quantizations |
 | :--- | :--- | :--- | :--- |
-| **NVIDIA** | RTX 20xx/30xx/40xx, GTX 10xx, A100/H100/L40S | `cuda` (cuBLAS / FlashAttention) | Q2_K – Q8_0, FP16 |
-| **AMD** | Radeon RX 6000/7000, Instinct MI200/MI300 | `rocm` / `hip` / `vulkan` | Q2_K – Q8_0, FP16 |
-| **Apple** | M1 / M2 / M3 / M4 (Base, Pro, Max, Ultra) | `metal` (Unified Memory) | Q2_K – Q8_0, FP16 |
+| **NVIDIA** | RTX 20xx/30xx/40xx, GTX 10xx, A100/H100/L40S | `cuda` (cuBLAS / FlashAttention) | Q2_K - Q8_0, FP16 |
+| **AMD** | Radeon RX 6000/7000, Instinct MI200/MI300 | `rocm` / `hip` / `vulkan` | Q2_K - Q8_0, FP16 |
+| **Apple** | M1 / M2 / M3 / M4 (Base, Pro, Max, Ultra) | `metal` (Unified Memory) | Q2_K - Q8_0, FP16 |
 | **Intel** | Arc A-Series GPUs, Data Center GPU Flex/Max | `vulkan` / `oneapi` | Q4_0, Q8_0, FP16 |
 | **Integrated** | AMD Radeon 780M/890M, Intel Iris Xe / Arc iGPU | `vulkan` (Shared RAM) | Q4_0, Q5_K_M, Q8_0 |
-| **Generic** | x86_64 CPUs (AVX2, AVX-512, AMX), ARM64 (NEON) | `cpu` (OpenMP Multithreading) | Q2_K – FP16 |
+| **Generic** | x86_64 CPUs (AVX2, AVX-512, AMX), ARM64 (NEON) | `cpu` (OpenMP Multithreading) | Q2_K - FP16 |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Installation
 
@@ -232,7 +232,7 @@ for chunk in response:
 
 ---
 
-## 🛠️ CLI Command Reference
+## CLI Command Reference
 
 InferenceOS provides a unified command suite accessible via `inferenceos <command>`:
 
@@ -265,7 +265,7 @@ For full option details per command, see [`docs/cli/command_reference.md`](docs/
 
 ---
 
-## 📈 Benchmarks & Performance Philosophy
+## Benchmarks & Performance Philosophy
 
 InferenceOS prioritizes **predictable safety without compromising throughput**:
 
@@ -277,7 +277,7 @@ InferenceOS prioritizes **predictable safety without compromising throughput**:
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] **Phase 1 — Hardware Profiler**: Multi-vendor CPU, GPU, iGPU, VRAM, and RAM discovery (`profiler/`).
 - [x] **Phase 2 — Dynamic Microbatch & KV Management**: Adaptive prefill batching, H2O attention sinks, KV quantization (`scheduler/`, `kv_manager/`).
@@ -288,7 +288,7 @@ InferenceOS prioritizes **predictable safety without compromising throughput**:
 
 ---
 
-## 🤝 Upstream `llama.cpp` Synergy & Attribution
+## Upstream `llama.cpp` Synergy & Attribution
 
 InferenceOS is built with profound respect for the [`llama.cpp`](https://github.com/ggerganov/llama.cpp) open-source community created by Georgi Gerganov and contributors.
 
@@ -298,7 +298,7 @@ InferenceOS is built with profound respect for the [`llama.cpp`](https://github.
 
 ---
 
-## 📜 Contributing & Governance
+## Contributing & Governance
 
 We welcome contributions from developers, systems engineers, researchers, and AI enthusiasts!
 
@@ -308,7 +308,7 @@ We welcome contributions from developers, systems engineers, researchers, and AI
 
 ---
 
-## 📄 License
+## License
 
 InferenceOS is released under the open-source **[MIT License](LICENSE)**.
 
@@ -316,8 +316,8 @@ InferenceOS is released under the open-source **[MIT License](LICENSE)**.
 
 <div align="center">
 
-**Built with ❤️ for the Local AI Community.**
+**Built for the Local AI Community.**
 
-[Back to top ⬆️](#-inferenceos)
+[Back to top](#inferenceos)
 
 </div>

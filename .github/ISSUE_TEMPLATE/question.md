@@ -1,5 +1,5 @@
 ---
-name: ❓ Question / Usage Support
+name: Question / Usage Support
 about: Ask a question about InferenceOS architecture or usage
 title: '[QUESTION] '
 labels: 'question'
