@@ -170,6 +170,13 @@ class RuntimeConfig:
     kv_eviction_policy: str = "adaptive"    # lru | fifo | lfu | adaptive
     verbose_kv_manager: bool = False
 
+    # Runtime Health Monitor & Memory Budget Manager
+    enable_health_monitor: bool = True
+    enable_memory_budget_manager: bool = True
+    budget_policy_mode: str = "adaptive"  # adaptive | balanced | conservative | aggressive | server | low_memory
+    verbose_health_monitor: bool = False
+    verbose_budget_manager: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -259,6 +266,12 @@ class RuntimeConfig:
             "kv_compression_mode": self.kv_compression_mode,
             "kv_eviction_policy": self.kv_eviction_policy,
             "verbose_kv_manager": self.verbose_kv_manager,
+            # Runtime Health Monitor & Memory Budget Manager
+            "enable_health_monitor": self.enable_health_monitor,
+            "enable_memory_budget_manager": self.enable_memory_budget_manager,
+            "budget_policy_mode": self.budget_policy_mode,
+            "verbose_health_monitor": self.verbose_health_monitor,
+            "verbose_budget_manager": self.verbose_budget_manager,
         }
 
     @classmethod

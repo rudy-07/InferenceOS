@@ -38,6 +38,8 @@ from .runtime_config import RuntimeConfig
 from .stats_collector import RuntimeStats, StatsCollector
 from kv_manager import IntelligentKVManager, KVDecision, KVPolicyConfig
 from layer_placement.placement_plan import PlacementPlan
+from memory_budget import BudgetConfig, BudgetDecision, MemoryBudgetManager
+from runtime_health import RuntimeHealth, RuntimeHealthMonitor
 from runtime_learning import LearningRecommendation, RuntimeLearningEngine
 from scheduler import (
     ContextDecision,
@@ -87,6 +89,10 @@ class InferenceResult:
         Adaptive Runtime Intelligence recommendation metadata.
     kv_decision : Optional[KVDecision]
         Intelligent KV Manager decision metadata.
+    runtime_health : Optional[RuntimeHealth]
+        Runtime Health Monitor observation.
+    budget_decision : Optional[BudgetDecision]
+        Adaptive Memory Budget Manager component allocation.
     """
     generated_text: str
     stats: RuntimeStats
@@ -100,6 +106,8 @@ class InferenceResult:
     memory_decision: Optional[MemoryDecision] = None
     learning_recommendation: Optional[LearningRecommendation] = None
     kv_decision: Optional[KVDecision] = None
+    runtime_health: Optional[RuntimeHealth] = None
+    budget_decision: Optional[BudgetDecision] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = {
@@ -119,6 +127,10 @@ class InferenceResult:
             d["learning_recommendation"] = self.learning_recommendation.to_dict()
         if self.kv_decision is not None:
             d["kv_decision"] = self.kv_decision.to_dict()
+        if self.runtime_health is not None:
+            d["runtime_health"] = self.runtime_health.to_dict()
+        if self.budget_decision is not None:
+            d["budget_decision"] = self.budget_decision.to_dict()
         return d
 
 
@@ -203,6 +215,10 @@ class InferenceSession:
         self.learning_recommendation: Optional[LearningRecommendation] = None
         self.kv_manager = IntelligentKVManager()
         self.kv_decision: Optional[KVDecision] = None
+        self.health_monitor = RuntimeHealthMonitor()
+        self.budget_manager = MemoryBudgetManager()
+        self.runtime_health: Optional[RuntimeHealth] = None
+        self.budget_decision: Optional[BudgetDecision] = None
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -219,6 +235,37 @@ class InferenceSession:
         """
         Execute a single inference pass with the given prompt.
         """
+        # Runtime Health Observation
+        runtime_health: Optional[RuntimeHealth] = None
+        if self.config.enable_health_monitor:
+            runtime_health = self.health_monitor.observe_health(hw_profile=self.hw_profile)
+            self.runtime_health = runtime_health
+            if self.config.verbose_health_monitor:
+                print(runtime_health.format_cli_output())
+
+        # Adaptive Memory Budget Allocation
+        budget_decision: Optional[BudgetDecision] = None
+        if self.config.enable_memory_budget_manager:
+            b_cfg = BudgetConfig(
+                enabled=self.config.enable_memory_budget_manager,
+                policy_mode=self.config.budget_policy_mode,
+                verbose=self.config.verbose_budget_manager,
+            )
+            h_status = runtime_health.status if runtime_health else "Good"
+            h_press = runtime_health.memory_pressure if runtime_health else "Low"
+            budget_decision = self.budget_manager.compute_budgets(
+                hw_profile=self.hw_profile,
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                health_status=h_status,
+                pressure_level=h_press,
+                config_override=b_cfg,
+            )
+            self.budget_decision = budget_decision
+
         # Adaptive Runtime Intelligence (ARTI) Recommendation
         learning_rec: Optional[LearningRecommendation] = None
         if self.config.enable_runtime_learning:
@@ -444,6 +491,8 @@ class InferenceSession:
             memory_decision=memory_decision,
             learning_recommendation=learning_rec,
             kv_decision=kv_decision,
+            runtime_health=runtime_health,
+            budget_decision=budget_decision,
         )
         self._last_result = result
 
