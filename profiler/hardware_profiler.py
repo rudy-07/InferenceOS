@@ -2,13 +2,16 @@
 hardware_profiler.py
 --------------------
 Main entry point for the InferenceOS hardware profiler.
+Assembles the SystemResources model and exposes the public API functions:
+  - getSystemResources() / get_system_resources()
+  - getAvailableMemory() / get_available_memory()
+  - getGPUs() / get_gpus()
+  - getCPUs() / get_cpus()
+  - estimateBandwidth() / estimate_bandwidth()
+  - run_profiler()
 
-Usage (CLI):
+CLI Usage:
     python -m profiler.hardware_profiler [--output hardware_profile.json] [--verbose]
-
-Usage (API):
-    from profiler.hardware_profiler import run_profiler
-    profile = run_profiler()  # returns a dict
 """
 from __future__ import annotations
 
@@ -18,34 +21,38 @@ import json
 import platform
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict, List, Optional
 
-from . import cpu_profiler, memory_profiler, gpu_profiler
+from . import cpu_profiler, gpu_profiler, interconnect_profiler, memory_profiler, storage_profiler
+from .resource_model import (
+    CPUResource,
+    GPUResource,
+    InterconnectResource,
+    RAMResource,
+    StorageResource,
+    SystemResources,
+)
 
-# ── Schema version — bump when the output structure changes ──
 SCHEMA_VERSION = "1.0"
 
 
 # ---------------------------------------------------------------------------
-# Inference hint derivation
+# Quant selection and inference hint derivation
 # ---------------------------------------------------------------------------
 
-# Quant selection thresholds (VRAM of primary GPU, in MB)
 _QUANT_TABLE = [
-    # (min_vram_mb, quant_name)  — evaluated in descending order
     (24_000, "Q8_0"),
     (16_000, "Q6_K"),
     (12_000, "Q5_K_M"),
     (8_000,  "Q4_K_M"),
     (4_000,  "Q4_0"),
-    (0,      "Q3_K_M"),   # CPU-only or very small VRAM
+    (0,      "Q3_K_M"),
 ]
 
 _CPU_QUANT_TABLE = [
-    # Prefer quality over speed on CPU; AVX512 handles Q4_K_M well
     ("avx512f", "Q4_K_M"),
     ("avx2",    "Q4_0"),
-    ("",        "Q4_0"),   # baseline
+    ("",        "Q4_0"),
 ]
 
 
@@ -65,84 +72,60 @@ def _cpu_quant(isa_extensions: list[str]) -> str:
 
 
 def _derive_inference_hints(
-    cpu: dict[str, Any],
-    memory: dict[str, Any],
-    gpus: list[dict[str, Any]],
+    cpu_res: CPUResource,
+    ram_res: RAMResource,
+    discrete_gpus: List[GPUResource],
+    igpus: List[GPUResource],
 ) -> dict[str, Any]:
-    """
-    Inspects the profiled data and returns a set of opinionated hints
-    that downstream phases (build system, orchestrator) consume directly.
-    """
-    if not gpus:
-        # ── CPU-only path ──
+    all_gpus = discrete_gpus + igpus
+
+    if not all_gpus:
         return {
             "recommended_backend": "cpu",
-            "recommended_quant": _cpu_quant(cpu.get("isa_extensions", [])),
+            "recommended_quant": _cpu_quant(cpu_res.isa_extensions),
             "max_gpu_layers": 0,
-            "parallelism_threads": cpu.get("logical_cores", 4),
+            "parallelism_threads": cpu_res.logical_cores,
             "primary_gpu_index": None,
-            "estimated_context_window": _estimate_cpu_ctx(memory),
+            "estimated_context_window": _estimate_cpu_ctx(ram_res.available_gb),
         }
 
-    # ── GPU path — pick the primary GPU (most VRAM) ──
-    primary = max(gpus, key=lambda g: g.get("vram_total_mb", 0))
-    vendor = primary.get("vendor", "unknown")
-    backend = primary.get("backend_hint", "cpu")
-    vram_mb = primary.get("vram_total_mb", 0)
-    vram_free_mb = primary.get("vram_free_mb", vram_mb)
+    primary = max(all_gpus, key=lambda g: g.vram_total_mb)
+    backend = primary.backend_hint
+    vram_mb = primary.vram_total_mb
+    vram_free_mb = primary.vram_free_mb
 
     backend_map = {
-        "cuda":  "cuda",
-        "rocm":  "rocm",
+        "cuda": "cuda",
+        "rocm": "rocm",
         "metal": "metal",
         "vulkan": "vulkan",
     }
     recommended_backend = backend_map.get(backend, "cpu")
-
-    # If we have multiple GPUs, hint at multi-GPU support
-    multi_gpu = len(gpus) > 1
+    multi_gpu = len(all_gpus) > 1
 
     return {
         "recommended_backend": recommended_backend,
         "recommended_quant": _select_quant(vram_free_mb),
-        # -1 means "offload all layers" (llama.cpp convention)
         "max_gpu_layers": -1 if vram_mb > 0 else 0,
-        "parallelism_threads": cpu.get("logical_cores", 4),
-        "primary_gpu_index": primary.get("global_index", 0),
+        "parallelism_threads": cpu_res.logical_cores,
+        "primary_gpu_index": primary.global_index,
         "multi_gpu": multi_gpu,
-        "total_vram_mb": sum(g.get("vram_total_mb", 0) for g in gpus),
+        "total_vram_mb": sum(g.vram_total_mb for g in all_gpus),
         "estimated_context_window": _estimate_gpu_ctx(vram_free_mb),
     }
 
 
-def _estimate_cpu_ctx(memory: dict[str, Any]) -> int:
-    """
-    Rough context window estimate for CPU-only inference.
-    KV cache for a 7B Q4 model: ~0.5 MB per 256 tokens.
-    We allow up to 25% of available RAM for the KV cache.
-    """
-    available_gb = memory.get("available_gb", 4.0)
+def _estimate_cpu_ctx(available_gb: float) -> int:
     kv_budget_mb = available_gb * 1024 * 0.25
-    # Each 256 tokens ≈ 0.5 MB for a 7B model Q4
     ctx = int((kv_budget_mb / 0.5) * 256)
-    # Clamp to sane limits
     return max(512, min(ctx, 131_072))
 
 
 def _estimate_gpu_ctx(vram_free_mb: int) -> int:
-    """
-    Rough context window estimate based on free VRAM.
-    KV cache for a 7B Q4 model: ~0.5 MB per 256 tokens.
-    We allow up to 40% of free VRAM for the KV cache.
-    """
     kv_budget_mb = vram_free_mb * 0.40
     ctx = int((kv_budget_mb / 0.5) * 256)
     return max(512, min(ctx, 131_072))
 
-
-# ---------------------------------------------------------------------------
-# OS info
-# ---------------------------------------------------------------------------
 
 def _os_info() -> dict[str, Any]:
     return {
@@ -155,101 +138,152 @@ def _os_info() -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Core profiler
+# Main SystemResources builder
 # ---------------------------------------------------------------------------
 
-def run_profiler(verbose: bool = False) -> dict[str, Any]:
+def get_system_resources(verbose: bool = False) -> SystemResources:
     """
-    Runs all sub-profilers and assembles the full hardware profile dict.
-
-    Parameters
-    ----------
-    verbose : bool
-        If True, prints progress messages to stderr.
-
-    Returns
-    -------
-    dict
-        The complete hardware profile (JSON-serialisable).
+    Discovers all host compute and memory resources and returns a SystemResources graph.
     """
     def _log(msg: str) -> None:
         if verbose:
             print(f"[profiler] {msg}", file=sys.stderr)
 
-    _log("Probing OS …")
+    _log("Probing OS...")
     os_data = _os_info()
 
-    _log("Probing CPU …")
-    cpu_data = cpu_profiler.profile()
+    _log("Probing CPU...")
+    cpu_res = cpu_profiler.get_cpu_resource()
 
-    _log("Probing memory …")
-    memory_data = memory_profiler.profile()
+    _log("Probing RAM...")
+    ram_res = memory_profiler.get_ram_resource()
 
-    _log("Probing GPUs …")
-    gpu_data = gpu_profiler.profile()
+    _log("Probing GPUs...")
+    discrete_gpus, igpus = gpu_profiler.get_gpu_resources()
 
-    if verbose:
-        gpu_names = [g.get("name", "?") for g in gpu_data]
-        _log(f"  Found {len(gpu_data)} GPU(s): {gpu_names if gpu_names else 'none'}")
+    _log("Probing Storage...")
+    storage_resources = storage_profiler.get_storage_resources()
 
-    _log("Deriving inference hints …")
-    hints = _derive_inference_hints(cpu_data, memory_data, gpu_data)
+    _log("Probing Interconnects...")
+    interconnect_resources = interconnect_profiler.get_interconnect_resources(discrete_gpus, ram_res.bandwidth)
 
-    profile: dict[str, Any] = {
-        "schema_version": SCHEMA_VERSION,
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
-        "os": os_data,
-        "cpu": cpu_data,
-        "memory": memory_data,
-        "gpus": gpu_data,
-        "inference_hints": hints,
-    }
+    _log("Deriving inference hints...")
+    hints = _derive_inference_hints(cpu_res, ram_res, discrete_gpus, igpus)
 
-    return profile
+    return SystemResources(
+        cpus=[cpu_res],
+        gpus=discrete_gpus,
+        igpus=igpus,
+        ram=ram_res,
+        storage=storage_resources,
+        interconnects=interconnect_resources,
+        os=os_data,
+        schema_version=SCHEMA_VERSION,
+        timestamp=datetime.datetime.utcnow().isoformat() + "Z",
+        inference_hints=hints,
+    )
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# Public API Functions
+# ---------------------------------------------------------------------------
+
+# Exact camelCase required by prompt
+def getSystemResources() -> SystemResources:
+    """Returns the unified SystemResources model."""
+    return get_system_resources()
+
+
+def getAvailableMemory() -> Dict[str, Any]:
+    """Returns system memory and available memory metrics."""
+    ram = memory_profiler.get_ram_resource()
+    return ram.to_dict()
+
+
+def getGPUs() -> List[Dict[str, Any]]:
+    """Returns list of all GPUs (discrete and integrated)."""
+    discrete, igpus = gpu_profiler.get_gpu_resources()
+    return [g.to_dict() for g in discrete] + [g.to_dict() for g in igpus]
+
+
+def getCPUs() -> List[Dict[str, Any]]:
+    """Returns CPU resource specifications."""
+    cpu = cpu_profiler.get_cpu_resource()
+    return [cpu.to_dict()]
+
+
+def estimateBandwidth() -> Dict[str, float]:
+    """
+    Returns estimated bandwidth for system memory, GPU interconnect, and storage.
+    """
+    ram = memory_profiler.get_ram_resource()
+    discrete, igpus = gpu_profiler.get_gpu_resources()
+    storage = storage_profiler.get_storage_resources()
+
+    gpu_bw = max([g.bandwidth for g in discrete + igpus], default=0.0)
+    storage_bw = max([s.bandwidth for s in storage], default=0.0)
+
+    return {
+        "ram_bandwidth_gbps": ram.bandwidth,
+        "max_gpu_bandwidth_gbps": gpu_bw,
+        "max_storage_bandwidth_gbps": storage_bw,
+    }
+
+
+# Pythonic snake_case aliases
+get_available_memory = getAvailableMemory
+get_gpus = getGPUs
+get_cpus = getCPUs
+estimate_bandwidth = estimateBandwidth
+
+
+def run_profiler(verbose: bool = False) -> Dict[str, Any]:
+    """
+    Runs full profiler and returns serializable dict matching required output schema:
+    {
+      "cpu": {...},
+      "ram": {...},
+      "gpus": [...],
+      "igpus": [...],
+      "storage": [...]
+    }
+    """
+    sys_res = get_system_resources(verbose=verbose)
+    return sys_res.to_dict()
+
+
+# ---------------------------------------------------------------------------
+# CLI Entry Point
 # ---------------------------------------------------------------------------
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="hardware_profiler",
-        description=(
-            "InferenceOS Hardware Profiler — "
-            "detect system capabilities and emit a JSON configuration profile."
-        ),
+        description="InferenceOS Hardware Profiler & Resource Manager",
     )
     parser.add_argument(
-        "--output",
-        "-o",
-        default="hardware_profile.json",
-        help="Path to write the JSON profile (default: hardware_profile.json)",
+        "--output", "-o", default="hardware_profile.json",
+        help="Path to write JSON profile (default: hardware_profile.json)",
     )
     parser.add_argument(
-        "--stdout",
-        action="store_true",
-        help="Also print the JSON profile to stdout",
+        "--stdout", action="store_true",
+        help="Print JSON profile to stdout",
     )
     parser.add_argument(
-        "--verbose",
-        "-v",
-        action="store_true",
-        help="Print progress information to stderr",
+        "--verbose", "-v", action="store_true",
+        help="Print progress info to stderr",
     )
     parser.add_argument(
-        "--no-file",
-        action="store_true",
-        help="Skip writing to a file (useful with --stdout)",
+        "--no-file", action="store_true",
+        help="Skip writing file",
     )
     return parser.parse_args()
 
 
 def main() -> None:
     args = _parse_args()
-
-    profile = run_profiler(verbose=args.verbose)
-    json_str = json.dumps(profile, indent=2, ensure_ascii=False)
+    profile_dict = run_profiler(verbose=args.verbose)
+    json_str = json.dumps(profile_dict, indent=2, ensure_ascii=False)
 
     if not args.no_file:
         output_path = Path(args.output)

@@ -1,0 +1,612 @@
+{
+  "summary": {
+    "model_name": "Qwen3-4B-Thinking-2507.Q5_K_M",
+    "backend": "cpu",
+    "total_wall_ms": 26300.36,
+    "generation_tps": 0.27,
+    "prompt_tps": 0.0,
+    "ttft_ms": 8202.9,
+    "p50_itl_ms": 2525.91,
+    "p95_itl_ms": 6696.02,
+    "gpu_idle_pct": 100.0
+  },
+  "telemetry": {
+    "throughput": {
+      "prompt_tokens": 0,
+      "generation_tokens": 7,
+      "prompt_eval_ms": 0.0,
+      "generation_eval_ms": 26300.36,
+      "total_wall_ms": 26300.36,
+      "prompt_tps": 0.0,
+      "generation_tps": 0.27
+    },
+    "latency": {
+      "ttft_ms": 8202.9,
+      "p50_itl_ms": 2525.91,
+      "p90_itl_ms": 6276.82,
+      "p95_itl_ms": 6696.02,
+      "p99_itl_ms": 7031.38,
+      "stddev_itl_ms": 3288.26,
+      "jitter_itl_ms": 5021.4,
+      "sample_count": 6
+    },
+    "utilization": {
+      "avg_cpu_pct": 46.7,
+      "peak_cpu_pct": 93.3,
+      "avg_gpu_pct": 0.0,
+      "peak_gpu_pct": 0.0,
+      "gpu_idle_pct": 100.0
+    },
+    "bandwidth": {
+      "ram_bandwidth_gbps": 14.33,
+      "vram_bandwidth_gbps": 0.0,
+      "pcie_bandwidth_gbps": 5.97,
+      "pcie_bytes_transferred": 229376,
+      "pcie_mb_transferred": 0.22
+    },
+    "kv_cache": {
+      "size_mb": 3.5,
+      "growth_rate_mb_per_tok": 0.5,
+      "context_length": 2048,
+      "context_utilization_pct": 0.3
+    },
+    "model": {
+      "model_name": "Qwen3-4B-Thinking-2507.Q5_K_M",
+      "backend": "cpu",
+      "total_layers": 38,
+      "n_gpu_layers": 20,
+      "n_cpu_layers": 16,
+      "n_igpu_layers": 0
+    },
+    "layer_timings": [
+      {
+        "layer_index": 0,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 1,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 2,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 3,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 4,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 5,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 6,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 7,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 8,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 9,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 10,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 11,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 12,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 13,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 14,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 15,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 16,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 17,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 18,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 19,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 20,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 21,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 1.2,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 22,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 23,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 24,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 25,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 26,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 27,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 28,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 29,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 30,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 31,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 32,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 33,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 34,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 35,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 36,
+        "device": "CPU",
+        "compute_ms": 1038.172,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 37,
+        "device": "GPU",
+        "compute_ms": 276.846,
+        "transfer_ms": 1.2,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      }
+    ]
+  },
+  "recommendations": [
+    {
+      "title": "Utilize Unused VRAM (6.0 GB Free)",
+      "bottleneck": "6144 MB VRAM unallocated while 16 layers execute on CPU",
+      "action": "Increase GPU layer offload count to 36",
+      "estimated_improvement": "+56.0% tok/s",
+      "estimated_tps_delta_pct": 56.0,
+      "severity": "WARNING",
+      "category": "memory"
+    },
+    {
+      "title": "Offload Layer 20 to GPU",
+      "bottleneck": "GPU idle 100% (waiting on CPU layer computation)",
+      "action": "Move Layer 20 to GPU (--gpu-layers 21)",
+      "estimated_improvement": "+35.0% tok/s",
+      "estimated_tps_delta_pct": 35.0,
+      "severity": "CRITICAL",
+      "category": "layer_placement"
+    },
+    {
+      "title": "Enable Phase 8 Async Prefetching",
+      "bottleneck": "Synchronous layer boundary transfer stalls GPU execution",
+      "action": "Set enable_async_scheduler=True and prefetch_lookahead=1",
+      "estimated_improvement": "+8.0% tok/s (overlaps transfer with compute)",
+      "estimated_tps_delta_pct": 8.0,
+      "severity": "INFO",
+      "category": "prefetch"
+    }
+  ],
+  "flame_graph": {
+    "name": "InferenceSession (Qwen3-4B-Thinking-2507.Q5_K_M)",
+    "value": 26300.356,
+    "category": "root",
+    "children": [
+      {
+        "name": "Stage: Prepare (Prompt Prefill)",
+        "value": 2630.036,
+        "category": "cpu",
+        "children": [
+          {
+            "name": "Tokenize & Prefix Scan",
+            "value": 789.011,
+            "category": "cpu",
+            "children": []
+          },
+          {
+            "name": "Prompt Layer Execution",
+            "value": 1841.025,
+            "category": "gpu",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Stage: Transfer (PCIe DMA Prefetch)",
+        "value": 0.022,
+        "category": "pcie",
+        "children": [
+          {
+            "name": "Boundary Buffer Copy",
+            "value": 0.018,
+            "category": "pcie",
+            "children": []
+          },
+          {
+            "name": "CUDA Stream Sync",
+            "value": 0.004,
+            "category": "pcie",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Stage: Compute (Autoregressive Generation)",
+        "value": 26300.356,
+        "category": "stage",
+        "children": [
+          {
+            "name": "dGPU Block (22 layers)",
+            "value": 6090.609,
+            "category": "gpu",
+            "children": [
+              {
+                "name": "Tensor Core GEMM (Q4/Q8)",
+                "value": 3958.896,
+                "category": "gpu",
+                "children": []
+              },
+              {
+                "name": "FlashAttention-2 Kernel",
+                "value": 2131.713,
+                "category": "gpu",
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "CPU Block (16 layers)",
+            "value": 16610.751,
+            "category": "cpu",
+            "children": [
+              {
+                "name": "AVX-512 / AMX Matrix Engine",
+                "value": 11627.526,
+                "category": "cpu",
+                "children": []
+              },
+              {
+                "name": "KV Cache Allocation",
+                "value": 4983.225,
+                "category": "kv",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Stage: Sampling & Post-Process",
+        "value": 1315.018,
+        "category": "sample",
+        "children": [
+          {
+            "name": "Top-P / Temperature Filter",
+            "value": 789.011,
+            "category": "sample",
+            "children": []
+          },
+          {
+            "name": "Tokenizer Decode",
+            "value": 526.007,
+            "category": "sample",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "timeline": [
+    {
+      "name": "Prompt Tokenization & Prefill",
+      "track": "CPU Prepare",
+      "start_ms": 0.0,
+      "duration_ms": 10.0,
+      "end_ms": 10.0,
+      "category": "cpu",
+      "details": {
+        "tokens": 0
+      }
+    },
+    {
+      "name": "Token #1",
+      "track": "Token Arrival",
+      "start_ms": 10.0,
+      "duration_ms": 2.0,
+      "end_ms": 12.0,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.13
+      }
+    },
+    {
+      "name": "Token #2",
+      "track": "Token Arrival",
+      "start_ms": 10.127,
+      "duration_ms": 2.0,
+      "end_ms": 12.127,
+      "category": "token",
+      "details": {
+        "itl_ms": 7115.22
+      }
+    },
+    {
+      "name": "PCIe / CPU Wait #2",
+      "track": "PCIe Bus",
+      "start_ms": 10.127,
+      "duration_ms": 7115.22,
+      "end_ms": 7125.347,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #3",
+      "track": "Token Arrival",
+      "start_ms": 7125.347,
+      "duration_ms": 2.0,
+      "end_ms": 7127.347,
+      "category": "token",
+      "details": {
+        "itl_ms": 5051.7
+      }
+    },
+    {
+      "name": "PCIe / CPU Wait #3",
+      "track": "PCIe Bus",
+      "start_ms": 7125.347,
+      "duration_ms": 5051.698,
+      "end_ms": 12177.046,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #4",
+      "track": "Token Arrival",
+      "start_ms": 12177.046,
+      "duration_ms": 2.0,
+      "end_ms": 12179.046,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.04
+      }
+    },
+    {
+      "name": "Token #5",
+      "track": "Token Arrival",
+      "start_ms": 12177.09,
+      "duration_ms": 2.0,
+      "end_ms": 12179.09,
+      "category": "token",
+      "details": {
+        "itl_ms": 5438.43
+      }
+    },
+    {
+      "name": "PCIe / CPU Wait #5",
+      "track": "PCIe Bus",
+      "start_ms": 12177.09,
+      "duration_ms": 5438.429,
+      "end_ms": 17615.519,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #6",
+      "track": "Token Arrival",
+      "start_ms": 17615.519,
+      "duration_ms": 2.0,
+      "end_ms": 17617.519,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.06
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+Config_Name,N_GPU_Layers,N_CPU_Layers,Gen_TPS,Prompt_TPS,TTFT_ms,p50_ITL_ms,Wall_Sec,Status
+InferenceOS (Adaptive Auto-Placement: 28 GPU / 5 CPU),28,5,9.0,33.16,13183.8,114.73,29.04,SUCCESS
+InferenceOS (18 GPU / 17 CPU: 18 GPU / 17 CPU),18,17,9.04,29.07,12255.9,114.56,28.35,SUCCESS
+Raw llama.cpp (GPU -ngl 18),18,15,4.67,20.3,492.6,214.18,37.7,SUCCESS
+InferenceOS (12 GPU / 23 CPU: 12 GPU / 23 CPU),12,23,9.02,33.12,12121.4,113.86,27.91,SUCCESS
+Raw llama.cpp (GPU -ngl 12),12,21,3.54,13.06,765.7,282.7,47.32,SUCCESS
+InferenceOS (6 GPU / 29 CPU: 6 GPU / 29 CPU),6,29,9.16,28.97,11928.3,113.34,27.64,SUCCESS
+Raw llama.cpp (GPU -ngl 6),6,27,2.86,8.13,1230.3,349.36,56.98,SUCCESS
+Raw llama.cpp (CPU Only (-ngl 0)),0,33,2.32,2.54,3938.2,430.79,64.43,SUCCESS
+Raw llama.cpp (GPU -ngl 99),99,0,0.0,0.0,0.0,0.0,2.53,FAILED / OOM

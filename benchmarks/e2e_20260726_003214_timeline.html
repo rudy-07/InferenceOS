@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InferenceOS Phase 9 — Execution Timeline</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #0b132b;
+            color: #f1f5f9;
+            margin: 0;
+            padding: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #38bdf8;
+            margin-bottom: 8px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .timeline-card {
+            background: #1c2541;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+        .track-row {
+            margin-bottom: 20px;
+        }
+        .track-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .track-bar-container {
+            position: relative;
+            height: 32px;
+            background: #0b132b;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+        .event-box {
+            position: absolute;
+            height: 100%;
+            border-radius: 2px;
+            padding: 4px 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .event-box:hover {
+            filter: brightness(1.2);
+            border: 1px solid #ffffff;
+        }
+        .tooltip {
+            position: fixed;
+            background: #090d16;
+            border: 1px solid #38bdf8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>⏱️ InferenceOS Execution Timeline</h1>
+            <div style="font-size:13px; color:#94a3b8">Total Span: 274.0 ms &bull; Tokens: 0</div>
+        </div>
+    </div>
+
+    <div class="timeline-card" id="timeline-container">
+        <!-- Rendered by JS -->
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        const events = [
+  {
+    "name": "Prompt Tokenization & Prefill",
+    "track": "CPU Prepare",
+    "start_ms": 0.0,
+    "duration_ms": 10.0,
+    "end_ms": 10.0,
+    "category": "cpu",
+    "details": {
+      "tokens": 0
+    }
+  },
+  {
+    "name": "Generation (0 tokens)",
+    "track": "GPU Execution",
+    "start_ms": 10.0,
+    "duration_ms": 263.972,
+    "end_ms": 273.972,
+    "category": "gpu",
+    "details": {}
+  }
+];
+        const totalSpan = 273.9721000014106;
+        const container = document.getElementById('timeline-container');
+        const tooltip = document.getElementById('tooltip');
+
+        const colors = {"token": "#38bdf8", "gpu": "#10b981", "cpu": "#6366f1", "pcie": "#f59e0b", "stall": "#ef4444"};
+
+        // Group by track
+        const tracks = {};
+        events.forEach(e => {
+            if (!tracks[e.track]) tracks[e.track] = [];
+            tracks[e.track].push(e);
+        });
+
+        Object.keys(tracks).forEach(trackName => {
+            const row = document.createElement('div');
+            row.className = 'track-row';
+
+            const label = document.createElement('div');
+            label.className = 'track-label';
+            label.innerText = trackName;
+            row.appendChild(label);
+
+            const barContainer = document.createElement('div');
+            barContainer.className = 'track-bar-container';
+
+            tracks[trackName].forEach(ev => {
+                const leftPct = (ev.start_ms / totalSpan) * 100;
+                const widthPct = Math.max(0.2, (ev.duration_ms / totalSpan) * 100);
+
+                const box = document.createElement('div');
+                box.className = 'event-box';
+                box.style.left = leftPct + '%';
+                box.style.width = widthPct + '%';
+                box.style.backgroundColor = colors[ev.category] || '#64748b';
+                box.innerText = ev.name;
+
+                box.addEventListener('mouseenter', (e) => {
+                    tooltip.style.display = 'block';
+                    tooltip.innerHTML = `<b>${ev.name}</b><br/>Start: ${ev.start_ms.toFixed(1)} ms<br/>Duration: ${ev.duration_ms.toFixed(1)} ms`;
+                });
+
+                box.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = (e.clientX + 12) + 'px';
+                    tooltip.style.top = (e.clientY + 12) + 'px';
+                });
+
+                box.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                barContainer.appendChild(box);
+            });
+
+            row.appendChild(barContainer);
+            container.appendChild(row);
+        });
+    </script>
+</body>
+</html>

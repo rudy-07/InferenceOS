@@ -1,17 +1,19 @@
 """
 cpu_profiler.py
 ---------------
-Detects CPU topology, clock speed, cache hierarchy, and ISA extension support.
-
-Uses `cpuinfo` (py-cpuinfo) as the primary source, with `psutil` and
-platform/ctypes fallbacks so the module is safe to import on any OS.
+Detects CPU topology, clock speed, cache hierarchy, SIMD support, NUMA nodes,
+and current CPU utilization.
 """
 from __future__ import annotations
 
+import ctypes
+import os
 import platform
 import subprocess
 import sys
-from typing import Any
+from typing import Any, Dict, List
+
+from .resource_model import CPUResource
 
 
 def _run_silent(*args: str) -> str:
@@ -37,23 +39,19 @@ def _get_cpuinfo_data() -> dict[str, Any]:
         import cpuinfo  # type: ignore
 
         return cpuinfo.get_cpu_info()
-    except ImportError:
+    except Exception:
         return {}
 
 
 def _detect_isa_extensions(raw: dict[str, Any]) -> list[str]:
     """
-    Extract ISA extensions relevant to llama.cpp from the cpuinfo flags list.
-    Falls back to parsing /proc/cpuinfo on Linux if cpuinfo is unavailable.
+    Extract ISA extensions relevant to llama.cpp from cpuinfo or OS sysctl/proc.
     """
-    # Extensions llama.cpp cares about (ordered roughly by importance)
     RELEVANT = {
         "avx512f", "avx512bw", "avx512cd", "avx512dq", "avx512vl",
         "avx512_vnni", "avx2", "avx", "fma", "f16c",
         "sse4_1", "sse4_2", "ssse3", "sse3", "sse2",
-        "neon",  # ARM
-        "sve",   # ARM scalable
-        "amx_bf16", "amx_int8",  # Intel AMX
+        "neon", "sve", "amx_bf16", "amx_int8",
     }
 
     flags: list[str] = []
@@ -65,7 +63,6 @@ def _detect_isa_extensions(raw: dict[str, Any]) -> list[str]:
         if proc:
             flags = proc.split(":")[1].strip().split() if ":" in proc else []
     elif platform.system() == "Darwin":
-        # macOS: use sysctl
         out = _run_silent("sysctl", "-a", "hw.optional")
         flags = [
             line.split(":")[0].split(".")[-1].lower()
@@ -76,22 +73,19 @@ def _detect_isa_extensions(raw: dict[str, Any]) -> list[str]:
     return sorted(f for f in flags if f in RELEVANT)
 
 
-def _get_cache_info() -> dict[str, Any]:
+def _get_cache_info() -> dict[str, float]:
     """
-    Returns L2 (per-core, KB) and L3 (total, MB) cache sizes.
-    Uses py-cpuinfo if available, then OS-specific fallbacks.
+    Returns L1 (per-core, KB), L2 (per-core, KB), and L3 (total, MB) cache sizes.
     """
+    caches = {"l1_cache_kb": 0.0, "l2_cache_kb": 0.0, "l3_cache_mb": 0.0}
     try:
         import cpuinfo  # type: ignore
 
         info = cpuinfo.get_cpu_info()
-        l2_kb = info.get("l2_cache_size", 0)
-        l3_mb = info.get("l3_cache_size", 0)
 
-        # cpuinfo returns values as ints (bytes) or strings like "512 KB"
         def _to_kb(val: Any) -> float:
-            if isinstance(val, int):
-                return round(val / 1024, 1)
+            if isinstance(val, (int, float)):
+                return round(float(val) / 1024, 1)
             if isinstance(val, str):
                 val = val.upper().replace(" ", "")
                 if "MB" in val:
@@ -104,55 +98,88 @@ def _get_cache_info() -> dict[str, Any]:
                     return 0.0
             return 0.0
 
-        return {
-            "l2_cache_kb": _to_kb(l2_kb),
-            "l3_cache_mb": round(_to_kb(l3_mb) / 1024, 1),
-        }
-    except ImportError:
+        if "l1_data_cache_size" in info:
+            caches["l1_cache_kb"] = _to_kb(info.get("l1_data_cache_size"))
+        if "l2_cache_size" in info:
+            caches["l2_cache_kb"] = _to_kb(info.get("l2_cache_size"))
+        if "l3_cache_size" in info:
+            caches["l3_cache_mb"] = round(_to_kb(info.get("l3_cache_size")) / 1024, 1)
+
+    except Exception:
         pass
 
     # Linux /sys fallback
     if platform.system() == "Linux":
         try:
-            import os
-
             cache_base = "/sys/devices/system/cpu/cpu0/cache"
-            caches: dict[str, float] = {}
-            for entry in os.listdir(cache_base):
-                level_file = f"{cache_base}/{entry}/level"
-                size_file = f"{cache_base}/{entry}/size"
-                type_file = f"{cache_base}/{entry}/type"
-                if not os.path.exists(level_file):
-                    continue
-                with open(level_file) as f:
-                    level = f.read().strip()
-                with open(size_file) as f:
-                    size_str = f.read().strip().upper()
-                with open(type_file) as f:
-                    cache_type = f.read().strip()
-                size_kb = (
-                    float(size_str.replace("K", "")) if "K" in size_str else 0.0
-                )
-                if level == "2" and cache_type in ("Unified", "Data"):
-                    caches["l2_cache_kb"] = size_kb
-                elif level == "3":
-                    caches["l3_cache_mb"] = round(size_kb / 1024, 1)
-            return caches
+            if os.path.exists(cache_base):
+                for entry in os.listdir(cache_base):
+                    level_file = f"{cache_base}/{entry}/level"
+                    size_file = f"{cache_base}/{entry}/size"
+                    if not os.path.exists(level_file):
+                        continue
+                    with open(level_file) as f:
+                        level = f.read().strip()
+                    with open(size_file) as f:
+                        size_str = f.read().strip().upper()
+                    size_kb = float(size_str.replace("K", "").replace("M", "000")) if "K" in size_str or "M" in size_str else 0.0
+                    if level == "1" and caches["l1_cache_kb"] == 0.0:
+                        caches["l1_cache_kb"] = size_kb
+                    elif level == "2" and caches["l2_cache_kb"] == 0.0:
+                        caches["l2_cache_kb"] = size_kb
+                    elif level == "3" and caches["l3_cache_mb"] == 0.0:
+                        caches["l3_cache_mb"] = round(size_kb / 1024, 1)
         except Exception:
             pass
 
-    return {"l2_cache_kb": 0.0, "l3_cache_mb": 0.0}
+    return caches
 
 
-def profile() -> dict[str, Any]:
+def _detect_numa_topology() -> tuple[int, List[Dict[str, Any]]]:
     """
-    Returns a structured dict describing the host CPU.
-    Never raises — missing values default to 0 or empty list.
+    Detects NUMA topology (number of nodes and node mapping if available).
+    """
+    numa_nodes = 1
+    numa_topology: List[Dict[str, Any]] = []
+
+    sys_name = platform.system()
+    if sys_name == "Linux":
+        try:
+            node_dir = "/sys/devices/system/node"
+            if os.path.exists(node_dir):
+                nodes = [d for d in os.listdir(node_dir) if d.startswith("node")]
+                if nodes:
+                    numa_nodes = len(nodes)
+                    for n in nodes:
+                        numa_topology.append({"node_id": n, "path": f"{node_dir}/{n}"})
+        except Exception:
+            pass
+
+    elif sys_name == "Windows":
+        try:
+            node_count = ctypes.c_ulong()
+            if ctypes.windll.kernel32.GetNumaHighestNodeNumber(ctypes.byref(node_count)):
+                numa_nodes = max(1, node_count.value + 1)
+                for i in range(numa_nodes):
+                    numa_topology.append({"node_id": i})
+        except Exception:
+            pass
+
+    if not numa_topology:
+        numa_topology = [{"node_id": 0}]
+
+    return numa_nodes, numa_topology
+
+
+def get_cpu_resource() -> CPUResource:
+    """
+    Returns CPU details wrapped in a CPUResource model.
     """
     import psutil
 
     raw = _get_cpuinfo_data()
     cache = _get_cache_info()
+    numa_nodes, numa_topology = _detect_numa_topology()
 
     brand = raw.get("brand_raw", "")
     if not brand:
@@ -162,24 +189,51 @@ def profile() -> dict[str, Any]:
     base_freq_mhz: float = 0.0
     if hz_info:
         try:
-            # e.g. "4.5000 GHz"
             val, unit = hz_info.split()
             multiplier = 1000.0 if unit.upper().startswith("G") else 1.0
             base_freq_mhz = round(float(val) * multiplier, 1)
         except (ValueError, AttributeError):
             pass
 
-    # psutil is the most reliable cross-platform source for core counts
     physical_cores = psutil.cpu_count(logical=False) or 1
     logical_cores = psutil.cpu_count(logical=True) or 1
 
-    return {
-        "brand": brand,
-        "architecture": raw.get("arch", platform.machine()),
-        "physical_cores": physical_cores,
-        "logical_cores": logical_cores,
-        "base_freq_mhz": base_freq_mhz,
-        "cache_l2_kb": cache.get("l2_cache_kb", 0.0),
-        "cache_l3_mb": cache.get("l3_cache_mb", 0.0),
-        "isa_extensions": _detect_isa_extensions(raw),
-    }
+    try:
+        utilization = float(psutil.cpu_percent(interval=0.1))
+    except Exception:
+        utilization = 0.0
+
+    capacity = float(logical_cores)
+    available = max(0.0, capacity * (1.0 - (utilization / 100.0)))
+
+    return CPUResource(
+        capacity=capacity,
+        available=round(available, 2),
+        bandwidth=0.0,  # Memory bandwidth reported in RAMResource
+        latency=0.0,
+        utilization=utilization,
+        brand=brand,
+        architecture=raw.get("arch", platform.machine()),
+        physical_cores=physical_cores,
+        logical_cores=logical_cores,
+        base_freq_mhz=base_freq_mhz,
+        cache_l1_kb=cache["l1_cache_kb"],
+        cache_l2_kb=cache["l2_cache_kb"],
+        cache_l3_mb=cache["l3_cache_mb"],
+        isa_extensions=_detect_isa_extensions(raw),
+        numa_nodes=numa_nodes,
+        numa_topology=numa_topology,
+    )
+
+
+def profile() -> dict[str, Any]:
+    """
+    Backwards-compatible dictionary function returning CPU metrics.
+    """
+    res = get_cpu_resource()
+    d = res.to_dict()
+    # Add backward compatible key names
+    d["cache_l1_kb"] = res.cache_l1_kb
+    d["cache_l2_kb"] = res.cache_l2_kb
+    d["cache_l3_mb"] = res.cache_l3_mb
+    return d

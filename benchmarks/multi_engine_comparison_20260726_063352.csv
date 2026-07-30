@@ -1,0 +1,5 @@
+Engine,Gen_TPS,Prompt_TPS,TTFT_ms,p50_ITL_ms,Total_Wall_Sec,Gen_Tokens,Prompt_Tokens
+InferenceOS (Adaptive),0.55,0.0,8472.18,556.14,12.64213,7,0
+Raw llama.cpp (GPU -ngl 99),50.97,62.49,160.0,19.62,11.36,127,10
+Raw llama.cpp (CPU -ngl 0),2.64,4.65,2150.2,379.02,58.99,127,10
+Ollama,0.0,0.0,0.0,0.0,0.0,0,0

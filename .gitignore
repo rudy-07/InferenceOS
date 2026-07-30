@@ -1,9 +1,45 @@
-hardware_profile.json
-.venv/
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+*.so
+*.dll
+*.exe
+*.obj
+*.o
+*.a
+*.lib
+*.pdb
+
+# Environment & Build artifacts
+.venv/
+env/
+venv/
 build/
 dist/
 *.egg-info/
 .pytest_cache/
+hardware_profile.json
+build_result.json
+
+# Model files & weights
+models/*.gguf
+models/*.bin
+models/*.safetensors
+models/*.pth
+!models/.gitkeep
+
+# Setup downloads & toolchains
+setup/vulkan_sdk/
+setup/downloads/
+*.zip
+*.tar.gz
+
+# User sessions & local configs
+sessions/
+*.log
+.env
+.DS_Store
+Thumbs.db

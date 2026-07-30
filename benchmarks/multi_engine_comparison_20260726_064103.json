@@ -1,0 +1,73 @@
+{
+  "timestamp": "2026-07-26T06:41:03.028248",
+  "prompt": "Explain what artificial intelligence is in one paragraph.",
+  "settings": {
+    "n_predict": 128,
+    "n_ctx": 2048,
+    "temperature": 0.0,
+    "seed": 42
+  },
+  "engines": {
+    "inferenceos_adaptive": {
+      "engine": "InferenceOS (Adaptive)",
+      "version": "1.0-adaptive",
+      "model_name": "Qwen3-4B-Thinking-2507.Q5_K_M.gguf",
+      "prompt_tokens": 0,
+      "gen_tokens": 127,
+      "prompt_eval_ms": 131.82,
+      "prompt_tps": 75.86,
+      "gen_eval_ms": 3648.83,
+      "generation_tps": 34.81,
+      "ttft_ms": 8121.24,
+      "p50_itl_ms": 29.92,
+      "p95_itl_ms": 68.59,
+      "total_wall_sec": 12.64686,
+      "gpu_offload_ratio": 1.0,
+      "n_gpu_layers": 36,
+      "n_cpu_layers": 0,
+      "actual_vram_mb": 2674.12,
+      "actual_ram_mb": 0.0,
+      "avg_gpu_util_pct": 8.3,
+      "avg_cpu_util_pct": 34.8
+    },
+    "raw_llamacpp_gpu": {
+      "engine": "Raw llama.cpp (GPU -ngl 99)",
+      "n_gpu_layers": 99,
+      "prompt_tokens": 10,
+      "gen_tokens": 127,
+      "prompt_eval_ms": 146.96,
+      "prompt_tps": 68.05,
+      "gen_eval_ms": 2484.77,
+      "generation_tps": 51.11,
+      "ttft_ms": 147.0,
+      "p50_itl_ms": 19.57,
+      "total_wall_sec": 8.84,
+      "response_text": "Explain what artificial intelligence is in one paragraph. Your response should be in English, and should not exceed 150 words.\n\nOkay, the user wants a one-paragraph explanation of artificial intelligence in English under 150 words. \n\nHmm, they're probably looking for something concise but accurate - maybe a student working on an assignment or a professional needing quick clarification. I should avoid jargon while covering the core concept. \n\nLet me structure it: start with the basic definition (machines performing tasks that require human intelligence), then mention key techniques like machine learning and neural networks, and finally emphasize the goal of solving complex problems. \n\nGotta be careful with word count..."
+    },
+    "raw_llamacpp_cpu": {
+      "engine": "Raw llama.cpp (CPU -ngl 0)",
+      "n_gpu_layers": 0,
+      "prompt_tokens": 10,
+      "gen_tokens": 127,
+      "prompt_eval_ms": 627.6,
+      "prompt_tps": 15.93,
+      "gen_eval_ms": 36265.92,
+      "generation_tps": 3.5,
+      "ttft_ms": 627.6,
+      "p50_itl_ms": 285.56,
+      "total_wall_sec": 39.53,
+      "response_text": "Explain what artificial intelligence is in one paragraph. Your response should be in English, and should not exceed 150 words.\n\nOkay, the user wants a one-paragraph explanation of artificial intelligence in English under 150 words. \n\nHmm, they seem to want something concise yet informative - probably for quick understanding rather than academic depth. Maybe they're a student, professional, or just curious person. The word limit suggests they value brevity, so I'll avoid jargon while covering core aspects.\n\nI should focus on: \n- Definition (machines performing tasks that require human intelligence)\n- Key capabilities (learning, pattern recognition, decision-making)\n- Common applications ("
+    },
+    "ollama": {
+      "engine": "Ollama",
+      "generation_tps": 0.0,
+      "prompt_tps": 0.0,
+      "ttft_ms": 0.0,
+      "p50_itl_ms": 0.0,
+      "total_wall_sec": 0.0,
+      "gen_tokens": 0,
+      "prompt_tokens": 0,
+      "error": "<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+    }
+  }
+}

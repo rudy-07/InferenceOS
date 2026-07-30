@@ -1,0 +1,3746 @@
+{
+  "summary": {
+    "model_name": "Qwen3-4B-Thinking-2507.Q5_K_M",
+    "backend": "cpu",
+    "total_wall_ms": 7917.31,
+    "generation_tps": 35.36,
+    "prompt_tps": 80.97,
+    "ttft_ms": 3448.09,
+    "p50_itl_ms": 29.94,
+    "p95_itl_ms": 61.98,
+    "gpu_idle_pct": 91.4
+  },
+  "telemetry": {
+    "throughput": {
+      "prompt_tokens": 0,
+      "generation_tokens": 127,
+      "prompt_eval_ms": 123.5,
+      "generation_eval_ms": 3591.14,
+      "total_wall_ms": 7917.31,
+      "prompt_tps": 80.97,
+      "generation_tps": 35.36
+    },
+    "latency": {
+      "ttft_ms": 3448.09,
+      "p50_itl_ms": 29.94,
+      "p90_itl_ms": 60.11,
+      "p95_itl_ms": 61.98,
+      "p99_itl_ms": 92.92,
+      "stddev_itl_ms": 19.36,
+      "jitter_itl_ms": 12.84,
+      "sample_count": 116
+    },
+    "utilization": {
+      "avg_cpu_pct": 14.9,
+      "peak_cpu_pct": 42.5,
+      "avg_gpu_pct": 4.1,
+      "peak_gpu_pct": 11.7,
+      "gpu_idle_pct": 91.4
+    },
+    "bandwidth": {
+      "ram_bandwidth_gbps": 7.98,
+      "vram_bandwidth_gbps": 12.99,
+      "pcie_bandwidth_gbps": 0.0,
+      "pcie_bytes_transferred": 0,
+      "pcie_mb_transferred": 0.0
+    },
+    "kv_cache": {
+      "size_mb": 63.5,
+      "growth_rate_mb_per_tok": 0.5,
+      "context_length": 2048,
+      "context_utilization_pct": 6.2
+    },
+    "model": {
+      "model_name": "Qwen3-4B-Thinking-2507.Q5_K_M",
+      "backend": "cpu",
+      "total_layers": 38,
+      "n_gpu_layers": 36,
+      "n_cpu_layers": 0,
+      "n_igpu_layers": 0
+    },
+    "layer_timings": [
+      {
+        "layer_index": 0,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 1,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 2,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 3,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 4,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 5,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 6,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 7,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 8,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 9,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 10,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 11,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 12,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 13,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 14,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 15,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 16,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 17,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 18,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 19,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 20,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 21,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 22,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 23,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 24,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 25,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 26,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 27,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 28,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 29,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 30,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 31,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 32,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 33,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 34,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 35,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 36,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 37,
+        "device": "GPU",
+        "compute_ms": 37.801,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      }
+    ]
+  },
+  "recommendations": [],
+  "flame_graph": {
+    "name": "InferenceSession (Qwen3-4B-Thinking-2507.Q5_K_M)",
+    "value": 7917.313,
+    "category": "root",
+    "children": [
+      {
+        "name": "Stage: Prepare (Prompt Prefill)",
+        "value": 123.5,
+        "category": "cpu",
+        "children": [
+          {
+            "name": "Tokenize & Prefix Scan",
+            "value": 37.05,
+            "category": "cpu",
+            "children": []
+          },
+          {
+            "name": "Prompt Layer Execution",
+            "value": 86.45,
+            "category": "gpu",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Stage: Transfer (PCIe DMA Prefetch)",
+        "value": 395.866,
+        "category": "pcie",
+        "children": [
+          {
+            "name": "Boundary Buffer Copy",
+            "value": 316.693,
+            "category": "pcie",
+            "children": []
+          },
+          {
+            "name": "CUDA Stream Sync",
+            "value": 79.173,
+            "category": "pcie",
+            "children": []
+          }
+        ]
+      },
+      {
+        "name": "Stage: Compute (Autoregressive Generation)",
+        "value": 3591.14,
+        "category": "stage",
+        "children": [
+          {
+            "name": "dGPU Block (38 layers)",
+            "value": 1436.456,
+            "category": "gpu",
+            "children": [
+              {
+                "name": "Tensor Core GEMM (Q4/Q8)",
+                "value": 933.696,
+                "category": "gpu",
+                "children": []
+              },
+              {
+                "name": "FlashAttention-2 Kernel",
+                "value": 502.76,
+                "category": "gpu",
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Stage: Sampling & Post-Process",
+        "value": 395.866,
+        "category": "sample",
+        "children": [
+          {
+            "name": "Top-P / Temperature Filter",
+            "value": 237.519,
+            "category": "sample",
+            "children": []
+          },
+          {
+            "name": "Tokenizer Decode",
+            "value": 158.346,
+            "category": "sample",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  "timeline": [
+    {
+      "name": "Prompt Tokenization & Prefill",
+      "track": "CPU Prepare",
+      "start_ms": 0.0,
+      "duration_ms": 123.5,
+      "end_ms": 123.5,
+      "category": "cpu",
+      "details": {
+        "tokens": 0
+      }
+    },
+    {
+      "name": "Token #1",
+      "track": "Token Arrival",
+      "start_ms": 123.5,
+      "duration_ms": 2.0,
+      "end_ms": 125.5,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.22
+      }
+    },
+    {
+      "name": "GPU Compute #1",
+      "track": "GPU Execution",
+      "start_ms": 123.5,
+      "duration_ms": 0.019,
+      "end_ms": 123.519,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #2",
+      "track": "Token Arrival",
+      "start_ms": 123.723,
+      "duration_ms": 2.0,
+      "end_ms": 125.723,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.13
+      }
+    },
+    {
+      "name": "GPU Compute #2",
+      "track": "GPU Execution",
+      "start_ms": 123.723,
+      "duration_ms": 0.011,
+      "end_ms": 123.734,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #3",
+      "track": "Token Arrival",
+      "start_ms": 123.851,
+      "duration_ms": 2.0,
+      "end_ms": 125.851,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.11
+      }
+    },
+    {
+      "name": "GPU Compute #3",
+      "track": "GPU Execution",
+      "start_ms": 123.851,
+      "duration_ms": 0.009,
+      "end_ms": 123.861,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #4",
+      "track": "Token Arrival",
+      "start_ms": 123.962,
+      "duration_ms": 2.0,
+      "end_ms": 125.962,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.08
+      }
+    },
+    {
+      "name": "GPU Compute #4",
+      "track": "GPU Execution",
+      "start_ms": 123.962,
+      "duration_ms": 0.007,
+      "end_ms": 123.969,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #5",
+      "track": "Token Arrival",
+      "start_ms": 124.038,
+      "duration_ms": 2.0,
+      "end_ms": 126.038,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.07
+      }
+    },
+    {
+      "name": "GPU Compute #5",
+      "track": "GPU Execution",
+      "start_ms": 124.038,
+      "duration_ms": 0.006,
+      "end_ms": 124.044,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #6",
+      "track": "Token Arrival",
+      "start_ms": 124.105,
+      "duration_ms": 2.0,
+      "end_ms": 126.105,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.06
+      }
+    },
+    {
+      "name": "GPU Compute #6",
+      "track": "GPU Execution",
+      "start_ms": 124.105,
+      "duration_ms": 0.005,
+      "end_ms": 124.111,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #7",
+      "track": "Token Arrival",
+      "start_ms": 124.168,
+      "duration_ms": 2.0,
+      "end_ms": 126.168,
+      "category": "token",
+      "details": {
+        "itl_ms": 123.41
+      }
+    },
+    {
+      "name": "GPU Compute #7",
+      "track": "GPU Execution",
+      "start_ms": 124.168,
+      "duration_ms": 10.578,
+      "end_ms": 134.746,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #7",
+      "track": "PCIe Bus",
+      "start_ms": 134.746,
+      "duration_ms": 112.829,
+      "end_ms": 247.575,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #8",
+      "track": "Token Arrival",
+      "start_ms": 247.575,
+      "duration_ms": 2.0,
+      "end_ms": 249.575,
+      "category": "token",
+      "details": {
+        "itl_ms": 32.59
+      }
+    },
+    {
+      "name": "GPU Compute #8",
+      "track": "GPU Execution",
+      "start_ms": 247.575,
+      "duration_ms": 2.793,
+      "end_ms": 250.369,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #8",
+      "track": "PCIe Bus",
+      "start_ms": 250.369,
+      "duration_ms": 29.797,
+      "end_ms": 280.166,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #9",
+      "track": "Token Arrival",
+      "start_ms": 280.166,
+      "duration_ms": 2.0,
+      "end_ms": 282.166,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.74
+      }
+    },
+    {
+      "name": "GPU Compute #9",
+      "track": "GPU Execution",
+      "start_ms": 280.166,
+      "duration_ms": 2.721,
+      "end_ms": 282.887,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #9",
+      "track": "PCIe Bus",
+      "start_ms": 282.887,
+      "duration_ms": 29.02,
+      "end_ms": 311.907,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #10",
+      "track": "Token Arrival",
+      "start_ms": 311.907,
+      "duration_ms": 2.0,
+      "end_ms": 313.907,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.57
+      }
+    },
+    {
+      "name": "GPU Compute #10",
+      "track": "GPU Execution",
+      "start_ms": 311.907,
+      "duration_ms": 2.534,
+      "end_ms": 314.441,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #10",
+      "track": "PCIe Bus",
+      "start_ms": 314.441,
+      "duration_ms": 27.033,
+      "end_ms": 341.474,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #11",
+      "track": "Token Arrival",
+      "start_ms": 341.474,
+      "duration_ms": 2.0,
+      "end_ms": 343.474,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.93
+      }
+    },
+    {
+      "name": "GPU Compute #11",
+      "track": "GPU Execution",
+      "start_ms": 341.474,
+      "duration_ms": 2.48,
+      "end_ms": 343.954,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #11",
+      "track": "PCIe Bus",
+      "start_ms": 343.954,
+      "duration_ms": 26.449,
+      "end_ms": 370.403,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #12",
+      "track": "Token Arrival",
+      "start_ms": 370.403,
+      "duration_ms": 2.0,
+      "end_ms": 372.403,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.85
+      }
+    },
+    {
+      "name": "GPU Compute #12",
+      "track": "GPU Execution",
+      "start_ms": 370.403,
+      "duration_ms": 2.558,
+      "end_ms": 372.962,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #12",
+      "track": "PCIe Bus",
+      "start_ms": 372.962,
+      "duration_ms": 27.29,
+      "end_ms": 400.252,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #13",
+      "track": "Token Arrival",
+      "start_ms": 400.252,
+      "duration_ms": 2.0,
+      "end_ms": 402.252,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.37
+      }
+    },
+    {
+      "name": "GPU Compute #13",
+      "track": "GPU Execution",
+      "start_ms": 400.252,
+      "duration_ms": 2.517,
+      "end_ms": 402.769,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #13",
+      "track": "PCIe Bus",
+      "start_ms": 402.769,
+      "duration_ms": 26.85,
+      "end_ms": 429.62,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #14",
+      "track": "Token Arrival",
+      "start_ms": 429.62,
+      "duration_ms": 2.0,
+      "end_ms": 431.62,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.15
+      }
+    },
+    {
+      "name": "GPU Compute #14",
+      "track": "GPU Execution",
+      "start_ms": 429.62,
+      "duration_ms": 2.499,
+      "end_ms": 432.118,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #14",
+      "track": "PCIe Bus",
+      "start_ms": 432.118,
+      "duration_ms": 26.653,
+      "end_ms": 458.771,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #15",
+      "track": "Token Arrival",
+      "start_ms": 458.771,
+      "duration_ms": 2.0,
+      "end_ms": 460.771,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.44
+      }
+    },
+    {
+      "name": "GPU Compute #15",
+      "track": "GPU Execution",
+      "start_ms": 458.771,
+      "duration_ms": 2.523,
+      "end_ms": 461.294,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #15",
+      "track": "PCIe Bus",
+      "start_ms": 461.294,
+      "duration_ms": 26.914,
+      "end_ms": 488.208,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #16",
+      "track": "Token Arrival",
+      "start_ms": 488.208,
+      "duration_ms": 2.0,
+      "end_ms": 490.208,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.18
+      }
+    },
+    {
+      "name": "GPU Compute #16",
+      "track": "GPU Execution",
+      "start_ms": 488.208,
+      "duration_ms": 2.587,
+      "end_ms": 490.795,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #16",
+      "track": "PCIe Bus",
+      "start_ms": 490.795,
+      "duration_ms": 27.596,
+      "end_ms": 518.391,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #17",
+      "track": "Token Arrival",
+      "start_ms": 518.391,
+      "duration_ms": 2.0,
+      "end_ms": 520.391,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.24
+      }
+    },
+    {
+      "name": "GPU Compute #17",
+      "track": "GPU Execution",
+      "start_ms": 518.391,
+      "duration_ms": 0.021,
+      "end_ms": 518.412,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #18",
+      "track": "Token Arrival",
+      "start_ms": 518.634,
+      "duration_ms": 2.0,
+      "end_ms": 520.634,
+      "category": "token",
+      "details": {
+        "itl_ms": 86.85
+      }
+    },
+    {
+      "name": "GPU Compute #18",
+      "track": "GPU Execution",
+      "start_ms": 518.634,
+      "duration_ms": 7.444,
+      "end_ms": 526.078,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #18",
+      "track": "PCIe Bus",
+      "start_ms": 526.078,
+      "duration_ms": 79.407,
+      "end_ms": 605.485,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #19",
+      "track": "Token Arrival",
+      "start_ms": 605.485,
+      "duration_ms": 2.0,
+      "end_ms": 607.485,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.06
+      }
+    },
+    {
+      "name": "GPU Compute #19",
+      "track": "GPU Execution",
+      "start_ms": 605.485,
+      "duration_ms": 2.576,
+      "end_ms": 608.062,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #19",
+      "track": "PCIe Bus",
+      "start_ms": 608.062,
+      "duration_ms": 27.481,
+      "end_ms": 635.543,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #20",
+      "track": "Token Arrival",
+      "start_ms": 635.543,
+      "duration_ms": 2.0,
+      "end_ms": 637.543,
+      "category": "token",
+      "details": {
+        "itl_ms": 93.15
+      }
+    },
+    {
+      "name": "GPU Compute #20",
+      "track": "GPU Execution",
+      "start_ms": 635.543,
+      "duration_ms": 7.984,
+      "end_ms": 643.527,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #20",
+      "track": "PCIe Bus",
+      "start_ms": 643.527,
+      "duration_ms": 85.166,
+      "end_ms": 728.693,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #21",
+      "track": "Token Arrival",
+      "start_ms": 728.693,
+      "duration_ms": 2.0,
+      "end_ms": 730.693,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.63
+      }
+    },
+    {
+      "name": "GPU Compute #21",
+      "track": "GPU Execution",
+      "start_ms": 728.693,
+      "duration_ms": 2.54,
+      "end_ms": 731.233,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #21",
+      "track": "PCIe Bus",
+      "start_ms": 731.233,
+      "duration_ms": 27.09,
+      "end_ms": 758.323,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #22",
+      "track": "Token Arrival",
+      "start_ms": 758.323,
+      "duration_ms": 2.0,
+      "end_ms": 760.323,
+      "category": "token",
+      "details": {
+        "itl_ms": 33.12
+      }
+    },
+    {
+      "name": "GPU Compute #22",
+      "track": "GPU Execution",
+      "start_ms": 758.323,
+      "duration_ms": 2.839,
+      "end_ms": 761.162,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #22",
+      "track": "PCIe Bus",
+      "start_ms": 761.162,
+      "duration_ms": 30.281,
+      "end_ms": 791.443,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #23",
+      "track": "Token Arrival",
+      "start_ms": 791.443,
+      "duration_ms": 2.0,
+      "end_ms": 793.443,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.45
+      }
+    },
+    {
+      "name": "GPU Compute #23",
+      "track": "GPU Execution",
+      "start_ms": 791.443,
+      "duration_ms": 2.61,
+      "end_ms": 794.052,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #23",
+      "track": "PCIe Bus",
+      "start_ms": 794.052,
+      "duration_ms": 27.836,
+      "end_ms": 821.889,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #24",
+      "track": "Token Arrival",
+      "start_ms": 821.889,
+      "duration_ms": 2.0,
+      "end_ms": 823.889,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.78
+      }
+    },
+    {
+      "name": "GPU Compute #24",
+      "track": "GPU Execution",
+      "start_ms": 821.889,
+      "duration_ms": 2.639,
+      "end_ms": 824.527,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #24",
+      "track": "PCIe Bus",
+      "start_ms": 824.527,
+      "duration_ms": 28.145,
+      "end_ms": 852.672,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #25",
+      "track": "Token Arrival",
+      "start_ms": 852.672,
+      "duration_ms": 2.0,
+      "end_ms": 854.672,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.82
+      }
+    },
+    {
+      "name": "GPU Compute #25",
+      "track": "GPU Execution",
+      "start_ms": 852.672,
+      "duration_ms": 2.556,
+      "end_ms": 855.229,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #25",
+      "track": "PCIe Bus",
+      "start_ms": 855.229,
+      "duration_ms": 27.267,
+      "end_ms": 882.495,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #26",
+      "track": "Token Arrival",
+      "start_ms": 882.495,
+      "duration_ms": 2.0,
+      "end_ms": 884.495,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.33
+      }
+    },
+    {
+      "name": "GPU Compute #26",
+      "track": "GPU Execution",
+      "start_ms": 882.495,
+      "duration_ms": 2.686,
+      "end_ms": 885.181,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #26",
+      "track": "PCIe Bus",
+      "start_ms": 885.181,
+      "duration_ms": 28.646,
+      "end_ms": 913.826,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #27",
+      "track": "Token Arrival",
+      "start_ms": 913.826,
+      "duration_ms": 2.0,
+      "end_ms": 915.826,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.83
+      }
+    },
+    {
+      "name": "GPU Compute #27",
+      "track": "GPU Execution",
+      "start_ms": 913.826,
+      "duration_ms": 2.557,
+      "end_ms": 916.383,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #27",
+      "track": "PCIe Bus",
+      "start_ms": 916.383,
+      "duration_ms": 27.272,
+      "end_ms": 943.655,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #28",
+      "track": "Token Arrival",
+      "start_ms": 943.655,
+      "duration_ms": 2.0,
+      "end_ms": 945.655,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.02
+      }
+    },
+    {
+      "name": "GPU Compute #28",
+      "track": "GPU Execution",
+      "start_ms": 943.655,
+      "duration_ms": 2.402,
+      "end_ms": 946.057,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #28",
+      "track": "PCIe Bus",
+      "start_ms": 946.057,
+      "duration_ms": 25.622,
+      "end_ms": 971.679,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #29",
+      "track": "Token Arrival",
+      "start_ms": 971.679,
+      "duration_ms": 2.0,
+      "end_ms": 973.679,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.73
+      }
+    },
+    {
+      "name": "GPU Compute #29",
+      "track": "GPU Execution",
+      "start_ms": 971.679,
+      "duration_ms": 2.462,
+      "end_ms": 974.141,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #29",
+      "track": "PCIe Bus",
+      "start_ms": 974.141,
+      "duration_ms": 26.267,
+      "end_ms": 1000.408,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #30",
+      "track": "Token Arrival",
+      "start_ms": 1000.408,
+      "duration_ms": 2.0,
+      "end_ms": 1002.408,
+      "category": "token",
+      "details": {
+        "itl_ms": 58.94
+      }
+    },
+    {
+      "name": "GPU Compute #30",
+      "track": "GPU Execution",
+      "start_ms": 1000.408,
+      "duration_ms": 5.052,
+      "end_ms": 1005.46,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #30",
+      "track": "PCIe Bus",
+      "start_ms": 1005.46,
+      "duration_ms": 53.892,
+      "end_ms": 1059.353,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #31",
+      "track": "Token Arrival",
+      "start_ms": 1059.353,
+      "duration_ms": 2.0,
+      "end_ms": 1061.353,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.22
+      }
+    },
+    {
+      "name": "GPU Compute #31",
+      "track": "GPU Execution",
+      "start_ms": 1059.353,
+      "duration_ms": 2.591,
+      "end_ms": 1061.943,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #31",
+      "track": "PCIe Bus",
+      "start_ms": 1061.943,
+      "duration_ms": 27.634,
+      "end_ms": 1089.577,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #32",
+      "track": "Token Arrival",
+      "start_ms": 1089.577,
+      "duration_ms": 2.0,
+      "end_ms": 1091.577,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.29
+      }
+    },
+    {
+      "name": "GPU Compute #32",
+      "track": "GPU Execution",
+      "start_ms": 1089.577,
+      "duration_ms": 2.511,
+      "end_ms": 1092.088,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #32",
+      "track": "PCIe Bus",
+      "start_ms": 1092.088,
+      "duration_ms": 26.783,
+      "end_ms": 1118.871,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #33",
+      "track": "Token Arrival",
+      "start_ms": 1118.871,
+      "duration_ms": 2.0,
+      "end_ms": 1120.871,
+      "category": "token",
+      "details": {
+        "itl_ms": 59.75
+      }
+    },
+    {
+      "name": "GPU Compute #33",
+      "track": "GPU Execution",
+      "start_ms": 1118.871,
+      "duration_ms": 5.121,
+      "end_ms": 1123.992,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #33",
+      "track": "PCIe Bus",
+      "start_ms": 1123.992,
+      "duration_ms": 54.627,
+      "end_ms": 1178.619,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #34",
+      "track": "Token Arrival",
+      "start_ms": 1178.619,
+      "duration_ms": 2.0,
+      "end_ms": 1180.619,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.34
+      }
+    },
+    {
+      "name": "GPU Compute #34",
+      "track": "GPU Execution",
+      "start_ms": 1178.619,
+      "duration_ms": 2.601,
+      "end_ms": 1181.219,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #34",
+      "track": "PCIe Bus",
+      "start_ms": 1181.219,
+      "duration_ms": 27.741,
+      "end_ms": 1208.96,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #35",
+      "track": "Token Arrival",
+      "start_ms": 1208.96,
+      "duration_ms": 2.0,
+      "end_ms": 1210.96,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.94
+      }
+    },
+    {
+      "name": "GPU Compute #35",
+      "track": "GPU Execution",
+      "start_ms": 1208.96,
+      "duration_ms": 2.567,
+      "end_ms": 1211.527,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #35",
+      "track": "PCIe Bus",
+      "start_ms": 1211.527,
+      "duration_ms": 27.378,
+      "end_ms": 1238.905,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #36",
+      "track": "Token Arrival",
+      "start_ms": 1238.905,
+      "duration_ms": 2.0,
+      "end_ms": 1240.905,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.91
+      }
+    },
+    {
+      "name": "GPU Compute #36",
+      "track": "GPU Execution",
+      "start_ms": 1238.905,
+      "duration_ms": 2.478,
+      "end_ms": 1241.383,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #36",
+      "track": "PCIe Bus",
+      "start_ms": 1241.383,
+      "duration_ms": 26.43,
+      "end_ms": 1267.813,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #37",
+      "track": "Token Arrival",
+      "start_ms": 1267.813,
+      "duration_ms": 2.0,
+      "end_ms": 1269.813,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.89
+      }
+    },
+    {
+      "name": "GPU Compute #37",
+      "track": "GPU Execution",
+      "start_ms": 1267.813,
+      "duration_ms": 2.476,
+      "end_ms": 1270.289,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #37",
+      "track": "PCIe Bus",
+      "start_ms": 1270.289,
+      "duration_ms": 26.415,
+      "end_ms": 1296.704,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #38",
+      "track": "Token Arrival",
+      "start_ms": 1296.704,
+      "duration_ms": 2.0,
+      "end_ms": 1298.704,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.58
+      }
+    },
+    {
+      "name": "GPU Compute #38",
+      "track": "GPU Execution",
+      "start_ms": 1296.704,
+      "duration_ms": 2.535,
+      "end_ms": 1299.239,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #38",
+      "track": "PCIe Bus",
+      "start_ms": 1299.239,
+      "duration_ms": 27.042,
+      "end_ms": 1326.281,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #39",
+      "track": "Token Arrival",
+      "start_ms": 1326.281,
+      "duration_ms": 2.0,
+      "end_ms": 1328.281,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.04
+      }
+    },
+    {
+      "name": "GPU Compute #39",
+      "track": "GPU Execution",
+      "start_ms": 1326.281,
+      "duration_ms": 2.575,
+      "end_ms": 1328.856,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #39",
+      "track": "PCIe Bus",
+      "start_ms": 1328.856,
+      "duration_ms": 27.468,
+      "end_ms": 1356.324,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #40",
+      "track": "Token Arrival",
+      "start_ms": 1356.324,
+      "duration_ms": 2.0,
+      "end_ms": 1358.324,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.73
+      }
+    },
+    {
+      "name": "GPU Compute #40",
+      "track": "GPU Execution",
+      "start_ms": 1356.324,
+      "duration_ms": 2.548,
+      "end_ms": 1358.872,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #40",
+      "track": "PCIe Bus",
+      "start_ms": 1358.872,
+      "duration_ms": 27.184,
+      "end_ms": 1386.056,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #41",
+      "track": "Token Arrival",
+      "start_ms": 1386.056,
+      "duration_ms": 2.0,
+      "end_ms": 1388.056,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.73
+      }
+    },
+    {
+      "name": "GPU Compute #41",
+      "track": "GPU Execution",
+      "start_ms": 1386.056,
+      "duration_ms": 2.463,
+      "end_ms": 1388.519,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #41",
+      "track": "PCIe Bus",
+      "start_ms": 1388.519,
+      "duration_ms": 26.271,
+      "end_ms": 1414.79,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #42",
+      "track": "Token Arrival",
+      "start_ms": 1414.79,
+      "duration_ms": 2.0,
+      "end_ms": 1416.79,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.63
+      }
+    },
+    {
+      "name": "GPU Compute #42",
+      "track": "GPU Execution",
+      "start_ms": 1414.79,
+      "duration_ms": 2.625,
+      "end_ms": 1417.415,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #42",
+      "track": "PCIe Bus",
+      "start_ms": 1417.415,
+      "duration_ms": 28.005,
+      "end_ms": 1445.42,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #43",
+      "track": "Token Arrival",
+      "start_ms": 1445.42,
+      "duration_ms": 2.0,
+      "end_ms": 1447.42,
+      "category": "token",
+      "details": {
+        "itl_ms": 58.91
+      }
+    },
+    {
+      "name": "GPU Compute #43",
+      "track": "GPU Execution",
+      "start_ms": 1445.42,
+      "duration_ms": 5.05,
+      "end_ms": 1450.47,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #43",
+      "track": "PCIe Bus",
+      "start_ms": 1450.47,
+      "duration_ms": 53.863,
+      "end_ms": 1504.333,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #44",
+      "track": "Token Arrival",
+      "start_ms": 1504.333,
+      "duration_ms": 2.0,
+      "end_ms": 1506.333,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.77
+      }
+    },
+    {
+      "name": "GPU Compute #44",
+      "track": "GPU Execution",
+      "start_ms": 1504.333,
+      "duration_ms": 2.723,
+      "end_ms": 1507.056,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #44",
+      "track": "PCIe Bus",
+      "start_ms": 1507.056,
+      "duration_ms": 29.047,
+      "end_ms": 1536.103,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #45",
+      "track": "Token Arrival",
+      "start_ms": 1536.103,
+      "duration_ms": 2.0,
+      "end_ms": 1538.103,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.0
+      }
+    },
+    {
+      "name": "GPU Compute #45",
+      "track": "GPU Execution",
+      "start_ms": 1536.103,
+      "duration_ms": 2.485,
+      "end_ms": 1538.589,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #45",
+      "track": "PCIe Bus",
+      "start_ms": 1538.589,
+      "duration_ms": 26.511,
+      "end_ms": 1565.099,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #46",
+      "track": "Token Arrival",
+      "start_ms": 1565.099,
+      "duration_ms": 2.0,
+      "end_ms": 1567.099,
+      "category": "token",
+      "details": {
+        "itl_ms": 59.53
+      }
+    },
+    {
+      "name": "GPU Compute #46",
+      "track": "GPU Execution",
+      "start_ms": 1565.099,
+      "duration_ms": 5.103,
+      "end_ms": 1570.202,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #46",
+      "track": "PCIe Bus",
+      "start_ms": 1570.202,
+      "duration_ms": 54.432,
+      "end_ms": 1624.634,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #47",
+      "track": "Token Arrival",
+      "start_ms": 1624.634,
+      "duration_ms": 2.0,
+      "end_ms": 1626.634,
+      "category": "token",
+      "details": {
+        "itl_ms": 91.6
+      }
+    },
+    {
+      "name": "GPU Compute #47",
+      "track": "GPU Execution",
+      "start_ms": 1624.634,
+      "duration_ms": 7.851,
+      "end_ms": 1632.485,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #47",
+      "track": "PCIe Bus",
+      "start_ms": 1632.485,
+      "duration_ms": 83.746,
+      "end_ms": 1716.232,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #48",
+      "track": "Token Arrival",
+      "start_ms": 1716.232,
+      "duration_ms": 2.0,
+      "end_ms": 1718.232,
+      "category": "token",
+      "details": {
+        "itl_ms": 59.29
+      }
+    },
+    {
+      "name": "GPU Compute #48",
+      "track": "GPU Execution",
+      "start_ms": 1716.232,
+      "duration_ms": 5.082,
+      "end_ms": 1721.314,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #48",
+      "track": "PCIe Bus",
+      "start_ms": 1721.314,
+      "duration_ms": 54.211,
+      "end_ms": 1775.524,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #49",
+      "track": "Token Arrival",
+      "start_ms": 1775.524,
+      "duration_ms": 2.0,
+      "end_ms": 1777.524,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.09
+      }
+    },
+    {
+      "name": "GPU Compute #49",
+      "track": "GPU Execution",
+      "start_ms": 1775.524,
+      "duration_ms": 2.493,
+      "end_ms": 1778.018,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #49",
+      "track": "PCIe Bus",
+      "start_ms": 1778.018,
+      "duration_ms": 26.594,
+      "end_ms": 1804.611,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #50",
+      "track": "Token Arrival",
+      "start_ms": 1804.611,
+      "duration_ms": 2.0,
+      "end_ms": 1806.611,
+      "category": "token",
+      "details": {
+        "itl_ms": 61.6
+      }
+    },
+    {
+      "name": "GPU Compute #50",
+      "track": "GPU Execution",
+      "start_ms": 1804.611,
+      "duration_ms": 5.28,
+      "end_ms": 1809.891,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #50",
+      "track": "PCIe Bus",
+      "start_ms": 1809.891,
+      "duration_ms": 56.32,
+      "end_ms": 1866.212,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #51",
+      "track": "Token Arrival",
+      "start_ms": 1866.212,
+      "duration_ms": 2.0,
+      "end_ms": 1868.212,
+      "category": "token",
+      "details": {
+        "itl_ms": 61.01
+      }
+    },
+    {
+      "name": "GPU Compute #51",
+      "track": "GPU Execution",
+      "start_ms": 1866.212,
+      "duration_ms": 5.229,
+      "end_ms": 1871.441,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #51",
+      "track": "PCIe Bus",
+      "start_ms": 1871.441,
+      "duration_ms": 55.777,
+      "end_ms": 1927.218,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #52",
+      "track": "Token Arrival",
+      "start_ms": 1927.218,
+      "duration_ms": 2.0,
+      "end_ms": 1929.218,
+      "category": "token",
+      "details": {
+        "itl_ms": 33.28
+      }
+    },
+    {
+      "name": "GPU Compute #52",
+      "track": "GPU Execution",
+      "start_ms": 1927.218,
+      "duration_ms": 2.853,
+      "end_ms": 1930.07,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #52",
+      "track": "PCIe Bus",
+      "start_ms": 1930.07,
+      "duration_ms": 30.427,
+      "end_ms": 1960.497,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #53",
+      "track": "Token Arrival",
+      "start_ms": 1960.497,
+      "duration_ms": 2.0,
+      "end_ms": 1962.497,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.93
+      }
+    },
+    {
+      "name": "GPU Compute #53",
+      "track": "GPU Execution",
+      "start_ms": 1960.497,
+      "duration_ms": 2.565,
+      "end_ms": 1963.063,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #53",
+      "track": "PCIe Bus",
+      "start_ms": 1963.063,
+      "duration_ms": 27.364,
+      "end_ms": 1990.427,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #54",
+      "track": "Token Arrival",
+      "start_ms": 1990.427,
+      "duration_ms": 2.0,
+      "end_ms": 1992.427,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.93
+      }
+    },
+    {
+      "name": "GPU Compute #54",
+      "track": "GPU Execution",
+      "start_ms": 1990.427,
+      "duration_ms": 2.48,
+      "end_ms": 1992.907,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #54",
+      "track": "PCIe Bus",
+      "start_ms": 1992.907,
+      "duration_ms": 26.449,
+      "end_ms": 2019.356,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #55",
+      "track": "Token Arrival",
+      "start_ms": 2019.356,
+      "duration_ms": 2.0,
+      "end_ms": 2021.356,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.46
+      }
+    },
+    {
+      "name": "GPU Compute #55",
+      "track": "GPU Execution",
+      "start_ms": 2019.356,
+      "duration_ms": 2.439,
+      "end_ms": 2021.795,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #55",
+      "track": "PCIe Bus",
+      "start_ms": 2021.795,
+      "duration_ms": 26.019,
+      "end_ms": 2047.814,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #56",
+      "track": "Token Arrival",
+      "start_ms": 2047.814,
+      "duration_ms": 2.0,
+      "end_ms": 2049.814,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.48
+      }
+    },
+    {
+      "name": "GPU Compute #56",
+      "track": "GPU Execution",
+      "start_ms": 2047.814,
+      "duration_ms": 2.441,
+      "end_ms": 2050.255,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #56",
+      "track": "PCIe Bus",
+      "start_ms": 2050.255,
+      "duration_ms": 26.04,
+      "end_ms": 2076.295,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #57",
+      "track": "Token Arrival",
+      "start_ms": 2076.295,
+      "duration_ms": 2.0,
+      "end_ms": 2078.295,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.14
+      }
+    },
+    {
+      "name": "GPU Compute #57",
+      "track": "GPU Execution",
+      "start_ms": 2076.295,
+      "duration_ms": 2.497,
+      "end_ms": 2078.792,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #57",
+      "track": "PCIe Bus",
+      "start_ms": 2078.792,
+      "duration_ms": 26.64,
+      "end_ms": 2105.432,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #58",
+      "track": "Token Arrival",
+      "start_ms": 2105.432,
+      "duration_ms": 2.0,
+      "end_ms": 2107.432,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.04
+      }
+    },
+    {
+      "name": "GPU Compute #58",
+      "track": "GPU Execution",
+      "start_ms": 2105.432,
+      "duration_ms": 2.489,
+      "end_ms": 2107.921,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #58",
+      "track": "PCIe Bus",
+      "start_ms": 2107.921,
+      "duration_ms": 26.547,
+      "end_ms": 2134.468,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #59",
+      "track": "Token Arrival",
+      "start_ms": 2134.468,
+      "duration_ms": 2.0,
+      "end_ms": 2136.468,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.97
+      }
+    },
+    {
+      "name": "GPU Compute #59",
+      "track": "GPU Execution",
+      "start_ms": 2134.468,
+      "duration_ms": 2.74,
+      "end_ms": 2137.208,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #59",
+      "track": "PCIe Bus",
+      "start_ms": 2137.208,
+      "duration_ms": 29.226,
+      "end_ms": 2166.434,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #60",
+      "track": "Token Arrival",
+      "start_ms": 2166.434,
+      "duration_ms": 2.0,
+      "end_ms": 2168.434,
+      "category": "token",
+      "details": {
+        "itl_ms": 57.95
+      }
+    },
+    {
+      "name": "GPU Compute #60",
+      "track": "GPU Execution",
+      "start_ms": 2166.434,
+      "duration_ms": 4.967,
+      "end_ms": 2171.401,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #60",
+      "track": "PCIe Bus",
+      "start_ms": 2171.401,
+      "duration_ms": 52.979,
+      "end_ms": 2224.38,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #61",
+      "track": "Token Arrival",
+      "start_ms": 2224.38,
+      "duration_ms": 2.0,
+      "end_ms": 2226.38,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.73
+      }
+    },
+    {
+      "name": "GPU Compute #61",
+      "track": "GPU Execution",
+      "start_ms": 2224.38,
+      "duration_ms": 2.548,
+      "end_ms": 2226.928,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #61",
+      "track": "PCIe Bus",
+      "start_ms": 2226.928,
+      "duration_ms": 27.182,
+      "end_ms": 2254.11,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #62",
+      "track": "Token Arrival",
+      "start_ms": 2254.11,
+      "duration_ms": 2.0,
+      "end_ms": 2256.11,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.26
+      }
+    },
+    {
+      "name": "GPU Compute #62",
+      "track": "GPU Execution",
+      "start_ms": 2254.11,
+      "duration_ms": 2.594,
+      "end_ms": 2256.704,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #62",
+      "track": "PCIe Bus",
+      "start_ms": 2256.704,
+      "duration_ms": 27.666,
+      "end_ms": 2284.369,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #63",
+      "track": "Token Arrival",
+      "start_ms": 2284.369,
+      "duration_ms": 2.0,
+      "end_ms": 2286.369,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.7
+      }
+    },
+    {
+      "name": "GPU Compute #63",
+      "track": "GPU Execution",
+      "start_ms": 2284.369,
+      "duration_ms": 2.545,
+      "end_ms": 2286.915,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #63",
+      "track": "PCIe Bus",
+      "start_ms": 2286.915,
+      "duration_ms": 27.151,
+      "end_ms": 2314.066,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #64",
+      "track": "Token Arrival",
+      "start_ms": 2314.066,
+      "duration_ms": 2.0,
+      "end_ms": 2316.066,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.1
+      }
+    },
+    {
+      "name": "GPU Compute #64",
+      "track": "GPU Execution",
+      "start_ms": 2314.066,
+      "duration_ms": 2.494,
+      "end_ms": 2316.56,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #64",
+      "track": "PCIe Bus",
+      "start_ms": 2316.56,
+      "duration_ms": 26.603,
+      "end_ms": 2343.164,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #65",
+      "track": "Token Arrival",
+      "start_ms": 2343.164,
+      "duration_ms": 2.0,
+      "end_ms": 2345.164,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.33
+      }
+    },
+    {
+      "name": "GPU Compute #65",
+      "track": "GPU Execution",
+      "start_ms": 2343.164,
+      "duration_ms": 2.599,
+      "end_ms": 2345.763,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #65",
+      "track": "PCIe Bus",
+      "start_ms": 2345.763,
+      "duration_ms": 27.728,
+      "end_ms": 2373.491,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #66",
+      "track": "Token Arrival",
+      "start_ms": 2373.491,
+      "duration_ms": 2.0,
+      "end_ms": 2375.491,
+      "category": "token",
+      "details": {
+        "itl_ms": 60.47
+      }
+    },
+    {
+      "name": "GPU Compute #66",
+      "track": "GPU Execution",
+      "start_ms": 2373.491,
+      "duration_ms": 5.183,
+      "end_ms": 2378.673,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #66",
+      "track": "PCIe Bus",
+      "start_ms": 2378.673,
+      "duration_ms": 55.283,
+      "end_ms": 2433.956,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #67",
+      "track": "Token Arrival",
+      "start_ms": 2433.956,
+      "duration_ms": 2.0,
+      "end_ms": 2435.956,
+      "category": "token",
+      "details": {
+        "itl_ms": 62.02
+      }
+    },
+    {
+      "name": "GPU Compute #67",
+      "track": "GPU Execution",
+      "start_ms": 2433.956,
+      "duration_ms": 5.316,
+      "end_ms": 2439.272,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #67",
+      "track": "PCIe Bus",
+      "start_ms": 2439.272,
+      "duration_ms": 56.703,
+      "end_ms": 2495.975,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #68",
+      "track": "Token Arrival",
+      "start_ms": 2495.975,
+      "duration_ms": 2.0,
+      "end_ms": 2497.975,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.28
+      }
+    },
+    {
+      "name": "GPU Compute #68",
+      "track": "GPU Execution",
+      "start_ms": 2495.975,
+      "duration_ms": 2.595,
+      "end_ms": 2498.57,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #68",
+      "track": "PCIe Bus",
+      "start_ms": 2498.57,
+      "duration_ms": 27.681,
+      "end_ms": 2526.251,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #69",
+      "track": "Token Arrival",
+      "start_ms": 2526.251,
+      "duration_ms": 2.0,
+      "end_ms": 2528.251,
+      "category": "token",
+      "details": {
+        "itl_ms": 60.69
+      }
+    },
+    {
+      "name": "GPU Compute #69",
+      "track": "GPU Execution",
+      "start_ms": 2526.251,
+      "duration_ms": 5.202,
+      "end_ms": 2531.453,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #69",
+      "track": "PCIe Bus",
+      "start_ms": 2531.453,
+      "duration_ms": 55.49,
+      "end_ms": 2586.944,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #70",
+      "track": "Token Arrival",
+      "start_ms": 2586.944,
+      "duration_ms": 2.0,
+      "end_ms": 2588.944,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.79
+      }
+    },
+    {
+      "name": "GPU Compute #70",
+      "track": "GPU Execution",
+      "start_ms": 2586.944,
+      "duration_ms": 2.639,
+      "end_ms": 2589.583,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #70",
+      "track": "PCIe Bus",
+      "start_ms": 2589.583,
+      "duration_ms": 28.151,
+      "end_ms": 2617.733,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #71",
+      "track": "Token Arrival",
+      "start_ms": 2617.733,
+      "duration_ms": 2.0,
+      "end_ms": 2619.733,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.83
+      }
+    },
+    {
+      "name": "GPU Compute #71",
+      "track": "GPU Execution",
+      "start_ms": 2617.733,
+      "duration_ms": 2.642,
+      "end_ms": 2620.376,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #71",
+      "track": "PCIe Bus",
+      "start_ms": 2620.376,
+      "duration_ms": 28.187,
+      "end_ms": 2648.562,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #72",
+      "track": "Token Arrival",
+      "start_ms": 2648.562,
+      "duration_ms": 2.0,
+      "end_ms": 2650.562,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.26
+      }
+    },
+    {
+      "name": "GPU Compute #72",
+      "track": "GPU Execution",
+      "start_ms": 2648.562,
+      "duration_ms": 2.594,
+      "end_ms": 2651.156,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #72",
+      "track": "PCIe Bus",
+      "start_ms": 2651.156,
+      "duration_ms": 27.666,
+      "end_ms": 2678.822,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #73",
+      "track": "Token Arrival",
+      "start_ms": 2678.822,
+      "duration_ms": 2.0,
+      "end_ms": 2680.822,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.97
+      }
+    },
+    {
+      "name": "GPU Compute #73",
+      "track": "GPU Execution",
+      "start_ms": 2678.822,
+      "duration_ms": 2.655,
+      "end_ms": 2681.477,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #73",
+      "track": "PCIe Bus",
+      "start_ms": 2681.477,
+      "duration_ms": 28.319,
+      "end_ms": 2709.795,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #74",
+      "track": "Token Arrival",
+      "start_ms": 2709.795,
+      "duration_ms": 2.0,
+      "end_ms": 2711.795,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.4
+      }
+    },
+    {
+      "name": "GPU Compute #74",
+      "track": "GPU Execution",
+      "start_ms": 2709.795,
+      "duration_ms": 2.52,
+      "end_ms": 2712.316,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #74",
+      "track": "PCIe Bus",
+      "start_ms": 2712.316,
+      "duration_ms": 26.882,
+      "end_ms": 2739.198,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #75",
+      "track": "Token Arrival",
+      "start_ms": 2739.198,
+      "duration_ms": 2.0,
+      "end_ms": 2741.198,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.04
+      }
+    },
+    {
+      "name": "GPU Compute #75",
+      "track": "GPU Execution",
+      "start_ms": 2739.198,
+      "duration_ms": 2.66,
+      "end_ms": 2741.858,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #75",
+      "track": "PCIe Bus",
+      "start_ms": 2741.858,
+      "duration_ms": 28.377,
+      "end_ms": 2770.235,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #76",
+      "track": "Token Arrival",
+      "start_ms": 2770.235,
+      "duration_ms": 2.0,
+      "end_ms": 2772.235,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.55
+      }
+    },
+    {
+      "name": "GPU Compute #76",
+      "track": "GPU Execution",
+      "start_ms": 2770.235,
+      "duration_ms": 2.447,
+      "end_ms": 2772.682,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #76",
+      "track": "PCIe Bus",
+      "start_ms": 2772.682,
+      "duration_ms": 26.101,
+      "end_ms": 2798.784,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #77",
+      "track": "Token Arrival",
+      "start_ms": 2798.784,
+      "duration_ms": 2.0,
+      "end_ms": 2800.784,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.12
+      }
+    },
+    {
+      "name": "GPU Compute #77",
+      "track": "GPU Execution",
+      "start_ms": 2798.784,
+      "duration_ms": 2.496,
+      "end_ms": 2801.279,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #77",
+      "track": "PCIe Bus",
+      "start_ms": 2801.279,
+      "duration_ms": 26.622,
+      "end_ms": 2827.901,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #78",
+      "track": "Token Arrival",
+      "start_ms": 2827.901,
+      "duration_ms": 2.0,
+      "end_ms": 2829.901,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.11
+      }
+    },
+    {
+      "name": "GPU Compute #78",
+      "track": "GPU Execution",
+      "start_ms": 2827.901,
+      "duration_ms": 2.581,
+      "end_ms": 2830.482,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #78",
+      "track": "PCIe Bus",
+      "start_ms": 2830.482,
+      "duration_ms": 27.527,
+      "end_ms": 2858.008,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #79",
+      "track": "Token Arrival",
+      "start_ms": 2858.008,
+      "duration_ms": 2.0,
+      "end_ms": 2860.008,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.42
+      }
+    },
+    {
+      "name": "GPU Compute #79",
+      "track": "GPU Execution",
+      "start_ms": 2858.008,
+      "duration_ms": 2.521,
+      "end_ms": 2860.529,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #79",
+      "track": "PCIe Bus",
+      "start_ms": 2860.529,
+      "duration_ms": 26.895,
+      "end_ms": 2887.424,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #80",
+      "track": "Token Arrival",
+      "start_ms": 2887.424,
+      "duration_ms": 2.0,
+      "end_ms": 2889.424,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.49
+      }
+    },
+    {
+      "name": "GPU Compute #80",
+      "track": "GPU Execution",
+      "start_ms": 2887.424,
+      "duration_ms": 2.613,
+      "end_ms": 2890.037,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #80",
+      "track": "PCIe Bus",
+      "start_ms": 2890.037,
+      "duration_ms": 27.876,
+      "end_ms": 2917.914,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #81",
+      "track": "Token Arrival",
+      "start_ms": 2917.914,
+      "duration_ms": 2.0,
+      "end_ms": 2919.914,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.34
+      }
+    },
+    {
+      "name": "GPU Compute #81",
+      "track": "GPU Execution",
+      "start_ms": 2917.914,
+      "duration_ms": 2.515,
+      "end_ms": 2920.429,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #81",
+      "track": "PCIe Bus",
+      "start_ms": 2920.429,
+      "duration_ms": 26.827,
+      "end_ms": 2947.255,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #82",
+      "track": "Token Arrival",
+      "start_ms": 2947.255,
+      "duration_ms": 2.0,
+      "end_ms": 2949.255,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.54
+      }
+    },
+    {
+      "name": "GPU Compute #82",
+      "track": "GPU Execution",
+      "start_ms": 2947.255,
+      "duration_ms": 0.047,
+      "end_ms": 2947.302,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #83",
+      "track": "Token Arrival",
+      "start_ms": 2947.799,
+      "duration_ms": 2.0,
+      "end_ms": 2949.799,
+      "category": "token",
+      "details": {
+        "itl_ms": 88.3
+      }
+    },
+    {
+      "name": "GPU Compute #83",
+      "track": "GPU Execution",
+      "start_ms": 2947.799,
+      "duration_ms": 7.568,
+      "end_ms": 2955.367,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #83",
+      "track": "PCIe Bus",
+      "start_ms": 2955.367,
+      "duration_ms": 80.727,
+      "end_ms": 3036.095,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #84",
+      "track": "Token Arrival",
+      "start_ms": 3036.095,
+      "duration_ms": 2.0,
+      "end_ms": 3038.095,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.57
+      }
+    },
+    {
+      "name": "GPU Compute #84",
+      "track": "GPU Execution",
+      "start_ms": 3036.095,
+      "duration_ms": 2.621,
+      "end_ms": 3038.715,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #84",
+      "track": "PCIe Bus",
+      "start_ms": 3038.715,
+      "duration_ms": 27.953,
+      "end_ms": 3066.668,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #85",
+      "track": "Token Arrival",
+      "start_ms": 3066.668,
+      "duration_ms": 2.0,
+      "end_ms": 3068.668,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.02
+      }
+    },
+    {
+      "name": "GPU Compute #85",
+      "track": "GPU Execution",
+      "start_ms": 3066.668,
+      "duration_ms": 2.659,
+      "end_ms": 3069.327,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #85",
+      "track": "PCIe Bus",
+      "start_ms": 3069.327,
+      "duration_ms": 28.362,
+      "end_ms": 3097.689,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #86",
+      "track": "Token Arrival",
+      "start_ms": 3097.689,
+      "duration_ms": 2.0,
+      "end_ms": 3099.689,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.92
+      }
+    },
+    {
+      "name": "GPU Compute #86",
+      "track": "GPU Execution",
+      "start_ms": 3097.689,
+      "duration_ms": 2.479,
+      "end_ms": 3100.168,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #86",
+      "track": "PCIe Bus",
+      "start_ms": 3100.168,
+      "duration_ms": 26.441,
+      "end_ms": 3126.609,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #87",
+      "track": "Token Arrival",
+      "start_ms": 3126.609,
+      "duration_ms": 2.0,
+      "end_ms": 3128.609,
+      "category": "token",
+      "details": {
+        "itl_ms": 34.22
+      }
+    },
+    {
+      "name": "GPU Compute #87",
+      "track": "GPU Execution",
+      "start_ms": 3126.609,
+      "duration_ms": 2.933,
+      "end_ms": 3129.542,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #87",
+      "track": "PCIe Bus",
+      "start_ms": 3129.542,
+      "duration_ms": 31.289,
+      "end_ms": 3160.831,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #88",
+      "track": "Token Arrival",
+      "start_ms": 3160.831,
+      "duration_ms": 2.0,
+      "end_ms": 3162.831,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.72
+      }
+    },
+    {
+      "name": "GPU Compute #88",
+      "track": "GPU Execution",
+      "start_ms": 3160.831,
+      "duration_ms": 2.462,
+      "end_ms": 3163.293,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #88",
+      "track": "PCIe Bus",
+      "start_ms": 3163.293,
+      "duration_ms": 26.256,
+      "end_ms": 3189.549,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #89",
+      "track": "Token Arrival",
+      "start_ms": 3189.549,
+      "duration_ms": 2.0,
+      "end_ms": 3191.549,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.36
+      }
+    },
+    {
+      "name": "GPU Compute #89",
+      "track": "GPU Execution",
+      "start_ms": 3189.549,
+      "duration_ms": 2.688,
+      "end_ms": 3192.237,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #89",
+      "track": "PCIe Bus",
+      "start_ms": 3192.237,
+      "duration_ms": 28.668,
+      "end_ms": 3220.905,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #90",
+      "track": "Token Arrival",
+      "start_ms": 3220.905,
+      "duration_ms": 2.0,
+      "end_ms": 3222.905,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.68
+      }
+    },
+    {
+      "name": "GPU Compute #90",
+      "track": "GPU Execution",
+      "start_ms": 3220.905,
+      "duration_ms": 2.458,
+      "end_ms": 3223.363,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #90",
+      "track": "PCIe Bus",
+      "start_ms": 3223.363,
+      "duration_ms": 26.222,
+      "end_ms": 3249.586,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #91",
+      "track": "Token Arrival",
+      "start_ms": 3249.586,
+      "duration_ms": 2.0,
+      "end_ms": 3251.586,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.45
+      }
+    },
+    {
+      "name": "GPU Compute #91",
+      "track": "GPU Execution",
+      "start_ms": 3249.586,
+      "duration_ms": 2.438,
+      "end_ms": 3252.024,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #91",
+      "track": "PCIe Bus",
+      "start_ms": 3252.024,
+      "duration_ms": 26.007,
+      "end_ms": 3278.031,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #92",
+      "track": "Token Arrival",
+      "start_ms": 3278.031,
+      "duration_ms": 2.0,
+      "end_ms": 3280.031,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.49
+      }
+    },
+    {
+      "name": "GPU Compute #92",
+      "track": "GPU Execution",
+      "start_ms": 3278.031,
+      "duration_ms": 2.442,
+      "end_ms": 3280.474,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #92",
+      "track": "PCIe Bus",
+      "start_ms": 3280.474,
+      "duration_ms": 26.052,
+      "end_ms": 3306.526,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #93",
+      "track": "Token Arrival",
+      "start_ms": 3306.526,
+      "duration_ms": 2.0,
+      "end_ms": 3308.526,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.75
+      }
+    },
+    {
+      "name": "GPU Compute #93",
+      "track": "GPU Execution",
+      "start_ms": 3306.526,
+      "duration_ms": 2.636,
+      "end_ms": 3309.162,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #93",
+      "track": "PCIe Bus",
+      "start_ms": 3309.162,
+      "duration_ms": 28.117,
+      "end_ms": 3337.279,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #94",
+      "track": "Token Arrival",
+      "start_ms": 3337.279,
+      "duration_ms": 2.0,
+      "end_ms": 3339.279,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.86
+      }
+    },
+    {
+      "name": "GPU Compute #94",
+      "track": "GPU Execution",
+      "start_ms": 3337.279,
+      "duration_ms": 2.559,
+      "end_ms": 3339.838,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #94",
+      "track": "PCIe Bus",
+      "start_ms": 3339.838,
+      "duration_ms": 27.299,
+      "end_ms": 3367.137,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #95",
+      "track": "Token Arrival",
+      "start_ms": 3367.137,
+      "duration_ms": 2.0,
+      "end_ms": 3369.137,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.2
+      }
+    },
+    {
+      "name": "GPU Compute #95",
+      "track": "GPU Execution",
+      "start_ms": 3367.137,
+      "duration_ms": 2.503,
+      "end_ms": 3369.639,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #95",
+      "track": "PCIe Bus",
+      "start_ms": 3369.639,
+      "duration_ms": 26.695,
+      "end_ms": 3396.334,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #96",
+      "track": "Token Arrival",
+      "start_ms": 3396.334,
+      "duration_ms": 2.0,
+      "end_ms": 3398.334,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.43
+      }
+    },
+    {
+      "name": "GPU Compute #96",
+      "track": "GPU Execution",
+      "start_ms": 3396.334,
+      "duration_ms": 2.694,
+      "end_ms": 3399.028,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #96",
+      "track": "PCIe Bus",
+      "start_ms": 3399.028,
+      "duration_ms": 28.736,
+      "end_ms": 3427.764,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #97",
+      "track": "Token Arrival",
+      "start_ms": 3427.764,
+      "duration_ms": 2.0,
+      "end_ms": 3429.764,
+      "category": "token",
+      "details": {
+        "itl_ms": 58.41
+      }
+    },
+    {
+      "name": "GPU Compute #97",
+      "track": "GPU Execution",
+      "start_ms": 3427.764,
+      "duration_ms": 5.006,
+      "end_ms": 3432.77,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #97",
+      "track": "PCIe Bus",
+      "start_ms": 3432.77,
+      "duration_ms": 53.399,
+      "end_ms": 3486.169,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #98",
+      "track": "Token Arrival",
+      "start_ms": 3486.169,
+      "duration_ms": 2.0,
+      "end_ms": 3488.169,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.3
+      }
+    },
+    {
+      "name": "GPU Compute #98",
+      "track": "GPU Execution",
+      "start_ms": 3486.169,
+      "duration_ms": 2.597,
+      "end_ms": 3488.766,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #98",
+      "track": "PCIe Bus",
+      "start_ms": 3488.766,
+      "duration_ms": 27.7,
+      "end_ms": 3516.466,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #99",
+      "track": "Token Arrival",
+      "start_ms": 3516.466,
+      "duration_ms": 2.0,
+      "end_ms": 3518.466,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.53
+      }
+    },
+    {
+      "name": "GPU Compute #99",
+      "track": "GPU Execution",
+      "start_ms": 3516.466,
+      "duration_ms": 2.531,
+      "end_ms": 3518.997,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #99",
+      "track": "PCIe Bus",
+      "start_ms": 3518.997,
+      "duration_ms": 26.997,
+      "end_ms": 3545.994,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #100",
+      "track": "Token Arrival",
+      "start_ms": 3545.994,
+      "duration_ms": 2.0,
+      "end_ms": 3547.994,
+      "category": "token",
+      "details": {
+        "itl_ms": 30.02
+      }
+    },
+    {
+      "name": "GPU Compute #100",
+      "track": "GPU Execution",
+      "start_ms": 3545.994,
+      "duration_ms": 2.573,
+      "end_ms": 3548.567,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #100",
+      "track": "PCIe Bus",
+      "start_ms": 3548.567,
+      "duration_ms": 27.45,
+      "end_ms": 3576.017,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #101",
+      "track": "Token Arrival",
+      "start_ms": 3576.017,
+      "duration_ms": 2.0,
+      "end_ms": 3578.017,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.65
+      }
+    },
+    {
+      "name": "GPU Compute #101",
+      "track": "GPU Execution",
+      "start_ms": 3576.017,
+      "duration_ms": 2.541,
+      "end_ms": 3578.558,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #101",
+      "track": "PCIe Bus",
+      "start_ms": 3578.558,
+      "duration_ms": 27.106,
+      "end_ms": 3605.663,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #102",
+      "track": "Token Arrival",
+      "start_ms": 3605.663,
+      "duration_ms": 2.0,
+      "end_ms": 3607.663,
+      "category": "token",
+      "details": {
+        "itl_ms": 61.85
+      }
+    },
+    {
+      "name": "GPU Compute #102",
+      "track": "GPU Execution",
+      "start_ms": 3605.663,
+      "duration_ms": 5.302,
+      "end_ms": 3610.965,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #102",
+      "track": "PCIe Bus",
+      "start_ms": 3610.965,
+      "duration_ms": 56.552,
+      "end_ms": 3667.517,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #103",
+      "track": "Token Arrival",
+      "start_ms": 3667.517,
+      "duration_ms": 2.0,
+      "end_ms": 3669.517,
+      "category": "token",
+      "details": {
+        "itl_ms": 61.96
+      }
+    },
+    {
+      "name": "GPU Compute #103",
+      "track": "GPU Execution",
+      "start_ms": 3667.517,
+      "duration_ms": 5.311,
+      "end_ms": 3672.828,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #103",
+      "track": "PCIe Bus",
+      "start_ms": 3672.828,
+      "duration_ms": 56.652,
+      "end_ms": 3729.48,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #104",
+      "track": "Token Arrival",
+      "start_ms": 3729.48,
+      "duration_ms": 2.0,
+      "end_ms": 3731.48,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.3
+      }
+    },
+    {
+      "name": "GPU Compute #104",
+      "track": "GPU Execution",
+      "start_ms": 3729.48,
+      "duration_ms": 2.683,
+      "end_ms": 3732.162,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #104",
+      "track": "PCIe Bus",
+      "start_ms": 3732.162,
+      "duration_ms": 28.615,
+      "end_ms": 3760.777,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #105",
+      "track": "Token Arrival",
+      "start_ms": 3760.777,
+      "duration_ms": 2.0,
+      "end_ms": 3762.777,
+      "category": "token",
+      "details": {
+        "itl_ms": 32.16
+      }
+    },
+    {
+      "name": "GPU Compute #105",
+      "track": "GPU Execution",
+      "start_ms": 3760.777,
+      "duration_ms": 2.757,
+      "end_ms": 3763.533,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #105",
+      "track": "PCIe Bus",
+      "start_ms": 3763.533,
+      "duration_ms": 29.403,
+      "end_ms": 3792.936,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #106",
+      "track": "Token Arrival",
+      "start_ms": 3792.936,
+      "duration_ms": 2.0,
+      "end_ms": 3794.936,
+      "category": "token",
+      "details": {
+        "itl_ms": 31.63
+      }
+    },
+    {
+      "name": "GPU Compute #106",
+      "track": "GPU Execution",
+      "start_ms": 3792.936,
+      "duration_ms": 2.712,
+      "end_ms": 3795.648,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #106",
+      "track": "PCIe Bus",
+      "start_ms": 3795.648,
+      "duration_ms": 28.923,
+      "end_ms": 3824.571,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #107",
+      "track": "Token Arrival",
+      "start_ms": 3824.571,
+      "duration_ms": 2.0,
+      "end_ms": 3826.571,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.39
+      }
+    },
+    {
+      "name": "GPU Compute #107",
+      "track": "GPU Execution",
+      "start_ms": 3824.571,
+      "duration_ms": 2.519,
+      "end_ms": 3827.09,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #107",
+      "track": "PCIe Bus",
+      "start_ms": 3827.09,
+      "duration_ms": 26.87,
+      "end_ms": 3853.96,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #108",
+      "track": "Token Arrival",
+      "start_ms": 3853.96,
+      "duration_ms": 2.0,
+      "end_ms": 3855.96,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.24
+      }
+    },
+    {
+      "name": "GPU Compute #108",
+      "track": "GPU Execution",
+      "start_ms": 3853.96,
+      "duration_ms": 2.42,
+      "end_ms": 3856.38,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #108",
+      "track": "PCIe Bus",
+      "start_ms": 3856.38,
+      "duration_ms": 25.815,
+      "end_ms": 3882.195,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #109",
+      "track": "Token Arrival",
+      "start_ms": 3882.195,
+      "duration_ms": 2.0,
+      "end_ms": 3884.195,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.01
+      }
+    },
+    {
+      "name": "GPU Compute #109",
+      "track": "GPU Execution",
+      "start_ms": 3882.195,
+      "duration_ms": 2.486,
+      "end_ms": 3884.681,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #109",
+      "track": "PCIe Bus",
+      "start_ms": 3884.681,
+      "duration_ms": 26.519,
+      "end_ms": 3911.201,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #110",
+      "track": "Token Arrival",
+      "start_ms": 3911.201,
+      "duration_ms": 2.0,
+      "end_ms": 3913.201,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.73
+      }
+    },
+    {
+      "name": "GPU Compute #110",
+      "track": "GPU Execution",
+      "start_ms": 3911.201,
+      "duration_ms": 2.549,
+      "end_ms": 3913.749,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #110",
+      "track": "PCIe Bus",
+      "start_ms": 3913.749,
+      "duration_ms": 27.186,
+      "end_ms": 3940.935,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #111",
+      "track": "Token Arrival",
+      "start_ms": 3940.935,
+      "duration_ms": 2.0,
+      "end_ms": 3942.935,
+      "category": "token",
+      "details": {
+        "itl_ms": 32.84
+      }
+    },
+    {
+      "name": "GPU Compute #111",
+      "track": "GPU Execution",
+      "start_ms": 3940.935,
+      "duration_ms": 2.815,
+      "end_ms": 3943.75,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #111",
+      "track": "PCIe Bus",
+      "start_ms": 3943.75,
+      "duration_ms": 30.029,
+      "end_ms": 3973.779,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #112",
+      "track": "Token Arrival",
+      "start_ms": 3973.779,
+      "duration_ms": 2.0,
+      "end_ms": 3975.779,
+      "category": "token",
+      "details": {
+        "itl_ms": 28.69
+      }
+    },
+    {
+      "name": "GPU Compute #112",
+      "track": "GPU Execution",
+      "start_ms": 3973.779,
+      "duration_ms": 2.459,
+      "end_ms": 3976.238,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #112",
+      "track": "PCIe Bus",
+      "start_ms": 3976.238,
+      "duration_ms": 26.231,
+      "end_ms": 4002.469,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #113",
+      "track": "Token Arrival",
+      "start_ms": 4002.469,
+      "duration_ms": 2.0,
+      "end_ms": 4004.469,
+      "category": "token",
+      "details": {
+        "itl_ms": 34.66
+      }
+    },
+    {
+      "name": "GPU Compute #113",
+      "track": "GPU Execution",
+      "start_ms": 4002.469,
+      "duration_ms": 2.971,
+      "end_ms": 4005.44,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #113",
+      "track": "PCIe Bus",
+      "start_ms": 4005.44,
+      "duration_ms": 31.689,
+      "end_ms": 4037.129,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #114",
+      "track": "Token Arrival",
+      "start_ms": 4037.129,
+      "duration_ms": 2.0,
+      "end_ms": 4039.129,
+      "category": "token",
+      "details": {
+        "itl_ms": 29.83
+      }
+    },
+    {
+      "name": "GPU Compute #114",
+      "track": "GPU Execution",
+      "start_ms": 4037.129,
+      "duration_ms": 2.557,
+      "end_ms": 4039.686,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "PCIe / CPU Wait #114",
+      "track": "PCIe Bus",
+      "start_ms": 4039.686,
+      "duration_ms": 27.272,
+      "end_ms": 4066.958,
+      "category": "stall",
+      "details": {}
+    },
+    {
+      "name": "Token #115",
+      "track": "Token Arrival",
+      "start_ms": 4066.958,
+      "duration_ms": 2.0,
+      "end_ms": 4068.958,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.35
+      }
+    },
+    {
+      "name": "GPU Compute #115",
+      "track": "GPU Execution",
+      "start_ms": 4066.958,
+      "duration_ms": 0.03,
+      "end_ms": 4066.988,
+      "category": "gpu",
+      "details": {}
+    },
+    {
+      "name": "Token #116",
+      "track": "Token Arrival",
+      "start_ms": 4067.305,
+      "duration_ms": 2.0,
+      "end_ms": 4069.305,
+      "category": "token",
+      "details": {
+        "itl_ms": 0.17
+      }
+    },
+    {
+      "name": "GPU Compute #116",
+      "track": "GPU Execution",
+      "start_ms": 4067.305,
+      "duration_ms": 0.014,
+      "end_ms": 4067.32,
+      "category": "gpu",
+      "details": {}
+    }
+  ]
+}

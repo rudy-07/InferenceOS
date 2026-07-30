@@ -1,0 +1,2 @@
+Timestamp,Model,Backend,OffloadRatio,GPU_Layers,CPU_Layers,Gen_TPS,Prompt_TPS,TTFT_ms,Median_ITL_ms,GPU_Idle_Pct,Pred_VRAM_MB,Act_VRAM_MB,VRAM_Error_Pct
+20260726_065006,Qwen3-4B-Thinking-2507.Q5_K_M.gguf,vulkan,1.0,36,0,35.36,80.97,3448.1,29.94,91.4,2935.7,2674.1,9.78

@@ -1,0 +1,10 @@
+{
+  "enable_placement_optimizer": true,
+  "gpu_layers_override": 20,
+  "enable_preflight_guard": true,
+  "enable_async_scheduler": true,
+  "enable_igpu_contributor": true,
+  "enable_profiler_telemetry": true,
+  "enable_flash_attention": true,
+  "threads": 6
+}
