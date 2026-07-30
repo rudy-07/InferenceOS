@@ -189,6 +189,11 @@ class RuntimeConfig:
     optimization_dir: str = "~/.inferenceos/optimization"
     verbose_apo: bool = False
 
+    # Performance Intelligence Engine (PIE)
+    enable_pie: bool = True
+    pie_dir: str = "~/.inferenceos/performance"
+    verbose_pie: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -294,6 +299,10 @@ class RuntimeConfig:
             "force_optimization": self.force_optimization,
             "optimization_dir": self.optimization_dir,
             "verbose_apo": self.verbose_apo,
+            # Performance Intelligence Engine (PIE)
+            "enable_pie": self.enable_pie,
+            "pie_dir": self.pie_dir,
+            "verbose_pie": self.verbose_pie,
         }
 
     @classmethod
