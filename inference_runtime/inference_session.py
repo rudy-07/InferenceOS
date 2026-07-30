@@ -39,6 +39,7 @@ from .stats_collector import RuntimeStats, StatsCollector
 from kv_manager import IntelligentKVManager, KVDecision, KVPolicyConfig
 from layer_placement.placement_plan import PlacementPlan
 from memory_budget import BudgetConfig, BudgetDecision, MemoryBudgetManager
+from optimizer import APOConfig, AutomaticPerformanceOptimizer, OptimizationProfile
 from runtime_health import RuntimeHealth, RuntimeHealthMonitor
 from runtime_kb import ExecutionRecord, HardwareFingerprint, ModelFingerprint, RuntimeKnowledgeBase
 from runtime_learning import LearningRecommendation, RuntimeLearningEngine
@@ -94,6 +95,8 @@ class InferenceResult:
         Runtime Health Monitor observation.
     budget_decision : Optional[BudgetDecision]
         Adaptive Memory Budget Manager component allocation.
+    optimization_profile : Optional[OptimizationProfile]
+        Automatic Performance Optimizer profile.
     """
     generated_text: str
     stats: RuntimeStats
@@ -109,6 +112,7 @@ class InferenceResult:
     kv_decision: Optional[KVDecision] = None
     runtime_health: Optional[RuntimeHealth] = None
     budget_decision: Optional[BudgetDecision] = None
+    optimization_profile: Optional[OptimizationProfile] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = {
@@ -132,6 +136,8 @@ class InferenceResult:
             d["runtime_health"] = self.runtime_health.to_dict()
         if self.budget_decision is not None:
             d["budget_decision"] = self.budget_decision.to_dict()
+        if self.optimization_profile is not None:
+            d["optimization_profile"] = self.optimization_profile.to_dict()
         return d
 
 
@@ -221,6 +227,8 @@ class InferenceSession:
         self.runtime_health: Optional[RuntimeHealth] = None
         self.budget_decision: Optional[BudgetDecision] = None
         self.rkb = RuntimeKnowledgeBase(base_dir=self.config.rkb_dir)
+        self.optimizer = AutomaticPerformanceOptimizer()
+        self.optimization_profile: Optional[OptimizationProfile] = None
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -237,6 +245,31 @@ class InferenceSession:
         """
         Execute a single inference pass with the given prompt.
         """
+        # Automatic Performance Optimizer (APO) Profile Check / Calibration
+        optimization_profile: Optional[OptimizationProfile] = None
+        if self.config.enable_apo:
+            apo_cfg = APOConfig(
+                enabled=self.config.enable_apo,
+                goal=self.config.apo_goal,
+                force=self.config.force_optimization,
+                storage_dir=self.config.optimization_dir,
+                verbose=self.config.verbose_apo,
+            )
+            optimization_profile = self.optimizer.get_or_create_profile(
+                model_path=str(self.model_path) if hasattr(self, "model_path") else None,
+                model_metadata={
+                    "num_layers": self.plan.total_layers,
+                    "hidden_size": getattr(self.plan, "hidden_size", 4096),
+                    "model_name": self.plan.model_name,
+                },
+                hw_profile=self.hw_profile,
+                backend=self.backend_info.name,
+                config_override=apo_cfg,
+            )
+            self.optimization_profile = optimization_profile
+            if optimization_profile and self.config.manual_microbatch is None:
+                self.config.manual_microbatch = optimization_profile.best_candidate.microbatch_size
+
         # Runtime Health Observation
         runtime_health: Optional[RuntimeHealth] = None
         if self.config.enable_health_monitor:
@@ -495,6 +528,7 @@ class InferenceSession:
             kv_decision=kv_decision,
             runtime_health=runtime_health,
             budget_decision=budget_decision,
+            optimization_profile=optimization_profile,
         )
         self._last_result = result
 

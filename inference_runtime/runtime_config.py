@@ -182,6 +182,13 @@ class RuntimeConfig:
     rkb_dir: str = "~/.inferenceos/knowledge"
     verbose_rkb: bool = False
 
+    # Automatic Performance Optimizer (APO)
+    enable_apo: bool = True
+    apo_goal: str = "Balanced"  # Balanced | Max Throughput | Lowest Latency | Lowest Memory | Max Stability
+    force_optimization: bool = False
+    optimization_dir: str = "~/.inferenceos/optimization"
+    verbose_apo: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -281,6 +288,12 @@ class RuntimeConfig:
             "enable_rkb": self.enable_rkb,
             "rkb_dir": self.rkb_dir,
             "verbose_rkb": self.verbose_rkb,
+            # Automatic Performance Optimizer (APO)
+            "enable_apo": self.enable_apo,
+            "apo_goal": self.apo_goal,
+            "force_optimization": self.force_optimization,
+            "optimization_dir": self.optimization_dir,
+            "verbose_apo": self.verbose_apo,
         }
 
     @classmethod
