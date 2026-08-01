@@ -174,7 +174,7 @@ sequenceDiagram
 
 ```bash
 # Clone the repository
-git clone https://github.com/InferenceOS/InferenceOS.git
+git clone https://github.com/rudy-07/InferenceOS.git
 cd InferenceOS
 
 # Create and activate virtual environment
