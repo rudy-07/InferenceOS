@@ -5,7 +5,7 @@
 # InferenceOS
 ### *The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference*
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-yellow.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![C++20 Core](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)](https://isocpp.org/)
 [![CUDA Ready](https://img.shields.io/badge/CUDA-11.8%20%7C%2012.x-76B900.svg)](https://developer.nvidia.com/cuda-zone)
@@ -312,7 +312,7 @@ We welcome contributions from developers, systems engineers, researchers, and AI
 
 ## License
 
-InferenceOS is released under the open-source **[MIT License](LICENSE)**.
+InferenceOS is released under the open-source **[Apache License 2.0](LICENSE)**.
 
 ---
 

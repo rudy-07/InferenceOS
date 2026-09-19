@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 authors = [
     { name = "InferenceOS Team", email = "maintainers@inferenceos.org" }
 ]
@@ -32,7 +32,7 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",

@@ -94,4 +94,4 @@ Want to extend InferenceOS? Check out our step-by-step guides in the documentati
 
 ## License
 
-By contributing to InferenceOS, you agree that your contributions will be licensed under the project's [MIT License](LICENSE).
+By contributing to InferenceOS, you agree that your contributions will be licensed under the project's [Apache License 2.0](LICENSE).
