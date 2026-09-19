@@ -1,13 +1,8 @@
 <div align="center">
 
-<img src="assets/banner_telemetry_hud.png" alt="InferenceOS Banner" width="100%" />
-
-<br/><br/>
-
 <img src="assets/logo_hex_transparent.png" alt="InferenceOS Logo" width="100" height="100" />
 
 # InferenceOS
-
 ### *The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -19,6 +14,7 @@
 [![Apple Metal](https://img.shields.io/badge/Metal-Supported-000000.svg)](https://developer.apple.com/metal/)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 [![Documentation](https://img.shields.io/badge/Docs-Complete-blueviolet.svg)](docs/)
+<img src="assets/banner_telemetry_hud.png" alt="InferenceOS Banner" width="100%" />
 
 [Overview](#overview) •
 [Why InferenceOS](#why-inferenceos) •
