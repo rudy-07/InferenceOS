@@ -1,14 +1,5 @@
 from __future__ import annotations
 
-import sys
-import os
-from pathlib import Path
-
-# Add global user site-packages for fastapi/uvicorn/httpx if needed
-user_site = r"C:\Users\gamin\AppData\Roaming\Python\Python310\site-packages"
-if os.path.exists(user_site) and user_site not in sys.path:
-    sys.path.insert(0, user_site)
-
 import pytest
 from unittest.mock import MagicMock, patch
 from fastapi.testclient import TestClient
