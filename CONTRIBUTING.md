@@ -13,7 +13,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 ## How to Contribute
 
 ### 1. Reporting Bugs
-Before creating a bug report, please check existing issues to avoid duplicates. When submitting a bug report via [GitHub Issues](https://github.com/InferenceOS/InferenceOS/issues), please include:
+Before creating a bug report, please check existing issues to avoid duplicates. When submitting a bug report via [GitHub Issues](https://github.com/rudy-07/InferenceOS/issues), please include:
 - A clear description of the bug.
 - Steps to reproduce the issue.
 - System hardware profile (output of `inferenceos hardware` or `hardware_profile.json`).
@@ -26,7 +26,7 @@ We welcome feature proposals! Submit a feature request issue outlining:
 - Any alternative solutions considered.
 
 ### 3. Submitting Pull Requests
-1. **Fork the Repository**: Create a fork of `InferenceOS/InferenceOS` on GitHub.
+1. **Fork the Repository**: Create a fork of `rudy-07/InferenceOS` on GitHub.
 2. **Clone & Setup Environment**:
    ```bash
    git clone https://github.com/YOUR_USERNAME/InferenceOS.git

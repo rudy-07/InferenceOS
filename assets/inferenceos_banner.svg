@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#040806" />
+      <stop offset="50%" stop-color="#07120C" />
+      <stop offset="100%" stop-color="#030604" />
+    </linearGradient>
+
+    <!-- Nebula Glow Left -->
+    <radialGradient id="nebulaLeft" cx="18%" cy="50%" r="45%">
+      <stop offset="0%" stop-color="#00F5A0" stop-opacity="0.22" />
+      <stop offset="50%" stop-color="#10B981" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#040806" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Nebula Glow Right -->
+    <radialGradient id="nebulaRight" cx="85%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#040806" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#10B981" stroke-width="0.75" stroke-opacity="0.12" />
+    </pattern>
+
+    <!-- Logo Gradients -->
+    <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5A0" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="logoGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7" />
+      <stop offset="50%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#064E3B" />
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Base Canvas -->
+  <rect width="1200" height="400" fill="url(#bgGrad)" />
+
+  <!-- Ambient Glows -->
+  <rect width="1200" height="400" fill="url(#nebulaLeft)" />
+  <rect width="1200" height="400" fill="url(#nebulaRight)" />
+
+  <!-- High-Tech Coordinate Grid -->
+  <rect width="1200" height="400" fill="url(#grid)" />
+
+  <!-- Left: Logo & Branding Lockup -->
+  <!-- Mini Logo Mark (Centered at x=135, y=180) -->
+  <g transform="translate(45, 115) scale(0.25)">
+    <!-- Back Ribbon Loop -->
+    <path d="M 142 178 C 142 108, 370 108, 370 256 C 370 348, 292 410, 212 400 C 152 392, 102 332, 112 260 C 116 230, 132 190, 172 150" 
+          fill="none" stroke="url(#logoGrad2)" stroke-width="48" stroke-linecap="round" opacity="0.9" />
+
+    <!-- Front Ribbon Loop -->
+    <path d="M 370 334 C 370 404, 142 404, 142 256 C 142 164, 220 102, 300 112 C 360 120, 410 182, 400 254 C 396 284, 380 324, 340 362" 
+          fill="none" stroke="url(#logoGrad1)" stroke-width="48" stroke-linecap="round" filter="url(#softGlow)" />
+
+    <!-- Core Dot -->
+    <circle cx="256" cy="256" r="32" fill="url(#logoGrad1)" />
+    <circle cx="256" cy="256" r="14" fill="#E6FFFA" />
+  </g>
+
+  <!-- Typography: Brand Name -->
+  <text x="195" y="195" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-weight="800" font-size="58" fill="#FFFFFF" letter-spacing="-0.02em">
+    Inference<tspan fill="#00F5A0">OS</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text x="75" y="248" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="500" font-size="20.5" fill="#94A3B8" letter-spacing="-0.01em">
+    The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference
+  </text>
+
+  <!-- Feature Pill Badges -->
+  <!-- Pill 1: Dynamic Layer Offload -->
+  <g transform="translate(75, 280)">
+    <rect width="195" height="32" rx="16" fill="#0B1C13" stroke="#10B981" stroke-opacity="0.3" stroke-width="1" />
+    <circle cx="16" cy="16" r="4" fill="#00F5A0" />
+    <text x="28" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="12.5" fill="#E2E8F0">Dynamic Layer Offload</text>
+  </g>
+
+  <!-- Pill 2: Speculative Decoding -->
+  <g transform="translate(282, 280)">
+    <rect width="180" height="32" rx="16" fill="#0B1C13" stroke="#10B981" stroke-opacity="0.3" stroke-width="1" />
+    <circle cx="16" cy="16" r="4" fill="#34D399" />
+    <text x="28" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="12.5" fill="#E2E8F0">Speculative Decoding</text>
+  </g>
+
+  <!-- Pill 3: Zero-OOM Hysteresis -->
+  <g transform="translate(474, 280)">
+    <rect width="185" height="32" rx="16" fill="#0B1C13" stroke="#10B981" stroke-opacity="0.3" stroke-width="1" />
+    <circle cx="16" cy="16" r="4" fill="#6EE7B7" />
+    <text x="28" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="12.5" fill="#E2E8F0">Zero-OOM Hysteresis</text>
+  </g>
+
+  <!-- Pill 4: Attention-Sink KV Cache -->
+  <g transform="translate(671, 280)">
+    <rect width="195" height="32" rx="16" fill="#0B1C13" stroke="#10B981" stroke-opacity="0.3" stroke-width="1" />
+    <circle cx="16" cy="16" r="4" fill="#A7F3D0" />
+    <text x="28" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="12.5" fill="#E2E8F0">Attention-Sink KV Cache</text>
+  </g>
+
+  <!-- Right Side: Ecosystem Badge -->
+  <g transform="translate(930, 160)">
+    <rect width="210" height="42" rx="21" fill="#082316" stroke="#00F5A0" stroke-opacity="0.5" stroke-width="1.2" />
+    <!-- Small sphere dot -->
+    <circle cx="24" cy="21" r="7" fill="none" stroke="#00F5A0" stroke-width="2" />
+    <circle cx="24" cy="21" r="2.5" fill="#00F5A0" />
+    <text x="40" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="600" font-size="13.5" fill="#F0FDF4">mySphere Ecosystem</text>
+  </g>
+
+  <!-- Right Side: Hardware Tech Specs -->
+  <text x="1140" y="235" text-anchor="end" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-weight="500" font-size="13" fill="#6EE7B7" opacity="0.85" letter-spacing="0.05em">
+    CUDA • ROCm • Metal • Vulkan • C++20
+  </text>
+</svg>

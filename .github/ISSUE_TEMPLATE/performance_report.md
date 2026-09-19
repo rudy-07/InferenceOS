@@ -1,5 +1,5 @@
 ---
-name: Performance / Regression Report
+name: ⚡ Performance / Regression Report
 about: Report a throughput issue, latency spike, or benchmark discrepancy
 title: '[PERF] '
 labels: 'performance'

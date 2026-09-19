@@ -11,8 +11,9 @@ import logging
 import os
 import sqlite3
 import threading
+import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from .history import ExecutionRecord
 from .knowledge import HardwareKnowledge, ModelKnowledge, WorkloadKnowledge
@@ -120,7 +121,108 @@ class LearningDatabase:
                     last_updated REAL
                 )
             """)
+            # Phase 5: Speculative Decoding telemetry table
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS speculative_stats (
+                    run_id TEXT PRIMARY KEY,
+                    model_name TEXT,
+                    backend TEXT,
+                    mode TEXT,
+                    draft_tokens_requested INTEGER,
+                    total_tokens_generated INTEGER,
+                    total_draft_tokens INTEGER,
+                    total_accepted_tokens INTEGER,
+                    acceptance_rate REAL,
+                    speculative_rounds INTEGER,
+                    eval_tps_speculative REAL,
+                    eval_tps_baseline REAL,
+                    speedup_ratio REAL,
+                    timestamp REAL,
+                    raw_json TEXT
+                )
+            """)
             conn.commit()
+
+    def save_spec_record(self, record: Dict[str, Any]) -> None:
+        """
+        Persist a Phase 5 speculative decoding telemetry record.
+
+        Parameters
+        ----------
+        record : dict
+            Dictionary produced by ``SpecRunRecord.to_dict()``.
+        """
+        import uuid as _uuid
+        run_id = str(_uuid.uuid4())[:12]
+        with self._lock, self._get_connection() as conn:
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO speculative_stats (
+                    run_id, model_name, backend, mode,
+                    draft_tokens_requested, total_tokens_generated,
+                    total_draft_tokens, total_accepted_tokens, acceptance_rate,
+                    speculative_rounds, eval_tps_speculative, eval_tps_baseline,
+                    speedup_ratio, timestamp, raw_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    run_id,
+                    record.get("model_name", ""),
+                    record.get("backend", "cpu"),
+                    record.get("mode", "ngram"),
+                    record.get("draft_tokens_requested", 5),
+                    record.get("total_tokens_generated", 0),
+                    record.get("total_draft_tokens", 0),
+                    record.get("total_accepted_tokens", 0),
+                    record.get("acceptance_rate", 0.0),
+                    record.get("speculative_rounds", 0),
+                    record.get("eval_tps_speculative", 0.0),
+                    record.get("eval_tps_baseline", 0.0),
+                    record.get("speedup_ratio", 1.0),
+                    record.get("timestamp", time.time()),
+                    json.dumps(record),
+                ),
+            )
+            conn.commit()
+
+    def get_spec_stats(
+        self,
+        model_name: Optional[str] = None,
+        limit: int = 50,
+    ) -> List[Dict[str, Any]]:
+        """
+        Retrieve stored speculative decoding telemetry records.
+
+        Parameters
+        ----------
+        model_name : str, optional
+            Filter by model name.  None = all models.
+        limit : int
+            Maximum records to return.
+
+        Returns
+        -------
+        list of dict
+        """
+        with self._lock, self._get_connection() as conn:
+            if model_name:
+                cursor = conn.execute(
+                    """
+                    SELECT raw_json FROM speculative_stats
+                    WHERE model_name = ?
+                    ORDER BY timestamp DESC LIMIT ?
+                    """,
+                    (model_name, limit),
+                )
+            else:
+                cursor = conn.execute(
+                    """
+                    SELECT raw_json FROM speculative_stats
+                    ORDER BY timestamp DESC LIMIT ?
+                    """,
+                    (limit,),
+                )
+            return [json.loads(r["raw_json"]) for r in cursor.fetchall()]
 
     def save_execution(self, record: ExecutionRecord) -> None:
         """Save a new execution record to the database."""

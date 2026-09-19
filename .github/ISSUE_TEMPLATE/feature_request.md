@@ -1,5 +1,5 @@
 ---
-name: Feature Request
+name: ✨ Feature Request
 about: Suggest an idea or enhancement for InferenceOS
 title: '[FEAT] '
 labels: 'enhancement'

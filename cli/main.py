@@ -43,6 +43,7 @@ from cli.commands.placement_cmd import handle_placement_command
 from cli.commands.update_cmd import handle_update_command
 from cli.commands.version_cmd import handle_version_command
 from cli.commands.reset_cmd import handle_reset_command
+from cli.commands.speculative_cmd import handle_speculative_command
 
 
 COMMAND_DESCRIPTIONS = {
@@ -67,6 +68,7 @@ COMMAND_DESCRIPTIONS = {
     "update": "Check system engine binaries and build updates",
     "version": "Display InferenceOS release version banner and environment info",
     "reset": "Reset configuration, profiles, and caches back to defaults",
+    "speculative": "Inspect speculative decoding configuration, history, and run self-tests",
 }
 
 
@@ -123,6 +125,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_run.add_argument("-t", "--threads", type=int, default=None, help="Thread count")
     p_run.add_argument("--temp", type=float, default=None, help="Sampling temperature")
     p_run.add_argument("-n", "--max-tokens", type=int, default=None, help="Max tokens to generate")
+    p_run.add_argument("--speculative", action="store_true", default=False, help="Enable speculative decoding (Phase 5)")
+    p_run.add_argument("--spec-mode", type=str, default=None, help="Speculation strategy: ngram | prompt_lookup | eagle | auto")
+    p_run.add_argument("--draft-tokens", type=int, default=None, help="Draft tokens per speculation step")
+    p_run.add_argument("--draft-model", type=str, default=None, help="Path to Eagle draft GGUF model")
 
     # serve
     p_serve = subparsers.add_parser("serve", help="Launch API server")
@@ -205,6 +211,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     # reset
     subparsers.add_parser("reset", help="Reset settings to defaults")
+
+    # speculative
+    p_spec = subparsers.add_parser("speculative", help="Speculative decoding inspector")
+    p_spec.add_argument(
+        "action",
+        nargs="?",
+        default="status",
+        choices=["status", "stats", "test"],
+        help="Action to perform (default: status)",
+    )
+    p_spec.add_argument(
+        "--model", type=str, default=None,
+        help="Filter stats by model name",
+    )
+    p_spec.add_argument(
+        "--limit", type=int, default=20,
+        help="Maximum history records to display (default: 20)",
+    )
 
     return parser
 
@@ -300,6 +324,12 @@ def cli_main(argv: Optional[List[str]] = None) -> None:
         handle_version_command()
     elif cmd == "reset":
         handle_reset_command()
+    elif cmd == "speculative":
+        handle_speculative_command(
+            action=getattr(args, "action", "status"),
+            model_name=getattr(args, "model", None),
+            limit=getattr(args, "limit", 20),
+        )
     else:
         Console().print(f"[bold red]Unknown command: {cmd}[/bold red]")
         print_custom_help()

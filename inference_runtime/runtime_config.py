@@ -194,6 +194,28 @@ class RuntimeConfig:
     pie_dir: str = "~/.inferenceos/performance"
     verbose_pie: bool = False
 
+    # ── Phase 5: Speculative Decoding Suite ───────────────────────────────────
+    # All flags are opt-in (disabled by default). Enable via CLI flag
+    # (--speculative) or by setting enable_speculative_decoding=True here.
+    enable_speculative_decoding: bool = False
+    # Strategy: "ngram" | "prompt_lookup" | "eagle" | "auto"
+    #   "ngram"         — N-gram suffix match from generated context (zero VRAM)
+    #   "prompt_lookup" — Suffix match against input prompt (great for RAG/code)
+    #   "eagle"         — External draft GGUF model (requires spec_eagle_draft_model)
+    #   "auto"          — Uses eagle if a draft model is set, else falls back to ngram
+    spec_mode: str = "auto"
+    spec_draft_tokens: int = 5               # draft tokens per speculation step
+    spec_ngram_size: int = 3                 # n-gram window size (2–8)
+    spec_min_match_length: int = 3           # min suffix match length to trigger drafts
+    spec_prompt_lookup_window: int = 0       # 0 = entire prompt; >0 = token window
+    spec_acceptance_threshold: float = 0.0  # min acceptance probability (0 = greedy)
+    spec_acceptance_strategy: str = "greedy" # "greedy" | "speculative"
+    spec_eagle_draft_model: Optional[str] = None  # path to draft GGUF model
+    spec_max_rounds: int = 8                 # safety cap on speculation cycles
+    spec_fallback_to_greedy: bool = True     # fall back if no drafts generated
+    spec_record_telemetry: bool = True       # write acceptance stats to Runtime Learning DB
+    verbose_spec_decoding: bool = False
+
 
     def __post_init__(self) -> None:
         # Auto-resolve thread count from physical cores
@@ -303,6 +325,20 @@ class RuntimeConfig:
             "enable_pie": self.enable_pie,
             "pie_dir": self.pie_dir,
             "verbose_pie": self.verbose_pie,
+            # Phase 5: Speculative Decoding
+            "enable_speculative_decoding": self.enable_speculative_decoding,
+            "spec_mode": self.spec_mode,
+            "spec_draft_tokens": self.spec_draft_tokens,
+            "spec_ngram_size": self.spec_ngram_size,
+            "spec_min_match_length": self.spec_min_match_length,
+            "spec_prompt_lookup_window": self.spec_prompt_lookup_window,
+            "spec_acceptance_threshold": self.spec_acceptance_threshold,
+            "spec_acceptance_strategy": self.spec_acceptance_strategy,
+            "spec_eagle_draft_model": self.spec_eagle_draft_model,
+            "spec_max_rounds": self.spec_max_rounds,
+            "spec_fallback_to_greedy": self.spec_fallback_to_greedy,
+            "spec_record_telemetry": self.spec_record_telemetry,
+            "verbose_spec_decoding": self.verbose_spec_decoding,
         }
 
     @classmethod

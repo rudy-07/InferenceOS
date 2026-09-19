@@ -56,6 +56,11 @@ from scheduler import (
     SchedulerConfig,
     SchedulingDecision,
 )
+from speculative_decoding import (
+    SpeculativeDecoderConfig,
+    SpeculativeOrchestrator,
+)
+from speculative_decoding.telemetry import SpecDecisionSummary
 
 
 # ---------------------------------------------------------------------------
@@ -101,6 +106,8 @@ class InferenceResult:
         Automatic Performance Optimizer profile.
     performance_score : Optional[PerformanceScore]
         Performance Intelligence Engine overall runtime score.
+    spec_decision : Optional[SpecDecisionSummary]
+        Phase 5 Speculative Decoding summary (acceptance rate, speedup, mode).
     """
     generated_text: str
     stats: RuntimeStats
@@ -118,6 +125,7 @@ class InferenceResult:
     budget_decision: Optional[BudgetDecision] = None
     optimization_profile: Optional[OptimizationProfile] = None
     performance_score: Optional[PerformanceScore] = None
+    spec_decision: Optional[SpecDecisionSummary] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = {
@@ -145,6 +153,8 @@ class InferenceResult:
             d["optimization_profile"] = self.optimization_profile.to_dict()
         if self.performance_score is not None:
             d["performance_score"] = self.performance_score.to_dict()
+        if self.spec_decision is not None:
+            d["spec_decision"] = self.spec_decision.to_dict()
         return d
 
 
@@ -238,6 +248,17 @@ class InferenceSession:
         self.optimization_profile: Optional[OptimizationProfile] = None
         self.pie = PerformanceIntelligenceEngine(config=PIEConfig(storage_dir=self.config.pie_dir))
         self.performance_score: Optional[PerformanceScore] = None
+
+        # Phase 5 — Speculative Decoding Orchestrator
+        self.spec_orchestrator: Optional[SpeculativeOrchestrator] = None
+        self.spec_decision: Optional[SpecDecisionSummary] = None
+        if self.config.enable_speculative_decoding:
+            spec_cfg = SpeculativeDecoderConfig.from_runtime_config(self.config)
+            self.spec_orchestrator = SpeculativeOrchestrator(
+                config=spec_cfg,
+                llama_exe_path=self.llama_exe,
+                hw_profile=self.hw_profile,
+            )
 
         if self.config.run_preflight_check:
             self.run_preflight_check()
@@ -540,6 +561,21 @@ class InferenceSession:
             optimization_profile=optimization_profile,
         )
         self._last_result = result
+
+        # ── Phase 5: Speculative Decoding — end session & build summary ───
+        if self.spec_orchestrator is not None:
+            baseline_tps = 0.0
+            if learning_rec is not None:
+                baseline_tps = getattr(learning_rec, "expected_eval_tps", 0.0)
+            spec_decision = self.spec_orchestrator.end_session(
+                total_tokens_generated=getattr(stats, "tokens_generated", 0),
+                eval_tps=getattr(stats, "eval_tps", 0.0),
+                baseline_tps=baseline_tps,
+                model_name=self.plan.model_name,
+                backend=self.backend_info.name,
+            )
+            self.spec_decision = spec_decision
+            result.spec_decision = spec_decision
 
         # Record post-inference execution telemetry into Runtime Learning Engine
         if self.config.enable_runtime_learning:

@@ -1,5 +1,11 @@
 <div align="center">
 
+<img src="assets/banner_telemetry_hud.png" alt="InferenceOS Banner" width="100%" />
+
+<br/><br/>
+
+<img src="assets/logo_hex_transparent.png" alt="InferenceOS Logo" width="100" height="100" />
+
 # InferenceOS
 
 ### *The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference*
