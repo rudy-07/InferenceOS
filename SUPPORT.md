@@ -35,7 +35,6 @@ inferenceos hardware
 ## 💬 Community Channels
 
 - **GitHub Discussions**: For general questions, architecture discussions, and sharing optimization tips, visit our [GitHub Discussions Forum](https://github.com/rudy-07/InferenceOS/discussions).
-- **Discord Community**: Join our live developer chat on [Discord](https://discord.gg/inferenceos).
 
 ---
 

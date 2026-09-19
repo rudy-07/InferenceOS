@@ -38,7 +38,7 @@ setup/downloads/
 *.tar.gz
 
 # User sessions & local configs
-sessions/
+/sessions/
 *.log
 .env
 .DS_Store

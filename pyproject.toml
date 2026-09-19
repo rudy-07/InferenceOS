@@ -86,5 +86,6 @@ include = [
     "runtime_profiler*",
     "scheduler*",
     "server*",
-    "setup*"
+    "setup*",
+    "speculative_decoding*"
 ]
