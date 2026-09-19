@@ -247,21 +247,24 @@ class MigrationCoordinator:
 
             # Priority 1: OOM-imminent (bypasses cooldown)
             if self._hysteresis.should_migrate_down_emergency(snapshot):
-                n = self._cfg.layers_to_move_on_pressure * 2  # aggressive
-                self._execute_migration("gpu_to_cpu", n, snapshot, MigrationReason.OOM_IMMINENT)
-                return
+                if plan.n_gpu_layers > self._cfg.min_gpu_layers:
+                    n = self._cfg.layers_to_move_on_pressure * 2  # aggressive
+                    self._execute_migration("gpu_to_cpu", n, snapshot, MigrationReason.OOM_IMMINENT)
+                    return
 
             # Priority 2: Pressure → GPU-to-CPU
             if self._hysteresis.should_migrate_down(snapshot):
-                n = self._cfg.layers_to_move_on_pressure
-                self._execute_migration("gpu_to_cpu", n, snapshot, MigrationReason.PRESSURE_HIGH)
-                return
+                if plan.n_gpu_layers > self._cfg.min_gpu_layers:
+                    n = self._cfg.layers_to_move_on_pressure
+                    self._execute_migration("gpu_to_cpu", n, snapshot, MigrationReason.PRESSURE_HIGH)
+                    return
 
             # Priority 3: Relief → CPU-to-GPU restoration
             if self._hysteresis.should_migrate_up(snapshot):
-                n = self._cfg.layers_to_restore_on_relief
-                self._execute_migration("cpu_to_gpu", n, snapshot, MigrationReason.PRESSURE_RELIEF)
-                return
+                if plan.n_cpu_layers > 0:
+                    n = self._cfg.layers_to_restore_on_relief
+                    self._execute_migration("cpu_to_gpu", n, snapshot, MigrationReason.PRESSURE_RELIEF)
+                    return
 
     def _execute_migration(
         self,
@@ -278,8 +281,6 @@ class MigrationCoordinator:
         if plan_before is None:
             return
 
-        self._hysteresis.record_migration_started(direction)
-
         t_start = time.perf_counter()
         if direction == "gpu_to_cpu":
             new_plan = self._mutator.migrate_layers_to_cpu(plan_before, n_layers)
@@ -289,6 +290,12 @@ class MigrationCoordinator:
                 vram_available_bytes=snapshot.vram_free_bytes,
             )
         duration_ms = (time.perf_counter() - t_start) * 1000.0
+
+        if new_plan.n_gpu_layers == plan_before.n_gpu_layers:
+            # No layers moved in this direction (e.g. already at limit)
+            return
+
+        self._hysteresis.record_migration_started(direction)
 
         event = MigrationEvent(
             reason=reason,

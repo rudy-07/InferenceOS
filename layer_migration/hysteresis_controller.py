@@ -194,6 +194,10 @@ class HysteresisController:
             if self._is_in_cooldown():
                 return False
 
+            # Relief only applies if a downward migration previously occurred or system was under pressure
+            if self._last_migration_time == 0.0 and self._state == HysteresisState.STABLE:
+                return False
+
             return True
 
     # ---------------------------------------------------------------------------
