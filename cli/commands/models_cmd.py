@@ -13,6 +13,7 @@ from cli.core.model_registry import get_model_registry
 
 def handle_models_command(
     action: str = "list",
+    target: Optional[str] = None,
     nickname: Optional[str] = None,
     path: Optional[str] = None,
     backend: str = "auto",
@@ -70,24 +71,25 @@ def handle_models_command(
         console.print(summary_table)
 
     elif act == "add":
-        if not nickname or not path:
-            console.print("[red]Error: 'models add' requires --nickname and --path[/red]")
+        nick = nickname or target
+        if not nick or not path:
+            console.print("[red]Error: 'models add' requires --nickname (or target) and --path[/red]")
             return
-        if registry.add_model(nickname, path, backend=backend, context=context, tags=tags):
-            console.print(f"[green]✔ Model '{nickname}' registered successfully![/green]")
+        if registry.add_model(nick, path, backend=backend, context=context, tags=tags):
+            console.print(f"[green]✔ Model '{nick}' registered successfully![/green]")
 
     elif act in ("remove", "delete", "rm"):
-        target = nickname or query
-        if not target:
-            console.print("[red]Error: Specify model nickname or path to remove[/red]")
+        rem_target = target or nickname or query
+        if not rem_target:
+            console.print("[red]Error: Specify model nickname or path to remove (e.g. 'models rm <nickname>')[/red]")
             return
-        if registry.remove_model(target):
-            console.print(f"[green]✔ Model '{target}' removed from registry.[/green]")
+        if registry.remove_model(rem_target):
+            console.print(f"[green]✔ Model '{rem_target}' removed from registry.[/green]")
         else:
-            console.print(f"[red]Model '{target}' not found in registry.[/red]")
+            console.print(f"[red]Model '{rem_target}' not found in registry.[/red]")
 
     elif act in ("search", "find"):
-        q = query or nickname or ""
+        q = target or query or nickname or ""
         results = registry.search_models(q)
         console.print(f"[bold cyan]Found {len(results)} model(s) matching '{q}':[/bold cyan]")
         for m in results:

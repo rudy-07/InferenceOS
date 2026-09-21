@@ -20,12 +20,13 @@ from typing import Any, Dict, List, Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich import box
 
 from cli.core.config_manager import get_config_manager
 from cli.core.model_registry import get_model_registry
 import profiler
 from layer_placement import ModelDescriptor, PlacementEngine
-from orchestrator.gguf_parser import read_gguf_metadata
+from orchestrator.model_parser import read_model_metadata, detect_model_format
 
 
 def handle_optimize_command(model_query: str) -> None:
@@ -47,38 +48,39 @@ def handle_optimize_command(model_query: str) -> None:
     hw_profile = sys_res.to_dict() if hasattr(sys_res, "to_dict") else sys_res
     cpu_cores = hw_profile.get("cpu", {}).get("logical_cores", 4)
     gpus = hw_profile.get("gpus", [])
-    gpu_name = gpus[0].get("name") if gpus else "None"
+    gpu_name = (gpus[0].get("model") or gpus[0].get("name")) if gpus else "None"
     console.print(f"  ✓ Detected: CPU ({cpu_cores} threads), GPU ({gpu_name})")
 
     # Step 2: Predict Memory
     console.print("\n[bold yellow][Step 2/5] Predicting Memory Footprint...[/bold yellow]")
+    fmt = detect_model_format(model_path)
     try:
-        gguf_meta = read_gguf_metadata(model_path)
+        model_meta = read_model_metadata(model_path)
     except Exception:
-        gguf_meta = {"arch": "llama", "num_layers": 32, "max_context_length": 4096}
+        model_meta = {"arch": "unknown", "num_layers": 1, "max_context_length": 2048}
 
     model_desc = ModelDescriptor.from_gguf_metadata(
-        metadata=gguf_meta,
+        metadata=model_meta,
         model_size_bytes=model_path.stat().st_size,
         model_name=model_path.stem,
     )
-    console.print(f"  ✓ Layers: {model_desc.num_layers} | Model Size: {model_desc.model_size_bytes / (1024**3):.2f} GB")
+    console.print(f"  ✓ Format: {fmt.value.upper()} | Layers: {model_desc.num_layers} | Model Size: {model_desc.model_size_bytes / (1024**3):.2f} GB")
 
     # Step 3: Generate Placement Candidates
     console.print("\n[bold yellow][Step 3/5] Generating Layer Placement Candidates...[/bold yellow]")
     placement_engine = PlacementEngine(hw_profile=hw_profile)
-    tot_layers = model_desc.num_layers
+    tot_layers = max(1, model_desc.num_layers)
     candidates = [
         {"name": "Full GPU Offload", "n_gpu": tot_layers},
-        {"name": "Hybrid Offload (75%)", "n_gpu": int(tot_layers * 0.75)},
-        {"name": "Hybrid Offload (50%)", "n_gpu": int(tot_layers * 0.50)},
+        {"name": "Hybrid Offload (75%)", "n_gpu": max(1, int(tot_layers * 0.75))},
+        {"name": "Hybrid Offload (50%)", "n_gpu": max(1, int(tot_layers * 0.50))},
         {"name": "CPU Only", "n_gpu": 0},
     ]
     console.print(f"  ✓ Generated {len(candidates)} placement candidates")
 
     # Step 4: Benchmark Candidates
     console.print("\n[bold yellow][Step 4/5] Evaluating Candidates...[/bold yellow]")
-    table = Table(box=None)
+    table = Table(box=box.ROUNDED)
     table.add_column("Candidate", style="cyan")
     table.add_column("GPU Layers", justify="right")
     table.add_column("CPU Layers", justify="right")

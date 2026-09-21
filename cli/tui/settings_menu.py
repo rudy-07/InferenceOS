@@ -85,30 +85,37 @@ class InteractiveSettingsMenu:
     def run_interactive(self) -> None:
         """Interactive loop allowing category selection and value updates."""
         while True:
-            self.display()
-            self.console.print("\n[bold cyan]Select Category by Name/Number (or 'q' to exit edit mode):[/bold cyan] ", end="")
-            choice = input().strip()
+            try:
+                self.display()
+                self.console.print("\n[bold cyan]Select Category by Name/Number (or 'q' to exit edit mode):[/bold cyan] ", end="")
+                choice = input().strip()
 
-            if choice.lower() in ("q", "quit", "exit"):
-                break
+                if choice.lower() in ("q", "quit", "exit"):
+                    break
 
-            # Process selection
-            matched_cat = None
-            if choice.isdigit():
-                idx = int(choice) - 1
-                if 0 <= idx < len(CATEGORIES):
-                    matched_cat = CATEGORIES[idx]
-            else:
-                for c in CATEGORIES:
-                    if choice.lower() in c[0].lower():
-                        matched_cat = c
+                # Process selection
+                matched_cat = None
+                if choice.isdigit():
+                    idx = int(choice) - 1
+                    if 0 <= idx < len(CATEGORIES):
+                        matched_cat = CATEGORIES[idx]
+                else:
+                    for c in CATEGORIES:
+                        if choice.lower() in c[0].lower():
+                            matched_cat = c
+                            break
+
+                if matched_cat:
+                    self._edit_category(matched_cat)
+                else:
+                    self.console.print("[red]Invalid selection. Press Enter to retry...[/red]")
+                    try:
+                        input()
+                    except (KeyboardInterrupt, EOFError):
                         break
-
-            if matched_cat:
-                self._edit_category(matched_cat)
-            else:
-                self.console.print("[red]Invalid selection. Press Enter to retry...[/red]")
-                input()
+            except (KeyboardInterrupt, EOFError):
+                self.console.print("\n[yellow]Exited settings menu.[/yellow]")
+                break
 
     def _edit_category(self, category: tuple[str, str]) -> None:
         label, key_path = category
@@ -117,41 +124,44 @@ class InteractiveSettingsMenu:
 
         curr_val = self.config_mgr.get(key_path) if "." in key_path else self.config_mgr.to_dict().get(key_path, {})
 
-        if isinstance(curr_val, dict):
-            table = Table(box=None)
-            table.add_column("Setting Key", style="cyan")
-            table.add_column("Current Value", style="bold green")
-            for k, v in curr_val.items():
-                table.add_row(k, str(v))
-            self.console.print(table)
+        try:
+            if isinstance(curr_val, dict):
+                table = Table(box=None)
+                table.add_column("Setting Key", style="cyan")
+                table.add_column("Current Value", style="bold green")
+                for k, v in curr_val.items():
+                    table.add_row(k, str(v))
+                self.console.print(table)
 
-            self.console.print("\n[bold yellow]Enter setting key to edit (or press Enter to return):[/bold yellow] ", end="")
-            sub_key = input().strip()
-            if sub_key and sub_key in curr_val:
-                self.console.print(f"New value for {sub_key}: ", end="")
+                self.console.print("\n[bold yellow]Enter setting key to edit (or press Enter to return):[/bold yellow] ", end="")
+                sub_key = input().strip()
+                if sub_key and sub_key in curr_val:
+                    self.console.print(f"New value for {sub_key}: ", end="")
+                    new_val_str = input().strip()
+                    # Type conversion heuristic
+                    parsed_val: Any = new_val_str
+                    if new_val_str.lower() == "true":
+                        parsed_val = True
+                    elif new_val_str.lower() == "false":
+                        parsed_val = False
+                    elif new_val_str.isdigit():
+                        parsed_val = int(new_val_str)
+                    else:
+                        try:
+                            parsed_val = float(new_val_str)
+                        except ValueError:
+                            pass
+
+                    self.config_mgr.set(f"{key_path}.{sub_key}", parsed_val)
+                    self.console.print(f"[green]Updated {key_path}.{sub_key} = {parsed_val}[/green]")
+                    input("Press Enter to continue...")
+            else:
+                self.console.print(f"Current Value: {curr_val}")
+                self.console.print("New Value: ", end="")
                 new_val_str = input().strip()
-                # Type conversion heuristic
-                parsed_val: Any = new_val_str
-                if new_val_str.lower() == "true":
-                    parsed_val = True
-                elif new_val_str.lower() == "false":
-                    parsed_val = False
-                elif new_val_str.isdigit():
-                    parsed_val = int(new_val_str)
-                else:
-                    try:
-                        parsed_val = float(new_val_str)
-                    except ValueError:
-                        pass
-
-                self.config_mgr.set(f"{key_path}.{sub_key}", parsed_val)
-                self.console.print(f"[green]Updated {key_path}.{sub_key} = {parsed_val}[/green]")
-                input("Press Enter to continue...")
-        else:
-            self.console.print(f"Current Value: {curr_val}")
-            self.console.print("New Value: ", end="")
-            new_val_str = input().strip()
-            if new_val_str:
-                self.config_mgr.set(key_path, new_val_str)
-                self.console.print(f"[green]Updated {key_path} = {new_val_str}[/green]")
-                input("Press Enter to continue...")
+                if new_val_str:
+                    self.config_mgr.set(key_path, new_val_str)
+                    self.console.print(f"[green]Updated {key_path} = {new_val_str}[/green]")
+                    input("Press Enter to continue...")
+        except (KeyboardInterrupt, EOFError):
+            return

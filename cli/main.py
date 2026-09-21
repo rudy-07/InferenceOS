@@ -44,6 +44,12 @@ from cli.commands.update_cmd import handle_update_command
 from cli.commands.version_cmd import handle_version_command
 from cli.commands.reset_cmd import handle_reset_command
 from cli.commands.speculative_cmd import handle_speculative_command
+from cli.budget_cli import handle_budget_cli
+from cli.health_cli import handle_health_cli
+from cli.kv_cli import handle_kv_cli
+from cli.knowledge_cli import handle_knowledge_cli
+from cli.learning_cli import handle_learning_cli
+from cli.performance_cli import handle_performance_cli
 
 
 COMMAND_DESCRIPTIONS = {
@@ -69,6 +75,12 @@ COMMAND_DESCRIPTIONS = {
     "version": "Display InferenceOS release version banner and environment info",
     "reset": "Reset configuration, profiles, and caches back to defaults",
     "speculative": "Inspect speculative decoding configuration, history, and run self-tests",
+    "budget": "Inspect and manage dynamic VRAM/RAM memory budget allocations",
+    "health": "Monitor real-time system health, thermals, and memory pressure",
+    "kv": "Inspect and manage intelligent KV cache quantization & eviction",
+    "knowledge": "Query or export Runtime Knowledge Base (RKB) execution history",
+    "learning": "Inspect learned runtime profiles and system adaptation rules",
+    "performance": "Analyze performance trends, score, and latency regressions",
 }
 
 
@@ -78,7 +90,7 @@ def print_custom_help() -> None:
     console.print("\n[bold cyan]⚡ InferenceOS ── The Operating System for Local AI Inference[/bold cyan]\n")
 
     table = Table(box=None, expand=True)
-    table.add_column("Command", style="bold green", width=16)
+    table.add_column("Command", style="bold green", width=26, no_wrap=True)
     table.add_column("Description", style="white")
 
     for cmd, desc in COMMAND_DESCRIPTIONS.items():
@@ -167,6 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
     # models
     p_models = subparsers.add_parser("models", help="Model registry manager")
     p_models.add_argument("action", nargs="?", default="list", choices=["list", "discover", "add", "remove", "rm", "search", "find"], help="Action to perform")
+    p_models.add_argument("target", nargs="?", default=None, help="Model nickname, query, or path")
     p_models.add_argument("--nickname", type=str, default=None, help="Model nickname")
     p_models.add_argument("--path", type=str, default=None, help="Path to model file")
     p_models.add_argument("--backend", type=str, default="auto", help="Default backend")
@@ -230,10 +243,34 @@ def build_parser() -> argparse.ArgumentParser:
         help="Maximum history records to display (default: 20)",
     )
 
+    # budget
+    p_budget = subparsers.add_parser("budget", help="Adaptive Memory Budget Manager")
+    p_budget.add_argument("args", nargs="*", help="Subcommand and options for budget manager (show, history)")
+
+    # health
+    p_health = subparsers.add_parser("health", help="Runtime Health Monitor")
+    p_health.add_argument("args", nargs="*", help="Subcommand and options for health monitor (show, monitor)")
+
+    # kv
+    p_kv = subparsers.add_parser("kv", help="Intelligent KV Cache Manager")
+    p_kv.add_argument("args", nargs="*", help="Subcommand and options for KV manager (show, stats, policies, reset)")
+
+    # knowledge
+    p_know = subparsers.add_parser("knowledge", help="Runtime Knowledge Base")
+    p_know.add_argument("args", nargs="*", help="Subcommand and options for knowledge base (show, hardware, models, performance, history, recommend, export, import, reset)")
+
+    # learning
+    p_learn = subparsers.add_parser("learning", help="Runtime Learning Engine")
+    p_learn.add_argument("args", nargs="*", help="Subcommand and options for learning engine (show, stats, reset, export, import)")
+
+    # performance
+    p_perf = subparsers.add_parser("performance", help="Performance Intelligence Engine")
+    p_perf.add_argument("args", nargs="*", help="Subcommand and options for performance intelligence (show, history, trends, regressions, score, analyze)")
+
     return parser
 
 
-def cli_main(argv: Optional[List[str]] = None) -> None:
+def cli_main(argv: Optional[List[str]] = None) -> int:
     """Main CLI entry point dispatcher."""
     if sys.platform == "win32":
         if hasattr(sys.stdout, "reconfigure"):
@@ -252,11 +289,11 @@ def cli_main(argv: Optional[List[str]] = None) -> None:
 
     if args.version:
         handle_version_command()
-        return
+        return 0
 
     if args.help or not args.command:
         print_custom_help()
-        return
+        return 0
 
     cmd = args.command.lower()
 
@@ -270,6 +307,10 @@ def cli_main(argv: Optional[List[str]] = None) -> None:
             threads=args.threads,
             temp=args.temp,
             max_tokens=args.max_tokens,
+            speculative=getattr(args, "speculative", False),
+            spec_mode=getattr(args, "spec_mode", None),
+            draft_tokens=getattr(args, "draft_tokens", None),
+            draft_model=getattr(args, "draft_model", None),
         )
     elif cmd == "serve":
         handle_serve_command(
@@ -296,6 +337,7 @@ def cli_main(argv: Optional[List[str]] = None) -> None:
     elif cmd == "models":
         handle_models_command(
             action=args.action,
+            target=getattr(args, "target", None),
             nickname=args.nickname,
             path=args.path,
             backend=args.backend,
@@ -330,10 +372,27 @@ def cli_main(argv: Optional[List[str]] = None) -> None:
             model_name=getattr(args, "model", None),
             limit=getattr(args, "limit", 20),
         )
+    elif cmd == "budget":
+        handle_budget_cli(getattr(args, "args", None))
+    elif cmd == "health":
+        handle_health_cli(getattr(args, "args", None))
+    elif cmd == "kv":
+        handle_kv_cli(getattr(args, "args", None))
+    elif cmd == "knowledge":
+        handle_knowledge_cli(getattr(args, "args", None))
+    elif cmd == "learning":
+        handle_learning_cli(getattr(args, "args", None))
+    elif cmd == "performance":
+        handle_performance_cli(getattr(args, "args", None))
     else:
         Console().print(f"[bold red]Unknown command: {cmd}[/bold red]")
         print_custom_help()
+        return 1
 
+    return 0
+
+
+main = cli_main
 
 if __name__ == "__main__":
     cli_main()

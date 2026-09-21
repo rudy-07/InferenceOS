@@ -5,7 +5,7 @@ Command handler for 'inferenceos config [key] [val] --interactive'.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 from rich.console import Console
 from cli.core.config_manager import get_config_manager
 from cli.tui.settings_menu import InteractiveSettingsMenu
@@ -29,12 +29,21 @@ def handle_config_command(
     if key and value is not None:
         # Heuristic value conversion
         val: Any = value
-        if value.lower() == "true":
+        lowered = value.strip().lower()
+        if lowered == "true":
             val = True
-        elif value.lower() == "false":
+        elif lowered == "false":
             val = False
-        elif value.isdigit():
-            val = int(value)
+        elif lowered in ("none", "null"):
+            val = None
+        else:
+            try:
+                val = int(value)
+            except ValueError:
+                try:
+                    val = float(value)
+                except ValueError:
+                    val = value
 
         config_mgr.set(key, val)
         console.print(f"[green]✔ Config updated: {key} = {val}[/green]")

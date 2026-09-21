@@ -67,13 +67,23 @@ def handle_doctor_command() -> None:
     else:
         table.add_row("CUDA Acceleration", "[yellow]ℹ INFO[/yellow]", "CUDA_PATH not set (using Vulkan/CPU fallback)")
 
-    # Check 6: GGUF Models Directory
-    models_dir = Path.cwd() / "models"
-    ggufs = list(models_dir.glob("*.gguf")) if models_dir.exists() else []
-    if ggufs:
-        table.add_row("GGUF Model Library", "[green]✓ PASS[/green]", f"Found {len(ggufs)} model(s) in models/")
+    # Check 6: Model Library
+    from cli.core.model_registry import get_model_registry
+    try:
+        registry = get_model_registry()
+        reg_models = registry.list_models()
+    except Exception:
+        reg_models = []
+
+    project_root = Path(__file__).parent.parent.parent.resolve()
+    models_dir = project_root / "models"
+    local_models = list(models_dir.glob("*.*")) if models_dir.exists() else []
+    total_count = max(len(reg_models), len(local_models))
+
+    if total_count > 0:
+        table.add_row("Model Library", "[green]✓ PASS[/green]", f"Found {total_count} model(s) ({len(reg_models)} registered)")
     else:
-        table.add_row("GGUF Model Library", "[yellow]⚠ WARN[/yellow]", "No .gguf models found in models/ directory")
+        table.add_row("Model Library", "[yellow]⚠ WARN[/yellow]", "No models found or registered yet")
 
     console.print(table)
     console.print("\n[bold green]Doctor checks complete! System is ready for local AI inference.[/bold green]")

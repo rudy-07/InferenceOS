@@ -28,13 +28,13 @@ def print_server_banner(config: ServerConfig) -> None:
 
     hw_lines = []
     for g in gpus:
-        name = g.get("name", "GPU")
+        name = g.get("model") or g.get("name") or "Discrete GPU"
         hw_lines.append(name)
     for ig in igpus:
-        name = ig.get("name", "iGPU")
+        name = ig.get("model") or ig.get("name") or "Integrated GPU"
         hw_lines.append(name)
     
-    cpu_name = cpu_info.get("brand_raw") or cpu_info.get("name") or "CPU Processor"
+    cpu_name = cpu_info.get("brand") or cpu_info.get("brand_raw") or cpu_info.get("name") or "CPU Processor"
     hw_lines.append(cpu_name)
     
     backend_name = config.backend or "AUTO (Vulkan / CUDA)"

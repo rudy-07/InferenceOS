@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InferenceOS Phase 9 — Flame Graph (Qwen3-0.6B-Q8_0)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 24px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: #38bdf8;
+        }
+        .meta-pills {
+            display: flex;
+            gap: 12px;
+        }
+        .pill {
+            background: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 16px;
+            padding: 4px 12px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+        #flamegraph-container {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+            overflow-x: auto;
+        }
+        .flame-row {
+            display: flex;
+            height: 28px;
+            margin-bottom: 2px;
+            gap: 2px;
+        }
+        .flame-box {
+            height: 100%;
+            border-radius: 3px;
+            box-sizing: border-box;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #ffffff;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+        .flame-box:hover {
+            opacity: 0.85;
+            transform: scaleY(1.05);
+        }
+        .tooltip {
+            position: fixed;
+            background: #090d16;
+            border: 1px solid #38bdf8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+        }
+        .legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🔥 InferenceOS Flame Graph</h1>
+            <div style="font-size:13px; color:#94a3b8; margin-top:4px;">
+                Model: <b>Qwen3-0.6B-Q8_0</b> &bull; Backend: <b>CPU</b>
+            </div>
+        </div>
+        <div class="meta-pills">
+            <div class="pill">Wall Time: <b>6492.1 ms</b></div>
+            <div class="pill">Gen TPS: <b>30.2 tok/s</b></div>
+            <div class="pill">GPU Idle: <b>98%</b></div>
+        </div>
+    </div>
+
+    <div id="flamegraph-container">
+        <!-- Rendered by JS below -->
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background:#10b981"></div> GPU Compute</div>
+        <div class="legend-item"><div class="legend-color" style="background:#6366f1"></div> CPU Compute</div>
+        <div class="legend-item"><div class="legend-color" style="background:#f59e0b"></div> PCIe Transfer</div>
+        <div class="legend-item"><div class="legend-color" style="background:#8b5cf6"></div> KV Cache</div>
+        <div class="legend-item"><div class="legend-color" style="background:#ec4899"></div> Sampling</div>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script>
+        const treeData = {
+  "name": "InferenceSession (Qwen3-0.6B-Q8_0)",
+  "value": 6492.054,
+  "category": "root",
+  "children": [
+    {
+      "name": "Stage: Prepare (Prompt Prefill)",
+      "value": 63.11,
+      "category": "cpu",
+      "children": [
+        {
+          "name": "Tokenize & Prefix Scan",
+          "value": 18.933,
+          "category": "cpu",
+          "children": []
+        },
+        {
+          "name": "Prompt Layer Execution",
+          "value": 44.177,
+          "category": "gpu",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Stage: Transfer (PCIe DMA Prefetch)",
+      "value": 0.397,
+      "category": "pcie",
+      "children": [
+        {
+          "name": "Boundary Buffer Copy",
+          "value": 0.318,
+          "category": "pcie",
+          "children": []
+        },
+        {
+          "name": "CUDA Stream Sync",
+          "value": 0.079,
+          "category": "pcie",
+          "children": []
+        }
+      ]
+    },
+    {
+      "name": "Stage: Compute (Autoregressive Generation)",
+      "value": 4199.61,
+      "category": "stage",
+      "children": [
+        {
+          "name": "dGPU Block (22 layers)",
+          "value": 1231.886,
+          "category": "gpu",
+          "children": [
+            {
+              "name": "Tensor Core GEMM (Q4/Q8)",
+              "value": 800.726,
+              "category": "gpu",
+              "children": []
+            },
+            {
+              "name": "FlashAttention-2 Kernel",
+              "value": 431.16,
+              "category": "gpu",
+              "children": []
+            }
+          ]
+        },
+        {
+          "name": "CPU Block (8 layers)",
+          "value": 1679.844,
+          "category": "cpu",
+          "children": [
+            {
+              "name": "AVX-512 / AMX Matrix Engine",
+              "value": 1175.891,
+              "category": "cpu",
+              "children": []
+            },
+            {
+              "name": "KV Cache Allocation",
+              "value": 503.953,
+              "category": "kv",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Stage: Sampling & Post-Process",
+      "value": 324.603,
+      "category": "sample",
+      "children": [
+        {
+          "name": "Top-P / Temperature Filter",
+          "value": 194.762,
+          "category": "sample",
+          "children": []
+        },
+        {
+          "name": "Tokenizer Decode",
+          "value": 129.841,
+          "category": "sample",
+          "children": []
+        }
+      ]
+    }
+  ]
+};
+        const colors = {
+  "root": "#1f2937",
+  "stage": "#3b82f6",
+  "gpu": "#10b981",
+  "cpu": "#6366f1",
+  "pcie": "#f59e0b",
+  "kv": "#8b5cf6",
+  "sample": "#ec4899"
+};
+        const container = document.getElementById('flamegraph-container');
+        const tooltip = document.getElementById('tooltip');
+
+        // Flatten tree into levels (rows)
+        const levels = [];
+
+        function traverse(node, depth, leftPct, widthPct) {
+            if (!levels[depth]) levels[depth] = [];
+            levels[depth].push({
+                name: node.name,
+                value: node.value,
+                category: node.category,
+                leftPct: leftPct,
+                widthPct: widthPct
+            });
+
+            if (node.children && node.children.length > 0) {
+                let currentLeft = leftPct;
+                const totalChildVal = node.children.reduce((acc, c) => acc + c.value, 0);
+                node.children.forEach(child => {
+                    const childWidth = totalChildVal > 0 ? (child.value / totalChildVal) * widthPct : 0;
+                    traverse(child, depth + 1, currentLeft, childWidth);
+                    currentLeft += childWidth;
+                });
+            }
+        }
+
+        traverse(treeData, 0, 0, 100);
+
+        // Render rows top-down
+        levels.forEach((row, depth) => {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'flame-row';
+
+            row.forEach(box => {
+                if (box.widthPct <= 0.05) return; // skip tiny boxes
+                const boxDiv = document.createElement('div');
+                boxDiv.className = 'flame-box';
+                boxDiv.style.width = box.widthPct + '%';
+                boxDiv.style.backgroundColor = colors[box.category] || '#475569';
+                boxDiv.innerText = `${box.name} (${box.value.toFixed(1)} ms)`;
+
+                boxDiv.addEventListener('mouseenter', (e) => {
+                    tooltip.style.display = 'block';
+                    tooltip.innerHTML = `<b>${box.name}</b><br/>Duration: ${box.value.toFixed(2)} ms (${box.widthPct.toFixed(1)}% of parent)`;
+                });
+
+                boxDiv.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = (e.clientX + 12) + 'px';
+                    tooltip.style.top = (e.clientY + 12) + 'px';
+                });
+
+                boxDiv.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                rowDiv.appendChild(boxDiv);
+            });
+
+            container.appendChild(rowDiv);
+        });
+    </script>
+</body>
+</html>

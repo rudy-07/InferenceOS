@@ -14,7 +14,7 @@ from rich.table import Table
 from cli.core.model_registry import get_model_registry
 import profiler
 from layer_placement import ModelDescriptor, PlacementEngine
-from orchestrator.gguf_parser import read_gguf_metadata
+from orchestrator.model_parser import read_model_metadata, detect_model_format
 
 
 def handle_placement_command(model_query: str) -> None:
@@ -27,18 +27,19 @@ def handle_placement_command(model_query: str) -> None:
         console.print(f"[bold red]Error: Could not resolve model '{model_query}'[/bold red]")
         sys.exit(1)
 
-    console.print(f"[cyan]Computing placement plan for [bold]{model_path.name}[/bold]...[/cyan]")
+    fmt = detect_model_format(model_path)
+    console.print(f"[cyan]Computing placement plan for [bold yellow]{fmt.value.upper()}[/bold yellow] model [bold]{model_path.name}[/bold]...[/cyan]")
 
     sys_res = profiler.get_system_resources()
     hw_profile = sys_res.to_dict() if hasattr(sys_res, "to_dict") else sys_res
 
     try:
-        gguf_meta = read_gguf_metadata(model_path)
+        model_meta = read_model_metadata(model_path)
     except Exception:
-        gguf_meta = {"arch": "llama", "num_layers": 32, "max_context_length": 4096}
+        model_meta = {"arch": "unknown", "num_layers": 1, "max_context_length": 2048}
 
     model_desc = ModelDescriptor.from_gguf_metadata(
-        metadata=gguf_meta,
+        metadata=model_meta,
         model_size_bytes=model_path.stat().st_size,
         model_name=model_path.stem,
     )

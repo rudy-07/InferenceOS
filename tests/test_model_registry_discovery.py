@@ -18,6 +18,8 @@ def test_supported_extensions():
     assert ".pt" in SUPPORTED_EXTENSIONS
     assert ".obx" in SUPPORTED_EXTENSIONS
     assert ".pkl" in SUPPORTED_EXTENSIONS
+    assert ".h5" in SUPPORTED_EXTENSIONS
+    assert ".keras" in SUPPORTED_EXTENSIONS
 
 
 def test_registry_discovery_test_formats():

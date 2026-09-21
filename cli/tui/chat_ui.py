@@ -82,9 +82,12 @@ class ChatInterface:
             self.model_path = self.model_registry.resolve_model_path(model_query)
 
         if not self.model_path:
-            # Auto discover from models registry
+            # Auto discover from models registry, prioritizing GGUF for native chat engine
             models = self.model_registry.list_models()
-            if models:
+            ggufs = [m for m in models if str(m.get("format", "")).lower() == "gguf" and Path(m.get("location", "")).exists()]
+            if ggufs:
+                self.model_path = Path(ggufs[0]["location"])
+            elif models:
                 self.model_path = Path(models[0]["location"])
 
     def _initialize_engine(self) -> bool:

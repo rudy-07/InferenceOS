@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from cli.core.model_registry import get_model_registry
-from orchestrator.model_parser import read_model_metadata, detect_model_format
+from orchestrator.model_parser import read_model_metadata, detect_model_format, ModelFormat
 
 
 def handle_inspect_command(model_query: str) -> None:
@@ -33,6 +33,8 @@ def handle_inspect_command(model_query: str) -> None:
         sys.exit(1)
 
     fmt = detect_model_format(model_path)
+    if fmt == ModelFormat.UNKNOWN or fmt.value == "unknown":
+        console.print(f"[yellow]Notice: '{model_path.name}' does not match standard model signatures (Format: UNKNOWN).[/yellow]")
     console.print(f"[cyan]Inspecting [bold yellow]{fmt.value.upper()}[/bold yellow] file: [bold]{model_path}[/bold]...[/cyan]")
 
     try:
@@ -59,7 +61,7 @@ def handle_inspect_command(model_query: str) -> None:
     params_str = f"{total_params:,}" if total_params > 0 else "N/A"
 
     table = Table(title=f"Model Architecture Overview -- {model_path.name}", box=None, expand=True)
-    table.add_column("Property", style="bold cyan", width=24)
+    table.add_column("Property", style="bold cyan", width=28, no_wrap=True)
     table.add_column("Value", style="bold green")
 
     table.add_row("Format", fmt.value.upper())

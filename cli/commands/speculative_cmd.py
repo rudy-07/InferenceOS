@@ -69,8 +69,8 @@ def _show_status() -> None:
 
         console.print("\n[bold cyan]⚡ InferenceOS — Speculative Decoding Configuration[/bold cyan]\n")
 
-        table = Table(box=box.ROUNDED, show_header=True, header_style="bold cyan")
-        table.add_column("Setting", style="bold green", width=36)
+        table = Table(box=None, show_header=True, header_style="bold cyan", expand=True)
+        table.add_column("Setting", style="bold green", width=32)
         table.add_column("Value", style="white")
 
         enabled_str = "[green]✓ Enabled[/green]" if cfg.enable_speculative_decoding else "[dim]Disabled[/dim]"

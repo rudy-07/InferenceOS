@@ -1,0 +1,1235 @@
+{
+  "timestamp": "2026-09-21T22:51:51.940276",
+  "model": {
+    "name": "Qwen3-0.6B-Q8_0.gguf",
+    "path": "D:\\Projects\\mySphere projects\\InferenceOS\\models\\Qwen3-0.6B-Q8_0.gguf",
+    "size_bytes": 639446688,
+    "architecture": "qwen3",
+    "num_layers": 28,
+    "quantization": "Q5_K_M"
+  },
+  "hardware": {
+    "schema_version": "1.0",
+    "timestamp": "2026-09-21T17:21:44.935551Z",
+    "os": {
+      "system": "Windows",
+      "release": "10",
+      "version": "10.0.19045",
+      "machine": "AMD64",
+      "python_version": "3.10.6"
+    },
+    "cpu": {
+      "capacity": 12.0,
+      "available": 9.91,
+      "bandwidth": 0.0,
+      "latency": 0.0,
+      "utilization": 17.4,
+      "brand": "AMD Ryzen 5 4600H with Radeon Graphics",
+      "architecture": "X86_64",
+      "physical_cores": 6,
+      "logical_cores": 12,
+      "base_freq_mhz": 2994.0,
+      "cache_l1_kb": 0.0,
+      "cache_l2_kb": 3072.0,
+      "cache_l3_mb": 8.0,
+      "isa_extensions": [
+        "avx",
+        "avx2",
+        "f16c",
+        "fma",
+        "sse2",
+        "sse4_1",
+        "sse4_2",
+        "ssse3"
+      ],
+      "numa_nodes": 1,
+      "numa_topology": [
+        {
+          "node_id": 0
+        }
+      ]
+    },
+    "cpus": [
+      {
+        "capacity": 12.0,
+        "available": 9.91,
+        "bandwidth": 0.0,
+        "latency": 0.0,
+        "utilization": 17.4,
+        "brand": "AMD Ryzen 5 4600H with Radeon Graphics",
+        "architecture": "X86_64",
+        "physical_cores": 6,
+        "logical_cores": 12,
+        "base_freq_mhz": 2994.0,
+        "cache_l1_kb": 0.0,
+        "cache_l2_kb": 3072.0,
+        "cache_l3_mb": 8.0,
+        "isa_extensions": [
+          "avx",
+          "avx2",
+          "f16c",
+          "fma",
+          "sse2",
+          "sse4_1",
+          "sse4_2",
+          "ssse3"
+        ],
+        "numa_nodes": 1,
+        "numa_topology": [
+          {
+            "node_id": 0
+          }
+        ]
+      }
+    ],
+    "ram": {
+      "capacity": 16501968896.0,
+      "available": 7233728512.0,
+      "bandwidth": 25.0,
+      "latency": 0.07,
+      "utilization": 56.2,
+      "total_bytes": 16501968896,
+      "free_bytes": 7233728512,
+      "available_bytes": 7233728512,
+      "total_gb": 15.37,
+      "free_gb": 6.74,
+      "available_gb": 6.74,
+      "used_gb": 8.63,
+      "swap_total_gb": 6.78,
+      "swap_used_gb": 0.11
+    },
+    "memory": {
+      "capacity": 16501968896.0,
+      "available": 7233728512.0,
+      "bandwidth": 25.0,
+      "latency": 0.07,
+      "utilization": 56.2,
+      "total_bytes": 16501968896,
+      "free_bytes": 7233728512,
+      "available_bytes": 7233728512,
+      "total_gb": 15.37,
+      "free_gb": 6.74,
+      "available_gb": 6.74,
+      "used_gb": 8.63,
+      "swap_total_gb": 6.78,
+      "swap_used_gb": 0.11
+    },
+    "gpus": [
+      {
+        "capacity": 6442450944.0,
+        "available": 6442450944.0,
+        "bandwidth": 16.0,
+        "latency": 5.0,
+        "utilization": 0.0,
+        "global_index": 1,
+        "vendor": "amd",
+        "model": "AMD Radeon(TM) RX 5600M Series",
+        "uuid": "",
+        "is_integrated": false,
+        "vram_total_bytes": 6442450944,
+        "vram_available_bytes": 6442450944,
+        "vram_total_mb": 6144,
+        "vram_free_mb": 6144,
+        "vram_used_mb": 0,
+        "shared_memory_bytes": 0,
+        "compute_capability": "vulkan",
+        "backend_hint": "vulkan",
+        "pcie_gen": null,
+        "pcie_lanes": null,
+        "driver_version": "26.6.4 (AMD proprietary shader compiler)"
+      },
+      {
+        "capacity": 6442450944.0,
+        "available": 6442450944.0,
+        "bandwidth": 16.0,
+        "latency": 5.0,
+        "utilization": 0.0,
+        "global_index": 2,
+        "vendor": "amd",
+        "model": "AMD Radeon(TM) RX 5600M Series",
+        "uuid": "",
+        "is_integrated": false,
+        "vram_total_bytes": 6442450944,
+        "vram_available_bytes": 6442450944,
+        "vram_total_mb": 6144,
+        "vram_free_mb": 6144,
+        "vram_used_mb": 0,
+        "shared_memory_bytes": 0,
+        "compute_capability": "vulkan",
+        "backend_hint": "vulkan",
+        "pcie_gen": null,
+        "pcie_lanes": null,
+        "driver_version": "26.6.4 (AMD proprietary shader compiler)"
+      }
+    ],
+    "igpus": [
+      {
+        "capacity": 536870912.0,
+        "available": 536870912.0,
+        "bandwidth": 0.0,
+        "latency": 5.0,
+        "utilization": 0.0,
+        "global_index": 0,
+        "vendor": "amd",
+        "model": "AMD Radeon(TM) Graphics",
+        "uuid": "",
+        "is_integrated": true,
+        "vram_total_bytes": 536870912,
+        "vram_available_bytes": 536870912,
+        "vram_total_mb": 512,
+        "vram_free_mb": 512,
+        "vram_used_mb": 0,
+        "shared_memory_bytes": 536870912,
+        "compute_capability": "vulkan",
+        "backend_hint": "vulkan",
+        "pcie_gen": null,
+        "pcie_lanes": null,
+        "driver_version": "23.10.24 (AMD proprietary shader compiler)"
+      }
+    ],
+    "storage": [
+      {
+        "capacity": 107374514176.0,
+        "available": 14471917568.0,
+        "bandwidth": 3.42,
+        "latency": 0.1,
+        "utilization": 86.5,
+        "device": "C:\\",
+        "mountpoint": "C:\\",
+        "fstype": "NTFS",
+        "media_type": "NVMe",
+        "total_bytes": 107374514176,
+        "free_bytes": 14471917568,
+        "used_bytes": 92902596608,
+        "total_gb": 100.0,
+        "free_gb": 13.48,
+        "read_speed_mbps": 3500.0,
+        "write_speed_mbps": 3000.0
+      },
+      {
+        "capacity": 404076097536.0,
+        "available": 130001174528.0,
+        "bandwidth": 3.42,
+        "latency": 0.1,
+        "utilization": 67.8,
+        "device": "D:\\",
+        "mountpoint": "D:\\",
+        "fstype": "NTFS",
+        "media_type": "NVMe",
+        "total_bytes": 404076097536,
+        "free_bytes": 130001174528,
+        "used_bytes": 274074923008,
+        "total_gb": 376.33,
+        "free_gb": 121.07,
+        "read_speed_mbps": 3500.0,
+        "write_speed_mbps": 3000.0
+      }
+    ],
+    "interconnects": [
+      {
+        "capacity": 25.0,
+        "available": 25.0,
+        "bandwidth": 25.0,
+        "latency": 0.07,
+        "utilization": 0.0,
+        "name": "System Memory Bus",
+        "type": "SystemBus",
+        "source": "CPU",
+        "destination": "RAM"
+      },
+      {
+        "capacity": 16.0,
+        "available": 16.0,
+        "bandwidth": 16.0,
+        "latency": 5.0,
+        "utilization": 0.0,
+        "name": "PCIe Bus (GPU 0: AMD Radeon(TM) RX 5600M Series)",
+        "type": "PCIe",
+        "source": "CPU",
+        "destination": "GPU_0"
+      },
+      {
+        "capacity": 16.0,
+        "available": 16.0,
+        "bandwidth": 16.0,
+        "latency": 5.0,
+        "utilization": 0.0,
+        "name": "PCIe Bus (GPU 1: AMD Radeon(TM) RX 5600M Series)",
+        "type": "PCIe",
+        "source": "CPU",
+        "destination": "GPU_1"
+      }
+    ],
+    "inference_hints": {
+      "recommended_backend": "vulkan",
+      "recommended_quant": "Q4_0",
+      "max_gpu_layers": -1,
+      "parallelism_threads": 12,
+      "primary_gpu_index": 1,
+      "multi_gpu": true,
+      "total_vram_mb": 12800,
+      "estimated_context_window": 131072
+    }
+  },
+  "placement_plan": {
+    "model_name": "Qwen3-0.6B-Q8_0",
+    "architecture": "qwen3",
+    "total_layers": 30,
+    "n_gpu_layers": 20,
+    "n_igpu_layers": 0,
+    "n_cpu_layers": 8,
+    "gpu_offload_ratio": 0.7143,
+    "igpu_offload_ratio": 0.0,
+    "boundary_crossings": 2,
+    "llama_cpp_n_gpu_layers_hint": 20,
+    "context_length": 2048,
+    "memory": {
+      "estimated_vram_bytes": 463394864,
+      "estimated_vram_gb": 0.432,
+      "estimated_igpu_vram_bytes": 0,
+      "estimated_igpu_vram_mb": 0,
+      "estimated_ram_bytes": 176051824,
+      "estimated_ram_gb": 0.164,
+      "estimated_peak_bytes": 1293758112,
+      "estimated_peak_gb": 1.205
+    },
+    "optimizer": {
+      "total_cost": 0.0,
+      "iterations": 500
+    },
+    "is_feasible": true,
+    "warnings": [
+      "iGPU suitability is LIGHT but no CPU-placed layers passed the VRAM budget or workload type filters. All layers remain on CPU."
+    ],
+    "segments": [
+      {
+        "device": "GPU",
+        "start_layer": 0,
+        "end_layer": 20,
+        "gpu_index": 0,
+        "layer_count": 21,
+        "total_size_bytes": 463394840,
+        "total_size_mb": 441.93,
+        "total_size_gb": 0.432
+      },
+      {
+        "device": "CPU",
+        "start_layer": 21,
+        "end_layer": 28,
+        "gpu_index": null,
+        "layer_count": 8,
+        "total_size_bytes": 176051824,
+        "total_size_mb": 167.9,
+        "total_size_gb": 0.164
+      },
+      {
+        "device": "GPU",
+        "start_layer": 29,
+        "end_layer": 29,
+        "gpu_index": 0,
+        "layer_count": 1,
+        "total_size_bytes": 24,
+        "total_size_mb": 0.0,
+        "total_size_gb": 0.0
+      }
+    ],
+    "layer_placements": [
+      {
+        "layer_index": 0,
+        "layer_type": "embedding",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 23265280,
+        "size_mb": 22.19,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 1,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 2,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 3,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 4,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 5,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 6,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 7,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 8,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 9,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 10,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 11,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 12,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 13,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 14,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 15,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 16,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 17,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 18,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 19,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 20,
+        "layer_type": "transformer",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 21,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 22,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 23,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 24,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 25,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 26,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 27,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 28,
+        "layer_type": "transformer",
+        "device": "CPU",
+        "gpu_index": null,
+        "size_bytes": 22006478,
+        "size_mb": 20.99,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      },
+      {
+        "layer_index": 29,
+        "layer_type": "lm_head",
+        "device": "GPU",
+        "gpu_index": 0,
+        "size_bytes": 24,
+        "size_mb": 0.0,
+        "cost": {
+          "memory_pressure_cost": 0.0,
+          "transfer_cost": 0.0,
+          "compute_cost": 0.0,
+          "total_cost": 0.0
+        }
+      }
+    ]
+  },
+  "runtime_config": {
+    "n_predict": 128,
+    "context_length": 2048,
+    "threads": 6,
+    "batch_size": 512,
+    "temp": 0.0,
+    "top_p": 1.0,
+    "top_k": 40,
+    "repeat_penalty": 1.1,
+    "seed": 42,
+    "use_flash_attn": true,
+    "use_mmap": true,
+    "use_mlock": false,
+    "numa_strategy": 0,
+    "async_streaming": true,
+    "stats_sample_interval_ms": 250.0,
+    "process_timeout_sec": 600.0,
+    "force_backend": null,
+    "benchmark_warmup_tokens": 32,
+    "run_preflight_check": false,
+    "block_on_critical_oom": true,
+    "auto_resize_context": true,
+    "enable_async_scheduler": true,
+    "scheduler_n_cpu_workers": -1,
+    "scheduler_queue_depth": 8,
+    "scheduler_prefetch": true,
+    "scheduler_benchmark_mode": false,
+    "enable_profiler": true,
+    "profiler_sample_interval_ms": 100.0,
+    "export_profile_html": false,
+    "enable_dynamic_microbatch": true,
+    "min_microbatch": 128,
+    "max_microbatch": 2048,
+    "microbatch_safety_margin": 0.15,
+    "microbatch_aggressiveness": 1.0,
+    "microbatch_optimization_goal": "throughput",
+    "manual_microbatch": 768,
+    "verbose_microbatch_scheduler": false,
+    "enable_dynamic_context": true,
+    "min_context": 512,
+    "max_context": 131072,
+    "context_safety_margin": 0.15,
+    "context_optimization_goal": "maximum_context",
+    "manual_context": null,
+    "verbose_context_scheduler": false,
+    "enable_adaptive_memory_scheduler": true,
+    "vram_safety_margin": 0.15,
+    "ram_safety_margin": 0.15,
+    "memory_strategy": "auto",
+    "oom_prevention": "strict",
+    "verbose_memory_scheduler": false,
+    "enable_runtime_learning": true,
+    "verbose_learning_engine": false,
+    "enable_kv_manager": true,
+    "kv_compression_enabled": true,
+    "kv_eviction_enabled": true,
+    "kv_compression_mode": "adaptive",
+    "kv_eviction_policy": "adaptive",
+    "verbose_kv_manager": false,
+    "enable_health_monitor": true,
+    "enable_memory_budget_manager": true,
+    "budget_policy_mode": "adaptive",
+    "verbose_health_monitor": false,
+    "verbose_budget_manager": false,
+    "enable_rkb": true,
+    "rkb_dir": "~/.inferenceos/knowledge",
+    "verbose_rkb": false,
+    "enable_apo": true,
+    "apo_goal": "Balanced",
+    "force_optimization": false,
+    "optimization_dir": "~/.inferenceos/optimization",
+    "verbose_apo": false,
+    "enable_pie": true,
+    "pie_dir": "~/.inferenceos/performance",
+    "verbose_pie": false,
+    "enable_speculative_decoding": false,
+    "spec_mode": "auto",
+    "spec_draft_tokens": 5,
+    "spec_ngram_size": 3,
+    "spec_min_match_length": 3,
+    "spec_prompt_lookup_window": 0,
+    "spec_acceptance_threshold": 0.0,
+    "spec_acceptance_strategy": "greedy",
+    "spec_eagle_draft_model": null,
+    "spec_max_rounds": 8,
+    "spec_fallback_to_greedy": true,
+    "spec_record_telemetry": true,
+    "verbose_spec_decoding": false
+  },
+  "backend": {
+    "name": "vulkan",
+    "n_gpu_layers": 20,
+    "gpu_index": 1,
+    "split_mode": "layer",
+    "extra_flags": [
+      "--device",
+      "Vulkan1"
+    ],
+    "supports_flash_attn": true
+  },
+  "preflight_budget": {
+    "model_name": "Qwen3-0.6B-Q8_0",
+    "context": {
+      "requested": 2048,
+      "effective": 2048,
+      "auto_resized": false,
+      "safe_limit": 295424
+    },
+    "kv_cache": {
+      "bytes_per_token": 40960,
+      "at_quarter_context_gb": 0.0195,
+      "at_half_context_gb": 0.0391,
+      "at_full_context_gb": 0.0781,
+      "growth_rate_gb_per_1k": 0.0381
+    },
+    "weights": {
+      "vram_gb": 0.4316,
+      "ram_gb": 0.164
+    },
+    "buffers": {
+      "activation_workspace_mb": 1.5,
+      "backend_overhead_mb": 300.0,
+      "kv_reservation_gb": 0.082
+    },
+    "peak": {
+      "vram_gb": 0.808,
+      "ram_gb": 1.164,
+      "total_gb": 1.972
+    },
+    "risk": {
+      "level": "LOW",
+      "oom_probability_pct": 0.05,
+      "kv_fill_ratio": 0.0069
+    },
+    "warnings": [],
+    "backend": "unknown"
+  },
+  "telemetry": {
+    "throughput": {
+      "prompt_tokens": 0,
+      "generation_tokens": 127,
+      "prompt_eval_ms": 63.11,
+      "generation_eval_ms": 4199.61,
+      "total_wall_ms": 6492.05,
+      "prompt_tps": 158.45,
+      "generation_tps": 30.24
+    },
+    "latency": {
+      "ttft_ms": 63.11,
+      "p50_itl_ms": 0.01,
+      "p90_itl_ms": 33.36,
+      "p95_itl_ms": 34.81,
+      "p99_itl_ms": 42.45,
+      "stddev_itl_ms": 13.97,
+      "jitter_itl_ms": 11.58,
+      "sample_count": 640
+    },
+    "utilization": {
+      "avg_cpu_pct": 42.7,
+      "peak_cpu_pct": 84.7,
+      "avg_gpu_pct": 1.4,
+      "peak_gpu_pct": 14.6,
+      "gpu_idle_pct": 98.3
+    },
+    "bandwidth": {
+      "ram_bandwidth_gbps": 13.54,
+      "vram_bandwidth_gbps": 5.43,
+      "pcie_bandwidth_gbps": 5.51,
+      "pcie_bytes_transferred": 4161536,
+      "pcie_mb_transferred": 3.97
+    },
+    "kv_cache": {
+      "size_mb": 63.5,
+      "growth_rate_mb_per_tok": 0.5,
+      "context_length": 2048,
+      "context_utilization_pct": 6.2
+    },
+    "model": {
+      "model_name": "Qwen3-0.6B-Q8_0",
+      "backend": "cpu",
+      "total_layers": 30,
+      "n_gpu_layers": 20,
+      "n_cpu_layers": 8,
+      "n_igpu_layers": 0
+    },
+    "layer_timings": [
+      {
+        "layer_index": 0,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 1,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 2,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 3,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 4,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 5,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 6,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 7,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 8,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 9,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 10,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 11,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 12,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 13,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 14,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 15,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 16,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 17,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 18,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 19,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 20,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 21,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 1.2,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 22,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 23,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 24,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 25,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 26,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 27,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 28,
+        "device": "CPU",
+        "compute_ms": 209.981,
+        "transfer_ms": 0.0,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      },
+      {
+        "layer_index": 29,
+        "device": "GPU",
+        "compute_ms": 55.995,
+        "transfer_ms": 1.2,
+        "size_bytes": 52428800,
+        "size_mb": 50.0
+      }
+    ]
+  },
+  "validation_accuracy": {
+    "predicted_vram_mb": 441.93,
+    "actual_vram_mb": 470.05,
+    "vram_error_pct": 5.98,
+    "predicted_ram_mb": 167.9,
+    "actual_ram_mb": 162.62,
+    "ram_error_pct": 3.24
+  },
+  "stage_checklist": {
+    "Hardware Profiler": true,
+    "Memory Planning Engine": true,
+    "Placement Optimizer": true,
+    "Runtime Autotuner": true,
+    "Memory Optimizer": true,
+    "Multi-Accelerator Scheduler": true,
+    "Backend Task Scheduler / Adapter": true,
+    "Inference Engine (llama.cpp)": true,
+    "Runtime Profiler": true
+  },
+  "recommendations": [
+    {
+      "title": "Offload Layer 20 to GPU",
+      "bottleneck": "GPU idle 98% (waiting on CPU layer computation)",
+      "action": "Move Layer 20 to GPU (--gpu-layers 21)",
+      "estimated_improvement": "+34.4% tok/s",
+      "estimated_tps_delta_pct": 34.42,
+      "severity": "CRITICAL",
+      "category": "layer_placement"
+    },
+    {
+      "title": "Utilize Unused VRAM (6.0 GB Free)",
+      "bottleneck": "6144 MB VRAM unallocated while 8 layers execute on CPU",
+      "action": "Increase GPU layer offload count to 28",
+      "estimated_improvement": "+28.0% tok/s",
+      "estimated_tps_delta_pct": 28.0,
+      "severity": "WARNING",
+      "category": "memory"
+    },
+    {
+      "title": "Enable Phase 8 Async Prefetching",
+      "bottleneck": "Synchronous layer boundary transfer stalls GPU execution",
+      "action": "Set enable_async_scheduler=True and prefetch_lookahead=1",
+      "estimated_improvement": "+8.0% tok/s (overlaps transfer with compute)",
+      "estimated_tps_delta_pct": 8.0,
+      "severity": "INFO",
+      "category": "prefetch"
+    }
+  ]
+}

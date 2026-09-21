@@ -31,6 +31,8 @@ SUPPORTED_EXTENSIONS: Set[str] = {
     ".joblib",
     ".obx",
     ".tflite",
+    ".h5",
+    ".keras",
 }
 
 IGNORE_DIR_PATTERNS = {

@@ -35,8 +35,12 @@ def handle_hardware_command() -> None:
     table.add_row("System RAM", f"{mem.get('total_gb', 0):.1f} GB Total | {mem.get('available_gb', 0):.1f} GB Available")
 
     if gpus:
-        gpu = gpus[0]
-        table.add_row("Discrete GPU", f"{gpu.get('name')} ({gpu.get('vram_total_mb')} MB VRAM, {gpu.get('vram_bandwidth_gbps', 0):.0f} GB/s BW)")
+        for idx, gpu in enumerate(gpus):
+            gpu_name = gpu.get("model") or gpu.get("name") or f"GPU {idx}"
+            vram_mb = gpu.get("vram_total_mb", 0)
+            bw = gpu.get("bandwidth") or gpu.get("vram_bandwidth_gbps") or 0
+            label = "Discrete GPU" if len(gpus) == 1 else f"Discrete GPU [{idx}]"
+            table.add_row(label, f"{gpu_name} ({vram_mb} MB VRAM, {bw:.0f} GB/s BW)")
     else:
         table.add_row("Discrete GPU", "None detected (CPU execution fallback)")
 

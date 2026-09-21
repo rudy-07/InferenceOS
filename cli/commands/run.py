@@ -26,6 +26,10 @@ def handle_run_command(
     threads: Optional[int] = None,
     temp: Optional[float] = None,
     max_tokens: Optional[int] = None,
+    speculative: bool = False,
+    spec_mode: Optional[str] = None,
+    draft_tokens: Optional[int] = None,
+    draft_model: Optional[str] = None,
 ) -> None:
     """Execute single prompt or interactive run across any supported model format."""
     if sys.platform == "win32" and hasattr(sys.stdout, "reconfigure"):
@@ -58,6 +62,14 @@ def handle_run_command(
         cfg_kwargs["temp"] = temp
     if max_tokens:
         cfg_kwargs["n_predict"] = max_tokens
+    if speculative:
+        cfg_kwargs["enable_speculative_decoding"] = True
+    if spec_mode:
+        cfg_kwargs["spec_mode"] = spec_mode
+    if draft_tokens:
+        cfg_kwargs["spec_draft_tokens"] = draft_tokens
+    if draft_model:
+        cfg_kwargs["spec_eagle_draft_model"] = draft_model
 
     runtime_cfg = RuntimeConfig.from_hw_profile(hw_profile, **cfg_kwargs)
 

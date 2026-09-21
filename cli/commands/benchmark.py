@@ -24,10 +24,10 @@ def handle_benchmark_command(
     if model_query:
         registry = get_model_registry()
         mp = registry.resolve_model_path(model_query)
-        if mp:
-            pipe_cfg.model_name = mp.name
-        else:
-            pipe_cfg.model_name = model_query
+        if not mp or not mp.exists():
+            console.print(f"[bold red]Error: Could not resolve model '{model_query}'[/bold red]")
+            sys.exit(1)
+        pipe_cfg.model_name = mp.name
 
     if gpu_layers is not None:
         pipe_cfg.gpu_layers_override = gpu_layers
