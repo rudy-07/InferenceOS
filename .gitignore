@@ -29,7 +29,12 @@ models/*.gguf
 models/*.bin
 models/*.safetensors
 models/*.pth
+models/test_formats/*
+!models/test_formats/.gitkeep
 !models/.gitkeep
+
+# Brag video generation outputs
+brag-output*/
 
 # Setup downloads & toolchains
 setup/vulkan_sdk/

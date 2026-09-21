@@ -20,7 +20,7 @@ def handle_models_command(
     tags: Optional[List[str]] = None,
     query: Optional[str] = None,
 ) -> None:
-    """Manage GGUF model library."""
+    """Manage multi-format model library (GGUF, ONNX, SafeTensors, PyTorch, Pickle, OBX)."""
     console = Console()
     registry = get_model_registry()
 
@@ -28,8 +28,9 @@ def handle_models_command(
 
     if act == "list":
         models = registry.list_models()
-        table = Table(title="InferenceOS Model Library", box=None, expand=True)
+        table = Table(title="InferenceOS Multi-Format Model Library", box=None, expand=True)
         table.add_column("Nickname", style="bold cyan")
+        table.add_column("Format", style="bold yellow")
         table.add_column("Location", style="dim")
         table.add_column("Backend", style="magenta")
         table.add_column("Context", justify="right", style="yellow")
@@ -37,14 +38,36 @@ def handle_models_command(
 
         for m in models:
             sz_gb = m.get("size_bytes", 0) / (1024**3)
+            fmt = str(m.get("format", "unknown")).upper()
             table.add_row(
                 m["nickname"],
+                fmt,
                 m["location"],
                 m.get("backend", "auto").upper(),
                 str(m.get("context", 4096)),
                 f"{sz_gb:.2f}",
             )
         console.print(table)
+
+    elif act == "discover":
+        console.print("[cyan]Scanning workspace, sibling repos (KaptaanLM, Qwen-Coder), and caches for models...[/cyan]")
+        discovered = registry.auto_discover()
+        registry.save()
+        console.print(f"[green]✔ Discovered {len(discovered)} model file(s).[/green]")
+
+        # Show breakdown by format
+        models = registry.list_models()
+        fmt_counts = {}
+        for m in models:
+            f = str(m.get("format", "unknown")).upper()
+            fmt_counts[f] = fmt_counts.get(f, 0) + 1
+
+        summary_table = Table(title="Model Library by Format", box=None)
+        summary_table.add_column("Format", style="bold yellow")
+        summary_table.add_column("Count", justify="right", style="bold green")
+        for f, count in sorted(fmt_counts.items()):
+            summary_table.add_row(f, str(count))
+        console.print(summary_table)
 
     elif act == "add":
         if not nickname or not path:
@@ -68,4 +91,5 @@ def handle_models_command(
         results = registry.search_models(q)
         console.print(f"[bold cyan]Found {len(results)} model(s) matching '{q}':[/bold cyan]")
         for m in results:
-            console.print(f"  • [bold green]{m['nickname']}[/bold green] ── {m['location']}")
+            fmt = str(m.get("format", "unknown")).upper()
+            console.print(f"  • [[bold yellow]{fmt}[/bold yellow]] [bold green]{m['nickname']}[/bold green] ── {m['location']}")

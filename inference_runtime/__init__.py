@@ -29,6 +29,7 @@ from __future__ import annotations
 from .argument_builder import ArgumentBuilder
 from .backend_selector import BackendInfo, BackendSelector, detect_backend
 from .inference_session import InferenceResult, InferenceSession
+from .multiformat_engine import MultiFormatRuntimeEngine
 from .process_manager import ProcessManager
 from .runtime_config import RuntimeConfig
 from .runtime_engine import BenchmarkResult, RuntimeEngine
@@ -37,6 +38,7 @@ from .stats_collector import RuntimeStats, StatsCollector
 __all__ = [
     # Facades
     "RuntimeEngine",
+    "MultiFormatRuntimeEngine",
     "InferenceSession",
     # Data types
     "InferenceResult",

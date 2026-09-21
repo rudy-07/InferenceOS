@@ -3,21 +3,50 @@ model_registry.py
 ------------------
 Model Library & Registry Manager for InferenceOS.
 
-Persists registered GGUF models, nicknames, locations, default backends,
-profiles, tags, and notes to ~/.inferenceos/config/models.json.
-Also performs auto-discovery of .gguf files in local directories.
+Persists registered models, nicknames, locations, default backends,
+formats, profiles, tags, and notes to ~/.inferenceos/config/models.json.
+Also performs universal auto-discovery of .gguf, .onnx, .safetensors,
+.pt, .pth, .bin, .pkl, .pickle, and .obx files in local directories,
+sibling projects (KaptaanLM, Qwen-Coder), and Hugging Face cache.
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set, Union
+
 from .config_manager import ConfigManager, get_config_manager
+from orchestrator.model_parser import detect_model_format, ModelFormat
+
+SUPPORTED_EXTENSIONS: Set[str] = {
+    ".gguf",
+    ".safetensors",
+    ".onnx",
+    ".ort",
+    ".pt",
+    ".pth",
+    ".bin",
+    ".pkl",
+    ".pickle",
+    ".joblib",
+    ".obx",
+    ".tflite",
+}
+
+IGNORE_DIR_PATTERNS = {
+    ".git",
+    "node_modules",
+    "build",
+    "cmakefiles",
+    "__pycache__",
+    ".venv",
+    "site-packages",
+}
 
 
 class ModelRegistry:
     """
-    Manages the GGUF model library and nicknames.
+    Manages the multi-format model library and nicknames.
     """
 
     def __init__(self, config_mgr: Optional[ConfigManager] = None) -> None:
@@ -41,6 +70,15 @@ class ModelRegistry:
             print(f"[Warning] Failed to load model registry from {self.registry_file}: {e}")
             self._models = {}
 
+        # Backfill missing formats for existing models
+        for k, v in self._models.items():
+            if "format" not in v or not v["format"]:
+                loc = v.get("location")
+                if loc and Path(loc).exists():
+                    v["format"] = detect_model_format(Path(loc)).value
+                else:
+                    v["format"] = "unknown"
+
         self.auto_discover()
 
     def save(self) -> None:
@@ -52,31 +90,80 @@ class ModelRegistry:
             print(f"[Error] Failed to save model registry: {e}")
 
     def auto_discover(self, root_dir: Optional[Path] = None) -> List[Path]:
-        """Auto-discover .gguf model files in standard directories."""
+        """Auto-discover model files across standard directories, sibling repos, and caches."""
         discovered_paths: List[Path] = []
+        project_root = Path(__file__).parent.parent.parent.resolve()
+        parent_dir = project_root.parent
+
         search_dirs = [
             root_dir,
-            Path.cwd() / "models",
+            project_root / "models",
             Path.home() / ".inferenceos" / "models",
+            parent_dir / "KaptaanLM",
+            parent_dir / "Qwen-Coder",
+            Path.home() / ".cache" / "huggingface" / "hub",
+            Path.home() / ".cache" / "kaggle",
         ]
         valid_dirs = [d for d in search_dirs if d and d.exists()]
 
         for search_dir in valid_dirs:
-            for gguf_file in search_dir.rglob("*.gguf"):
-                if gguf_file.is_file():
-                    discovered_paths.append(gguf_file)
-                    nick = gguf_file.stem.lower()
-                    if nick not in self._models:
-                        self._models[nick] = {
-                            "nickname": nick,
-                            "location": str(gguf_file.resolve()),
-                            "backend": "auto",
-                            "context": 4096,
-                            "profile": "balanced",
-                            "tags": ["auto-discovered"],
-                            "notes": f"Auto-discovered in {search_dir}",
-                            "size_bytes": gguf_file.stat().st_size,
-                        }
+            for file_path in search_dir.rglob("*"):
+                if not file_path.is_file():
+                    continue
+
+                ext = file_path.suffix.lower()
+                if ext not in SUPPORTED_EXTENSIONS:
+                    continue
+
+                # Skip build / git / cmake artifacts
+                lower_parts = [p.lower() for p in file_path.parts]
+                if any(ignored in lower_parts for ignored in IGNORE_DIR_PATTERNS):
+                    continue
+
+                # Skip non-model bin files
+                if ext == ".bin" and ("cmake" in file_path.name.lower() or file_path.stat().st_size < 1000):
+                    continue
+
+                # Skip empty files
+                if file_path.stat().st_size == 0:
+                    continue
+
+                discovered_paths.append(file_path)
+
+                # Generate clean nickname
+                fmt = detect_model_format(file_path)
+                stem = file_path.stem.lower()
+
+                # Prefix based on source
+                if "huggingface" in lower_parts:
+                    # e.g. models--EleutherAI--pythia-14m -> hf:pythia-14m
+                    repo_part = [p for p in lower_parts if p.startswith("models--")]
+                    if repo_part:
+                        model_id = repo_part[0].replace("models--", "").split("--")[-1]
+                        nick = f"hf:{model_id}" if stem == "model" else f"hf:{model_id}:{stem}"
+                    else:
+                        nick = f"hf:{stem}"
+                elif "kaptaanlm" in lower_parts:
+                    nick = f"kaptaan:{stem}"
+                elif "qwen-coder" in lower_parts:
+                    nick = f"qwen:{stem}"
+                elif "test_formats" in lower_parts:
+                    nick = f"test:{stem}"
+                else:
+                    nick = stem
+
+                if nick not in self._models:
+                    self._models[nick] = {
+                        "nickname": nick,
+                        "location": str(file_path.resolve()),
+                        "format": fmt.value,
+                        "backend": "auto",
+                        "context": 4096,
+                        "profile": "balanced",
+                        "tags": ["auto-discovered", fmt.value],
+                        "notes": f"Auto-discovered in {search_dir.name}",
+                        "size_bytes": file_path.stat().st_size,
+                    }
 
         return discovered_paths
 
@@ -98,14 +185,20 @@ class ModelRegistry:
 
         nick = nickname.lower().strip()
         size_bytes = path.stat().st_size if path.exists() else 0
+        fmt = detect_model_format(path)
+
+        all_tags = list(tags or [])
+        if fmt.value not in all_tags:
+            all_tags.append(fmt.value)
 
         self._models[nick] = {
             "nickname": nick,
             "location": str(path),
+            "format": fmt.value,
             "backend": backend,
             "context": context,
             "profile": profile,
-            "tags": tags or [],
+            "tags": all_tags,
             "notes": notes,
             "size_bytes": size_bytes,
         }
@@ -147,14 +240,16 @@ class ModelRegistry:
 
         # Direct file path check
         p = Path(query)
-        if p.exists() and p.is_file() and p.suffix.lower() == ".gguf":
+        if p.exists() and p.is_file() and p.suffix.lower() in SUPPORTED_EXTENSIONS:
+            fmt = detect_model_format(p)
             return {
                 "nickname": p.stem,
                 "location": str(p.resolve()),
+                "format": fmt.value,
                 "backend": "auto",
                 "context": 4096,
                 "profile": "balanced",
-                "tags": ["unregistered"],
+                "tags": ["unregistered", fmt.value],
                 "notes": "Direct path invocation",
                 "size_bytes": p.stat().st_size,
             }
@@ -173,8 +268,9 @@ class ModelRegistry:
             if (
                 q in m["nickname"].lower()
                 or q in m["location"].lower()
+                or q in m.get("format", "").lower()
                 or q in m["notes"].lower()
-                or any(q in t.lower() for t in m["tags"])
+                or any(q in t.lower() for t in m.get("tags", []))
             ):
                 results.append(m)
         return results

@@ -55,8 +55,8 @@ COMMAND_DESCRIPTIONS = {
     "profile": "Profile execution and generate interactive flamegraph & timeline HTMLs",
     "hardware": "Inspect CPU, GPU, iGPU, VRAM, RAM, and interconnect capabilities",
     "doctor": "Run diagnostic health checks across drivers, SDKs, and executables",
-    "inspect": "Inspect GGUF file architecture, metadata, and tensor shapes",
-    "models": "Register, list, remove, search, and tag models in library",
+    "inspect": "Inspect model architecture, parameters, and metadata across any format (GGUF, ONNX, SafeTensors, PyTorch, Pickle, OBX)",
+    "models": "Register, list, discover, remove, search, and tag models in library",
     "config": "View, edit, or interactively configure runtime settings",
     "plugins": "List, inspect, and manage loaded InferenceOS plugins",
     "cache": "View or clean placement and benchmark optimization caches",
@@ -166,9 +166,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     # models
     p_models = subparsers.add_parser("models", help="Model registry manager")
-    p_models.add_argument("action", nargs="?", default="list", choices=["list", "add", "remove", "rm", "search"], help="Action to perform")
+    p_models.add_argument("action", nargs="?", default="list", choices=["list", "discover", "add", "remove", "rm", "search", "find"], help="Action to perform")
     p_models.add_argument("--nickname", type=str, default=None, help="Model nickname")
-    p_models.add_argument("--path", type=str, default=None, help="Path to GGUF model")
+    p_models.add_argument("--path", type=str, default=None, help="Path to model file")
     p_models.add_argument("--backend", type=str, default="auto", help="Default backend")
     p_models.add_argument("--context", type=int, default=4096, help="Default context length")
     p_models.add_argument("--query", type=str, default=None, help="Search query")
