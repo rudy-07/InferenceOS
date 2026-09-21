@@ -29,6 +29,16 @@ import cli.commands.config_cmd as config_cmd
 import cli.commands.speculative_cmd as speculative_cmd
 import cli.commands.cache_cmd as cache_cmd
 import cli.commands.logs_cmd as logs_cmd
+import cli.commands.run as run_cmd
+import cli.commands.telemetry_cmd as telemetry_cmd
+import cli.commands.stats_cmd as stats_cmd
+import cli.commands.update_cmd as update_cmd
+import cli.commands.plugins_cmd as plugins_cmd
+import cli.commands.reset_cmd as reset_cmd
+from cli.tui.chat_ui import ChatInterface
+from cli.tui.settings_menu import InteractiveSettingsMenu
+from server.runtime_adapter.adapter import get_runtime_adapter
+from server.models.openai import ChatMessage
 
 ROOT_DIR = Path(__file__).parent.parent
 MODELS_DIR = ROOT_DIR / "models"
@@ -219,3 +229,225 @@ class TestSubsystemCLICommands:
         with patch.object(sys, "argv", ["inferenceos", "performance", "trends"]):
             res = main()
             assert res == 0
+
+    def test_knowledge_export_output_flag_forwarding(self, tmp_path):
+        out_file = tmp_path / "custom_rkb.json"
+        with patch.object(sys, "argv", ["inferenceos", "knowledge", "export", "--output", str(out_file)]):
+            res = main()
+            assert res == 0
+            assert out_file.exists()
+
+    def test_kv_policies_and_stats_dispatch(self):
+        with patch.object(sys, "argv", ["inferenceos", "kv", "policies"]):
+            assert main() == 0
+        with patch.object(sys, "argv", ["inferenceos", "kv", "stats"]):
+            assert main() == 0
+
+    def test_budget_history_dispatch(self):
+        with patch.object(sys, "argv", ["inferenceos", "budget", "history"]):
+            assert main() == 0
+
+    def test_health_monitor_dispatch(self):
+        with patch.object(sys, "argv", ["inferenceos", "health", "monitor"]):
+            assert main() == 0
+
+    def test_learning_stats_dispatch(self):
+        with patch.object(sys, "argv", ["inferenceos", "learning", "stats"]):
+            assert main() == 0
+
+    def test_performance_detailed_actions_dispatch(self):
+        for sub in ("score", "regressions", "analyze"):
+            with patch.object(sys, "argv", ["inferenceos", "performance", sub]):
+                assert main() == 0
+
+
+class TestRunCommand:
+    """Test single-shot model execution command."""
+
+    @pytest.mark.skipif(not TINY_ONNX.exists(), reason="Tiny ONNX model not present")
+    def test_run_onnx_single_shot(self):
+        run_cmd.handle_run_command(
+            model_query=str(TINY_ONNX),
+            prompt="Test prompt ONNX execution",
+            max_tokens=5,
+        )
+
+    @pytest.mark.skipif(not TINY_ST.exists(), reason="Tiny SafeTensors model not present")
+    def test_run_safetensors_single_shot(self):
+        run_cmd.handle_run_command(
+            model_query=str(TINY_ST),
+            prompt="Test prompt SafeTensors execution",
+            max_tokens=5,
+        )
+
+    def test_run_missing_model_exits(self):
+        with pytest.raises(SystemExit) as exc_info:
+            run_cmd.handle_run_command(model_query="non_existent_model_xyz.gguf")
+        assert exc_info.value.code == 1
+
+    def test_run_empty_prompt_exits(self):
+        with patch("rich.console.Console.input", return_value=""):
+            with pytest.raises(SystemExit) as exc_info:
+                run_cmd.handle_run_command(
+                    model_query=str(TINY_ONNX) if TINY_ONNX.exists() else str(QWEN_GGUF),
+                    prompt=None,
+                )
+            assert exc_info.value.code == 0
+
+
+class TestChatInterfaceSlashCommands:
+    """Test ChatInterface slash commands and interaction loops."""
+
+    def test_chat_interface_initialization(self):
+        chat = ChatInterface()
+        assert chat.theme_mgr is not None
+        assert chat.history == []
+
+    def test_chat_slash_commands(self, tmp_path):
+        chat = ChatInterface()
+        chat.history = [
+            {"role": "user", "content": "Hello InferenceOS"},
+            {"role": "assistant", "content": "Hello! How can I assist with local inference today?"},
+        ]
+
+        # /help
+        assert chat._handle_slash_command("/help") is True
+
+        # /history
+        assert chat._handle_slash_command("/history") is True
+
+        # /stats
+        assert chat._handle_slash_command("/stats") is True
+
+        # /context
+        assert chat._handle_slash_command("/context") is True
+
+        # /memory
+        assert chat._handle_slash_command("/memory") is True
+
+        # /config
+        assert chat._handle_slash_command("/config") is True
+
+        # /telemetry
+        assert chat._handle_slash_command("/telemetry") is True
+
+        # /save & /load
+        save_file = tmp_path / "saved_session.json"
+        assert chat._handle_slash_command(f"/save {save_file}") is True
+        assert save_file.exists()
+
+        chat.history = []
+        assert chat._handle_slash_command(f"/load {save_file}") is True
+        assert len(chat.history) == 2
+
+        # /export
+        export_file = tmp_path / "chat_export.md"
+        assert chat._handle_slash_command(f"/export {export_file}") is True
+        assert export_file.exists()
+
+        # /reset
+        assert chat._handle_slash_command("/reset") is True
+        assert chat.history == []
+
+        # /quit
+        assert chat._handle_slash_command("/quit") is False
+
+
+class TestModelsCommandEnhanced:
+    """Test enhanced models add, tags parsing, and removal."""
+
+    def test_models_add_positional_file_path(self, tmp_path):
+        fake_model = tmp_path / "positional_model.safetensors"
+        fake_model.write_text("DUMMY_SAFETENSORS")
+
+        # Add using target as file path directly without --path or --nickname
+        models_cmd.handle_models_command(action="add", target=str(fake_model))
+
+        # Search to verify it was registered with stem as nickname
+        registry = models_cmd.get_model_registry()
+        model_entry = registry.get_model("positional_model")
+        assert model_entry is not None
+        assert model_entry["nickname"] == "positional_model"
+
+        # Remove by file path
+        models_cmd.handle_models_command(action="rm", target=str(fake_model))
+        assert registry.get_model("positional_model") is None
+
+    def test_models_add_with_comma_delimited_tags(self, tmp_path):
+        fake_model = tmp_path / "tagged_model.gguf"
+        fake_model.write_text("GGUF")
+
+        models_cmd.handle_models_command(
+            action="add",
+            path=str(fake_model),
+            nickname="tagged_model_nick",
+            tags="quantized,production,edge",
+        )
+
+        registry = models_cmd.get_model_registry()
+        entry = registry.get_model("tagged_model_nick")
+        assert entry is not None
+        assert "quantized" in entry["tags"]
+        assert "production" in entry["tags"]
+        assert "edge" in entry["tags"]
+
+        # Clean up
+        models_cmd.handle_models_command(action="rm", target="tagged_model_nick")
+
+
+class TestUtilitiesAndTUI:
+    """Test utility commands, logging, and settings menu."""
+
+    def test_telemetry_command_runs(self):
+        telemetry_cmd.handle_telemetry_command()
+
+    def test_stats_command_runs(self):
+        stats_cmd.handle_stats_command()
+
+    def test_update_command_runs(self):
+        update_cmd.handle_update_command()
+
+    def test_plugins_command_runs(self):
+        plugins_cmd.handle_plugins_command()
+
+    def test_reset_command_clears_cache_and_config(self, tmp_path):
+        from cli.core.config_manager import get_config_manager
+        cfg = get_config_manager()
+        # Create a dummy cache file
+        dummy_cache = cfg.cache_dir / "test_cache.json"
+        dummy_cache.write_text("{}")
+        assert dummy_cache.exists()
+
+        reset_cmd.handle_reset_command()
+        assert not dummy_cache.exists()
+
+    def test_logs_command_with_brackets(self, tmp_path):
+        from cli.core.config_manager import get_config_manager
+        cfg = get_config_manager()
+        test_log = cfg.logs_dir / "test_markup.log"
+        test_log.write_text("[2026-09-21 23:59:59] [INFO] [task-123] Server initialized with [special brackets]")
+        logs_cmd.handle_logs_command(lines=5)
+
+    def test_settings_menu_numbered_display(self):
+        menu = InteractiveSettingsMenu()
+        menu.display()
+
+
+class TestServerRuntimeAdapterMultiFormat:
+    """Test server runtime adapter with multi-format models."""
+
+    @pytest.mark.skipif(not TINY_ONNX.exists(), reason="Tiny ONNX model not present")
+    def test_server_adapter_load_and_chat_onnx(self):
+        adapter = get_runtime_adapter()
+        loaded = adapter.load_model_if_needed(str(TINY_ONNX))
+        assert loaded is not None
+        assert loaded["model_path"] == TINY_ONNX
+
+        msg = ChatMessage(role="user", content="Hello server ONNX test")
+        res = adapter.execute_chat(
+            model_query=str(TINY_ONNX),
+            messages=[msg],
+            request_overrides={"max_tokens": 5},
+        )
+        assert res is not None
+        assert res.generated_text is not None

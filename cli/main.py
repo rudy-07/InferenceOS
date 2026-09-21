@@ -184,6 +184,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_models.add_argument("--path", type=str, default=None, help="Path to model file")
     p_models.add_argument("--backend", type=str, default="auto", help="Default backend")
     p_models.add_argument("--context", type=int, default=4096, help="Default context length")
+    p_models.add_argument("--tags", type=str, default=None, help="Comma-separated model tags")
     p_models.add_argument("--query", type=str, default=None, help="Search query")
 
     # config
@@ -342,6 +343,7 @@ def cli_main(argv: Optional[List[str]] = None) -> int:
             path=args.path,
             backend=args.backend,
             context=args.context,
+            tags=getattr(args, "tags", None),
             query=args.query,
         )
     elif cmd == "config":
@@ -372,18 +374,27 @@ def cli_main(argv: Optional[List[str]] = None) -> int:
             model_name=getattr(args, "model", None),
             limit=getattr(args, "limit", 20),
         )
-    elif cmd == "budget":
-        handle_budget_cli(getattr(args, "args", None))
-    elif cmd == "health":
-        handle_health_cli(getattr(args, "args", None))
-    elif cmd == "kv":
-        handle_kv_cli(getattr(args, "args", None))
-    elif cmd == "knowledge":
-        handle_knowledge_cli(getattr(args, "args", None))
-    elif cmd == "learning":
-        handle_learning_cli(getattr(args, "args", None))
-    elif cmd == "performance":
-        handle_performance_cli(getattr(args, "args", None))
+    elif cmd in ("budget", "health", "kv", "knowledge", "learning", "performance"):
+        # Resolve full arguments for subsystem commands (preserving options, flags, and subcommands)
+        effective_argv = argv if argv is not None else sys.argv[1:]
+        try:
+            cmd_idx = effective_argv.index(cmd)
+            sub_raw_args = effective_argv[cmd_idx + 1:]
+        except (ValueError, IndexError):
+            sub_raw_args = (getattr(args, "args", []) or []) + (unknown or [])
+
+        if cmd == "budget":
+            return handle_budget_cli(sub_raw_args)
+        elif cmd == "health":
+            return handle_health_cli(sub_raw_args)
+        elif cmd == "kv":
+            return handle_kv_cli(sub_raw_args)
+        elif cmd == "knowledge":
+            return handle_knowledge_cli(sub_raw_args)
+        elif cmd == "learning":
+            return handle_learning_cli(sub_raw_args)
+        elif cmd == "performance":
+            return handle_performance_cli(sub_raw_args)
     else:
         Console().print(f"[bold red]Unknown command: {cmd}[/bold red]")
         print_custom_help()

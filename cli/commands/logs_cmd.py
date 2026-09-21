@@ -26,6 +26,6 @@ def handle_logs_command(lines: int = 50) -> None:
     try:
         content = latest_log.read_text(encoding="utf-8").splitlines()
         for l in content[-lines:]:
-            console.print(l)
+            console.print(l, markup=False, highlight=False)
     except Exception as e:
         console.print(f"[red]Failed to read log file: {e}[/red]")

@@ -5,7 +5,8 @@ Command handler for 'inferenceos models [action] [options]'.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 from rich.console import Console
 from rich.table import Table
 from cli.core.model_registry import get_model_registry
@@ -71,12 +72,27 @@ def handle_models_command(
         console.print(summary_table)
 
     elif act == "add":
-        nick = nickname or target
-        if not nick or not path:
-            console.print("[red]Error: 'models add' requires --nickname (or target) and --path[/red]")
+        # Ergonomic support: allow passing file path directly as target
+        target_path = None
+        if target:
+            p = Path(target)
+            if p.exists() and p.is_file():
+                target_path = str(p.resolve())
+
+        model_file = path or target_path
+        nick = nickname or (Path(model_file).stem if model_file else target)
+
+        if not nick or not model_file:
+            console.print("[red]Error: 'models add' requires a model file path (e.g. 'models add /path/to/model.gguf' or with --path/--nickname)[/red]")
             return
-        if registry.add_model(nick, path, backend=backend, context=context, tags=tags):
-            console.print(f"[green]✔ Model '{nick}' registered successfully![/green]")
+
+        # Parse tags if string
+        parsed_tags = tags
+        if isinstance(tags, str):
+            parsed_tags = [t.strip() for t in tags.split(",") if t.strip()]
+
+        if registry.add_model(nick, model_file, backend=backend, context=context, tags=parsed_tags):
+            console.print(f"[green]✔ Model '{nick}' registered successfully at {model_file}![/green]")
 
     elif act in ("remove", "delete", "rm"):
         rem_target = target or nickname or query
@@ -86,7 +102,11 @@ def handle_models_command(
         if registry.remove_model(rem_target):
             console.print(f"[green]✔ Model '{rem_target}' removed from registry.[/green]")
         else:
-            console.print(f"[red]Model '{rem_target}' not found in registry.[/red]")
+            p = Path(rem_target)
+            if p.exists() and registry.remove_model(str(p.resolve())):
+                console.print(f"[green]✔ Model at '{p.resolve()}' removed from registry.[/green]")
+            else:
+                console.print(f"[red]Model '{rem_target}' not found in registry.[/red]")
 
     elif act in ("search", "find"):
         q = target or query or nickname or ""

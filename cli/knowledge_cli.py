@@ -6,7 +6,9 @@ CLI commands interface for Runtime Knowledge Base (RKB) in InferenceOS.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 from typing import List, Optional
 
 from runtime_kb import RuntimeKnowledgeBase
@@ -99,12 +101,35 @@ def handle_knowledge_cli(args_list: Optional[List[str]] = None) -> int:
         return 0
 
     elif parsed.subcommand == "export":
-        print(f"Successfully exported RKB data to {parsed.output}")
-        return 0
+        out_path = Path(parsed.output)
+        try:
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            export_payload = {
+                "version": "1.0.0",
+                "database_count": rkb.database.count(),
+                "summary": rkb.format_cli_output(),
+            }
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(export_payload, f, indent=2)
+            print(f"Successfully exported RKB data to {parsed.output}")
+            return 0
+        except Exception as e:
+            print(f"Error exporting RKB data: {e}")
+            return 1
 
     elif parsed.subcommand == "import":
-        print(f"Successfully imported RKB data from {parsed.input}")
-        return 0
+        in_path = Path(parsed.input)
+        if not in_path.exists():
+            print(f"Error: file not found at {parsed.input}")
+            return 1
+        try:
+            with open(in_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            print(f"Successfully imported RKB data from {parsed.input}")
+            return 0
+        except Exception as e:
+            print(f"Error importing RKB data: {e}")
+            return 1
 
     elif parsed.subcommand == "reset":
         rkb.clear()

@@ -8,6 +8,7 @@ and prompt input with rich markdown formatting and history.
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
 import time
@@ -354,6 +355,147 @@ class ChatInterface:
                 self.console.print(f"  GPU Layers: {self.plan.n_gpu_layers} / {self.plan.total_layers}")
                 self.console.print(f"  CPU Layers: {self.plan.n_cpu_layers}")
                 self.console.print(f"  Boundary Crossings: {self.plan.boundary_crossings}")
+            else:
+                self.console.print("[yellow]No active placement plan.[/yellow]")
+
+        elif cmd == "/reload":
+            self.console.print("[cyan]Reloading engine and placement plan...[/cyan]")
+            if self._initialize_engine():
+                self.console.print("[green]✔ Engine and placement plan reloaded successfully.[/green]")
+            else:
+                self.console.print("[red]Failed to reload engine.[/red]")
+
+        elif cmd == "/stats":
+            table = Table(title="InferenceOS Active Session Statistics", box=None)
+            table.add_column("Metric", style="cyan")
+            table.add_column("Value", style="bold green")
+            table.add_row("Model", self.model_path.name if self.model_path else "None")
+            table.add_row("Backend", self.session.backend_info.name if self.session else "AUTO")
+            table.add_row("Message Turns", str(len(self.history)))
+            if self.session and self.session.last_result:
+                st = self.session.last_result.stats
+                table.add_row("Last Generation TPS", f"{st.eval_tps:.2f} tok/s")
+                table.add_row("Last Prompt TPS", f"{st.prompt_eval_tps:.1f} tok/s")
+                table.add_row("Last TTFT", f"{st.prompt_eval_ms:.1f} ms")
+                table.add_row("Last Tokens Generated", str(st.tokens_generated))
+            else:
+                table.add_row("Inference Runs", "0 (No prompts evaluated yet)")
+            self.console.print(table)
+
+        elif cmd == "/context":
+            ctx_max = self.plan.context_length if self.plan else 4096
+            ctx_used = int(sum(len(m.get("content", "").split()) * 1.3 for m in self.history))
+            pct = min(100.0, (ctx_used / max(1, ctx_max)) * 100)
+            headroom = max(0, ctx_max - ctx_used)
+            bar_len = int(pct / 5.0)
+            bar_str = "█" * bar_len + "░" * (20 - bar_len)
+
+            table = Table(title="Context Window Utilization", box=None)
+            table.add_column("Property", style="cyan")
+            table.add_column("Value", style="bold green")
+            table.add_row("Tokens Estimated", str(ctx_used))
+            table.add_row("Maximum Capacity", f"{ctx_max} tokens")
+            table.add_row("Headroom Remaining", f"{headroom} tokens")
+            table.add_row("Utilization", f"[{bar_str}] {pct:.1f}%")
+            self.console.print(table)
+
+        elif cmd == "/memory":
+            table = Table(title="InferenceOS Memory Footprint", box=None)
+            table.add_column("Component", style="cyan")
+            table.add_column("Allocation", style="bold green")
+            if self.plan:
+                table.add_row("Estimated Model VRAM", f"{self.plan.estimated_vram_bytes / (1024**2):.1f} MB")
+                table.add_row("Estimated System RAM", f"{self.plan.estimated_ram_bytes / (1024**2):.1f} MB")
+            mem = self.hw_profile.get("memory", {})
+            if mem:
+                table.add_row("System Total RAM", f"{mem.get('total_gb', 0):.1f} GB")
+                table.add_row("System Available RAM", f"{mem.get('available_gb', 0):.1f} GB")
+            gpus = self.hw_profile.get("gpus", [])
+            if gpus:
+                table.add_row("GPU VRAM Total", f"{gpus[0].get('vram_total_mb', 0)} MB")
+            self.console.print(table)
+
+        elif cmd == "/config":
+            table = Table(title="InferenceOS Active Configuration", box=None)
+            table.add_column("Parameter", style="cyan")
+            table.add_column("Current Setting", style="bold green")
+            cfg = self.config_mgr.to_dict()
+            table.add_row("Backend", str(self.config_mgr.get("runtime.backend", "auto")))
+            table.add_row("Threads", str(self.config_mgr.get("runtime.threads", 6)))
+            table.add_row("Context Length", str(self.config_mgr.get("memory.context_length", 4096)))
+            table.add_row("Batch Size", str(self.config_mgr.get("memory.batch_size", 512)))
+            table.add_row("Sampling Temp", str(self.config_mgr.get("sampling.temp", 0.7)))
+            table.add_row("Sampling Top-P", str(self.config_mgr.get("sampling.top_p", 0.95)))
+            table.add_row("Active Profile", str(self.config_mgr.get("profiles.active_profile", "balanced")))
+            self.console.print(table)
+
+        elif cmd == "/telemetry":
+            from cli.core.telemetry_store import get_telemetry_store
+            store = get_telemetry_store()
+            summary = store.get_summary_stats()
+            table = Table(title="InferenceOS Telemetry Summary", box=None)
+            table.add_column("Metric", style="cyan")
+            table.add_column("Value", style="bold green")
+            table.add_row("Total Recorded Runs", str(summary.get("total_runs", 0)))
+            table.add_row("Avg Generation TPS", f"{summary.get('avg_generation_tps', 0.0):.2f} tok/s")
+            table.add_row("Avg Prompt TPS", f"{summary.get('avg_prompt_tps', 0.0):.1f} tok/s")
+            table.add_row("Avg TTFT", f"{summary.get('avg_ttft_ms', 0.0):.1f} ms")
+            self.console.print(table)
+
+        elif cmd == "/save":
+            if not self.history:
+                self.console.print("[yellow]Notice: Conversation history is empty, nothing to save.[/yellow]")
+            else:
+                out_path = Path(args[0]) if args else (self.config_mgr.sessions_dir / f"session_{int(time.time())}.json")
+                try:
+                    out_path.parent.mkdir(parents=True, exist_ok=True)
+                    data = {
+                        "model": str(self.model_path) if self.model_path else "none",
+                        "timestamp": time.time(),
+                        "messages": self.history,
+                    }
+                    with open(out_path, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=2)
+                    self.console.print(f"[green]✔ Conversation saved to: {out_path}[/green]")
+                except Exception as e:
+                    self.console.print(f"[red]Failed to save session: {e}[/red]")
+
+        elif cmd == "/load":
+            if not args:
+                self.console.print("[yellow]Usage: /load <path_to_session.json>[/yellow]")
+            else:
+                load_path = Path(" ".join(args))
+                if not load_path.exists():
+                    self.console.print(f"[red]Error: File not found: {load_path}[/red]")
+                else:
+                    try:
+                        with open(load_path, "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                        self.history = data.get("messages", [])
+                        self.console.print(f"[green]✔ Loaded {len(self.history)} messages from {load_path}[/green]")
+                    except Exception as e:
+                        self.console.print(f"[red]Failed to load session: {e}[/red]")
+
+        elif cmd == "/export":
+            if not self.history:
+                self.console.print("[yellow]Notice: Conversation history is empty, nothing to export.[/yellow]")
+            else:
+                exp_path = Path(args[0]) if args else Path(f"chat_export_{int(time.time())}.md")
+                try:
+                    lines = [
+                        "# InferenceOS Chat Session Export",
+                        f"- Model: `{self.model_path.name if self.model_path else 'none'}`",
+                        f"- Date: `{time.strftime('%Y-%m-%d %H:%M:%S')}`",
+                        f"- Total Turns: `{len(self.history)}`\n",
+                        "---",
+                    ]
+                    for msg in self.history:
+                        role_hdr = "### User" if msg.get("role") == "user" else "### Assistant"
+                        lines.append(f"\n{role_hdr}\n\n{msg.get('content', '')}\n")
+                    exp_path.write_text("\n".join(lines), encoding="utf-8")
+                    self.console.print(f"[green]✔ Conversation exported to Markdown: {exp_path.resolve()}[/green]")
+                except Exception as e:
+                    self.console.print(f"[red]Failed to export chat: {e}[/red]")
 
         else:
             self.console.print(f"[red]Unknown command: {cmd}. Type /help for assistance.[/red]")

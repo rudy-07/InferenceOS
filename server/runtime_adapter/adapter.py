@@ -18,6 +18,7 @@ from layer_placement import ModelDescriptor, PlacementEngine
 from layer_placement.placement_plan import PlacementPlan
 from inference_runtime import InferenceSession, RuntimeConfig, RuntimeEngine, InferenceResult
 from orchestrator.gguf_parser import read_gguf_metadata
+from orchestrator.model_parser import read_model_metadata, detect_model_format, ModelFormat
 from server.config import ServerConfig
 from server.models.openai import ChatMessage, ChatCompletionRequest, CompletionRequest
 from server.sessions.session import Session
@@ -77,13 +78,14 @@ class RuntimeAdapter:
             if not model_path or not model_path.exists():
                 raise FileNotFoundError(f"Model '{model_query}' not found in registry or disk.")
 
+            fmt = detect_model_format(model_path)
             try:
-                gguf_meta = read_gguf_metadata(model_path)
+                meta = read_model_metadata(model_path)
             except Exception:
-                gguf_meta = {"arch": "llama", "num_layers": 32, "max_context_length": self.config.default_context_length}
+                meta = {"arch": "llama", "num_layers": 32, "max_context_length": self.config.default_context_length}
 
             model_desc = ModelDescriptor.from_gguf_metadata(
-                metadata=gguf_meta,
+                metadata=meta,
                 model_size_bytes=model_path.stat().st_size,
                 model_name=model_path.stem,
             )
@@ -103,7 +105,7 @@ class RuntimeAdapter:
                 "model_path": model_path,
                 "descriptor": model_desc,
                 "plan": plan,
-                "meta": gguf_meta,
+                "meta": meta,
                 "loaded_time": time.time(),
                 "last_used": time.time(),
             }
@@ -223,14 +225,25 @@ class RuntimeAdapter:
         else:
             prompt = self.format_chat_prompt(messages, model_name=model_query)
 
-        # Execute placement plan on InferenceSession
-        with InferenceSession(
-            model_path=model_path,
-            plan=plan,
-            config=runtime_cfg,
-            hw_profile=self.hw_profile,
-        ) as inf_session:
-            result = inf_session.run(prompt, on_token=on_token)
+        # Route execution based on model format
+        fmt = detect_model_format(model_path)
+        if fmt == ModelFormat.GGUF:
+            with InferenceSession(
+                model_path=model_path,
+                plan=plan,
+                config=runtime_cfg,
+                hw_profile=self.hw_profile,
+            ) as inf_session:
+                result = inf_session.run(prompt, on_token=on_token)
+        else:
+            from inference_runtime import MultiFormatRuntimeEngine
+            engine = MultiFormatRuntimeEngine(hw_profile=self.hw_profile, config=runtime_cfg)
+            result = engine.execute(
+                model_path=model_path,
+                prompt=prompt,
+                on_token=on_token,
+                plan=plan,
+            )
 
         # Update placement info on session
         if session:

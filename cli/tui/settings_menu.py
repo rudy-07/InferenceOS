@@ -60,12 +60,12 @@ class InteractiveSettingsMenu:
         header = Text("⚙ InferenceOS Settings & Runtime Configuration", style=f"bold {tm.color('primary')}")
 
         table = Table(box=None, expand=True)
-        table.add_column("Category", style=f"bold {tm.color('secondary')}", width=22)
+        table.add_column("Category", style=f"bold {tm.color('secondary')}", width=26)
         table.add_column("Key Settings & Current Values", style="white")
 
         full_config = self.config_mgr.to_dict()
 
-        for label, section_key in CATEGORIES:
+        for idx, (label, section_key) in enumerate(CATEGORIES, 1):
             if "." in section_key:
                 val = self.config_mgr.get(section_key)
                 summary_str = f"{section_key} = {val}"
@@ -77,7 +77,7 @@ class InteractiveSettingsMenu:
                 else:
                     summary_str = str(sec_dict)
 
-            table.add_row(f"❯ {label}", summary_str)
+            table.add_row(f"[{idx:2d}] {label}", summary_str)
 
         panel = Panel(table, title=header, border_style=tm.color("primary"), padding=(1, 2))
         self.console.print(panel)

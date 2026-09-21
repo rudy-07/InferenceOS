@@ -189,7 +189,10 @@ class ModelRegistry:
         size_bytes = path.stat().st_size if path.exists() else 0
         fmt = detect_model_format(path)
 
-        all_tags = list(tags or [])
+        if isinstance(tags, str):
+            all_tags = [t.strip() for t in tags.split(",") if t.strip()]
+        else:
+            all_tags = list(tags or [])
         if fmt.value not in all_tags:
             all_tags.append(fmt.value)
 
@@ -222,10 +225,12 @@ class ModelRegistry:
                 return True
         return False
 
-    def get_model(self, query: str) -> Optional[Dict[str, Any]]:
+    def get_model(self, query: Optional[str]) -> Optional[Dict[str, Any]]:
         """
         Find a model by nickname, partial name, or file path.
         """
+        if not query:
+            return None
         clean_q = query.lower().strip()
         if clean_q in self._models:
             return self._models[clean_q]
@@ -277,8 +282,10 @@ class ModelRegistry:
                 results.append(m)
         return results
 
-    def resolve_model_path(self, query: str) -> Optional[Path]:
+    def resolve_model_path(self, query: Optional[str]) -> Optional[Path]:
         """Resolve query string (nickname, path, or filename) to existing Path."""
+        if not query:
+            return None
         model_info = self.get_model(query)
         if model_info:
             p = Path(model_info["location"])

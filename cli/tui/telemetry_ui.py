@@ -84,6 +84,6 @@ class TelemetryInterface:
         grid.add_row(Text("\n"))
         grid.add_row(hist_table)
 
-        header = Text("📈 InferenceOS Telemetry & Metric Dashboard", style=f"bold {c_primary}")
+        header = Text("⚡ InferenceOS Telemetry & Metric Dashboard", style=f"bold {c_primary}")
         panel = Panel(grid, title=header, border_style=c_primary, padding=(1, 2))
         self.console.print(panel)
