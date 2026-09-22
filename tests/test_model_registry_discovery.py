@@ -44,3 +44,20 @@ def test_resolve_model_path_formats():
     st_p = reg.resolve_model_path(str(FIXTURES_DIR / "tiny_model.safetensors"))
     assert st_p is not None
     assert st_p.exists()
+
+
+def test_registry_discovery_synthetic_dir(tmp_path):
+    (tmp_path / "model_a.onnx").write_bytes(b"dummy")
+    (tmp_path / "model_b.safetensors").write_bytes(b"dummy")
+    (tmp_path / "model_c.gguf").write_bytes(b"dummy")
+    (tmp_path / "ignore.txt").write_text("dummy")
+
+    reg = ModelRegistry()
+    discovered = reg.auto_discover(root_dir=tmp_path)
+    discovered_names = {p.name for p in discovered}
+    assert "model_a.onnx" in discovered_names
+    assert "model_b.safetensors" in discovered_names
+    assert "model_c.gguf" in discovered_names
+    assert "ignore.txt" not in discovered_names
+
+

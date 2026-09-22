@@ -31,6 +31,8 @@ models/*.safetensors
 models/*.pth
 models/test_formats/*
 !models/test_formats/.gitkeep
+!models/test_formats/tiny_model.*
+!models/test_formats/sample.obx
 !models/.gitkeep
 
 # Brag video generation outputs
