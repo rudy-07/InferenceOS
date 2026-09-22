@@ -39,6 +39,8 @@ from cli.tui.chat_ui import ChatInterface
 from cli.tui.settings_menu import InteractiveSettingsMenu
 from server.runtime_adapter.adapter import get_runtime_adapter
 from server.models.openai import ChatMessage
+from inference_runtime.multiformat_engine import _HAS_ORT, _HAS_TORCH, _HAS_SAFETENSORS
+
 
 ROOT_DIR = Path(__file__).parent.parent
 MODELS_DIR = ROOT_DIR / "models"
@@ -264,7 +266,7 @@ class TestSubsystemCLICommands:
 class TestRunCommand:
     """Test single-shot model execution command."""
 
-    @pytest.mark.skipif(not TINY_ONNX.exists(), reason="Tiny ONNX model not present")
+    @pytest.mark.skipif(not TINY_ONNX.exists() or not _HAS_ORT, reason="Tiny ONNX model or onnxruntime not present")
     def test_run_onnx_single_shot(self):
         run_cmd.handle_run_command(
             model_query=str(TINY_ONNX),
@@ -272,7 +274,7 @@ class TestRunCommand:
             max_tokens=5,
         )
 
-    @pytest.mark.skipif(not TINY_ST.exists(), reason="Tiny SafeTensors model not present")
+    @pytest.mark.skipif(not TINY_ST.exists() or not (_HAS_TORCH and _HAS_SAFETENSORS), reason="Tiny SafeTensors model or PyTorch/SafeTensors not present")
     def test_run_safetensors_single_shot(self):
         run_cmd.handle_run_command(
             model_query=str(TINY_ST),
@@ -436,7 +438,7 @@ class TestUtilitiesAndTUI:
 class TestServerRuntimeAdapterMultiFormat:
     """Test server runtime adapter with multi-format models."""
 
-    @pytest.mark.skipif(not TINY_ONNX.exists(), reason="Tiny ONNX model not present")
+    @pytest.mark.skipif(not TINY_ONNX.exists() or not _HAS_ORT, reason="Tiny ONNX model or onnxruntime not present")
     def test_server_adapter_load_and_chat_onnx(self):
         adapter = get_runtime_adapter()
         loaded = adapter.load_model_if_needed(str(TINY_ONNX))

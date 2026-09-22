@@ -150,9 +150,12 @@ class ModelRegistry:
                 elif "qwen-coder" in lower_parts:
                     nick = f"qwen:{stem}"
                 elif "test_formats" in lower_parts:
-                    nick = f"test:{stem}"
+                    nick = f"test:{stem}:{ext.lstrip('.')}"
                 else:
                     nick = stem
+
+                if nick in self._models and self._models[nick]["location"] != str(file_path.resolve()):
+                    nick = f"{nick}:{ext.lstrip('.')}"
 
                 if nick not in self._models:
                     self._models[nick] = {
