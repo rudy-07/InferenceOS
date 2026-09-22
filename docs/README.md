@@ -47,6 +47,8 @@ Welcome to the official technical documentation for **InferenceOS** — the hard
 - **[Tutorial: Adding a Custom Scheduler](developer/adding_scheduler.md)**: Step-by-step guide to writing a custom scheduler.
 - **[Tutorial: Adding a Custom Backend](developer/adding_backend.md)**: Step-by-step guide to integrating a new hardware backend.
 - **[Release Workflow & CI Guide](developer/release_process.md)**: Build, test, and release process documentation.
+- **[Feature Implementation Plan](developer/implementation_plan.md)**: Extended multi-phase architecture and feature roadmap.
+
 
 ### 10. Performance & FAQ
 - **[Benchmarking Guide](performance/benchmarks.md)**: Benchmark methodology, reproducibility guidelines, and throughput metrics.
