@@ -48,5 +48,7 @@ setup/downloads/
 /sessions/
 *.log
 .env
+notes.txt
 .DS_Store
 Thumbs.db
+
