@@ -4,6 +4,14 @@ All notable changes to the **InferenceOS** project will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-10-01
+
+### Fixed
+- **CI Test Suite Resilience**:
+  - Mocked model loading in symbiosis API endpoint tests (`tests/test_hybrid_symbiosis.py`) so HTTP tests do not depend on uncommitted local weight files in headless CI runners.
+  - Provided simulated GPU hardware profile in `test_model_descriptor_and_placement_plan` to verify 100% GPU offloading without requiring physical GPU hardware on CI runners.
+  - Enhanced `PlacementEngine._get_vram_available_bytes` to cleanly support `vram_free_bytes` and `vram_total_bytes` alongside megabyte fields.
+
 ## [1.1.0] - 2026-10-01
 
 ### Added

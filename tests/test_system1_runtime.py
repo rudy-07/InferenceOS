@@ -108,7 +108,17 @@ def test_model_descriptor_and_placement_plan(tmp_path):
 
     assert desc.kv_cache_bytes_per_token() == 0
 
-    pe = PlacementEngine()
+    hw_with_gpu = {
+        "gpus": [{
+            "model": "Simulated GPU",
+            "vram_total_mb": 16384,
+            "vram_free_mb": 14000,
+            "vram_total_bytes": 16 * 1024**3,
+            "bandwidth": 10.0,
+        }],
+        "ram": {"total_bytes": 32 * 1024**3, "available_gb": 24.0},
+    }
+    pe = PlacementEngine(hw_profile=hw_with_gpu)
     plan = pe.generatePlacementPlan(desc, context_length=1024)
 
     assert plan.n_gpu_layers == desc.num_layers

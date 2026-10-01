@@ -379,7 +379,11 @@ def test_direction_b_system1_guardrail_gate(mock_orchestrator):
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
+    monkeypatch.setattr(
+        "server.runtime_adapter.adapter.RuntimeAdapter.load_model_if_needed",
+        lambda self, q: {"model_path": Path("mock/laya"), "plan": None, "meta": {"format": "system1"}},
+    )
     app = create_app()
     return TestClient(app)
 

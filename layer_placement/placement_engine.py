@@ -438,6 +438,10 @@ class PlacementEngine:
 
         target_gpu = gpus[min(primary_gpu_index, len(gpus) - 1)]
         free_mb = target_gpu.get("vram_free_mb", target_gpu.get("vram_total_mb", 0))
+        if free_mb == 0 and "vram_free_bytes" in target_gpu:
+            free_mb = int(target_gpu["vram_free_bytes"] / (1024 * 1024))
+        elif free_mb == 0 and "vram_total_bytes" in target_gpu:
+            free_mb = int(target_gpu["vram_total_bytes"] * 0.85 / (1024 * 1024))
         if free_mb == 0:
             free_mb = int(target_gpu.get("vram_total_mb", 0) * 0.85)
 
