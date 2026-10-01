@@ -8,6 +8,7 @@ Welcome to the official technical documentation for **InferenceOS** — the hard
 
 ### 1. Architecture & Design Philosophy
 - **[Architecture Overview](architecture/overview.md)**: Control plane, system layers, and design philosophy.
+- **[System 1 & System 2 Hybrid Symbiosis](architecture/system1_system2_symbiosis.md)**: Kahneman dual-system fast/slow cognitive loop, non-autoregressive reflex models, confidence gating ($\tau$), and DAgger distillation.
 - **[Execution Lifecycle & Flow](architecture/execution_flow.md)**: End-to-end trace from CLI launch to token generation.
 - **[llama.cpp Fork & Synergy](architecture/llama_cpp_fork.md)**: Why `llama.cpp` was forked, what InferenceOS extends, and upstream alignment.
 
@@ -39,7 +40,8 @@ Welcome to the official technical documentation for **InferenceOS** — the hard
 - **[Ollama REST API Reference](server/ollama_api.md)**: `/api/generate`, `/api/chat`, `/api/tags`, `/api/show`, and `/api/ps`.
 
 ### 8. Interfaces & Configuration
-- **[CLI Command Reference](cli/command_reference.md)**: Complete guide to all 21 subcommands with usage examples.
+- **[Modern Terminal UI (TUI)](cli/modern_tui.md)**: Next-gen interactive terminal, floating slash autocompletion, modal model picker, and deliberation cards.
+- **[CLI Command Reference](cli/command_reference.md)**: Complete guide to all subcommands with usage examples.
 - **[Configuration Settings Reference](configuration/settings_reference.md)**: Environment variables, `pipeline_config.json`, and default settings.
 
 ### 9. Developer & Extension Guides

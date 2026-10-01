@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
 
 from .config_manager import ConfigManager, get_config_manager
-from orchestrator.model_parser import detect_model_format, ModelFormat
+from orchestrator.model_parser import detect_model_format, read_model_metadata, ModelFormat
 
 SUPPORTED_EXTENSIONS: Set[str] = {
     ".gguf",
@@ -103,23 +103,48 @@ class ModelRegistry:
             Path.home() / ".inferenceos" / "models",
             parent_dir / "KaptaanLM",
             parent_dir / "Qwen-Coder",
+            Path("D:/Projects/llm"),
             Path.home() / ".cache" / "huggingface" / "hub",
             Path.home() / ".cache" / "kaggle",
         ]
         valid_dirs = [d for d in search_dirs if d and d.exists()]
 
         for search_dir in valid_dirs:
-            for file_path in search_dir.rglob("*"):
-                if not file_path.is_file():
+            # 1. First check for directory-level models (e.g. System 1 checkpoints like Laya/Kev)
+            for item in search_dir.rglob("*"):
+                lower_parts = [p.lower() for p in item.parts]
+                if any(ignored in lower_parts for ignored in IGNORE_DIR_PATTERNS):
                     continue
 
+                if item.is_dir():
+                    dir_fmt = detect_model_format(item)
+                    if dir_fmt == ModelFormat.SYSTEM1:
+                        discovered_paths.append(item)
+                        meta = read_model_metadata(item)
+                        stem = item.name.lower()
+                        s1_kind = meta.get("system1_kind", "system1")
+                        nick = f"{s1_kind}:{stem}"
+                        if nick in self._models and self._models[nick]["location"] != str(item.resolve()):
+                            nick = f"{nick}:{item.parent.name.lower()}"
+                        if nick not in self._models:
+                            self._models[nick] = {
+                                "nickname": nick,
+                                "location": str(item.resolve()),
+                                "format": dir_fmt.value,
+                                "system1_kind": s1_kind,
+                                "backend": "auto",
+                                "context": meta.get("max_context_length", 1024),
+                                "profile": "balanced",
+                                "tags": ["auto-discovered", "system1", "non-autoregressive", s1_kind],
+                                "notes": f"System 1 decision model ({meta.get('arch', 'mmBERT')})",
+                                "size_bytes": meta.get("file_size_bytes", 0),
+                            }
+                    continue
+
+                # 2. File-level models (GGUF, ONNX, SafeTensors, PyTorch, etc.)
+                file_path = item
                 ext = file_path.suffix.lower()
                 if ext not in SUPPORTED_EXTENSIONS:
-                    continue
-
-                # Skip build / git / cmake artifacts
-                lower_parts = [p.lower() for p in file_path.parts]
-                if any(ignored in lower_parts for ignored in IGNORE_DIR_PATTERNS):
                     continue
 
                 # Skip non-model bin files
@@ -128,6 +153,10 @@ class ModelRegistry:
 
                 # Skip empty files
                 if file_path.stat().st_size == 0:
+                    continue
+
+                # If parent directory was already registered as a System 1 model, skip child files
+                if (file_path.parent / "rl_agent_config.json").exists() or (file_path.parent / "kev_config.json").exists():
                     continue
 
                 discovered_paths.append(file_path)
@@ -185,11 +214,10 @@ class ModelRegistry:
         """Register a model in the library."""
         path = Path(location).resolve()
         if not path.exists():
-            print(f"[Error] Model file does not exist: {path}")
+            print(f"[Error] Model path does not exist: {path}")
             return False
 
         nick = nickname.lower().strip()
-        size_bytes = path.stat().st_size if path.exists() else 0
         fmt = detect_model_format(path)
 
         if isinstance(tags, str):
@@ -198,6 +226,24 @@ class ModelRegistry:
             all_tags = list(tags or [])
         if fmt.value not in all_tags:
             all_tags.append(fmt.value)
+
+        meta: Dict[str, Any] = {}
+        try:
+            meta = read_model_metadata(path)
+        except Exception:
+            pass
+
+        if fmt == ModelFormat.SYSTEM1:
+            all_tags.extend(["system1", "non-autoregressive"])
+            s1_kind = meta.get("system1_kind", "system1")
+            if s1_kind not in all_tags:
+                all_tags.append(s1_kind)
+            context = meta.get("max_context_length", context)
+            size_bytes = meta.get("file_size_bytes", 0)
+            if not notes:
+                notes = f"System 1 non-autoregressive decision model ({meta.get('arch', 'mmBERT')})"
+        else:
+            size_bytes = path.stat().st_size if path.is_file() else sum(f.stat().st_size for f in path.glob("**/*") if f.is_file())
 
         self._models[nick] = {
             "nickname": nick,
@@ -210,6 +256,10 @@ class ModelRegistry:
             "notes": notes,
             "size_bytes": size_bytes,
         }
+        if fmt == ModelFormat.SYSTEM1:
+            self._models[nick]["system1_kind"] = meta.get("system1_kind", "system1")
+            self._models[nick]["head_max_len"] = meta.get("head_max_len", 768)
+
         self.save()
         return True
 

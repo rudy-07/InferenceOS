@@ -38,6 +38,7 @@ CATEGORIES = [
     ("Experimental", "experimental"),
     ("Appearance", "appearance"),
     ("Profiles", "profiles"),
+    ("System 1 & Symbiosis", "symbiosis"),
     ("Keyboard Shortcuts", "shortcuts"),
 ]
 

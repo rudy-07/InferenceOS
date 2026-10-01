@@ -25,6 +25,7 @@ from server.api.routes.responses import router as responses_router
 from server.api.routes.sessions import router as sessions_router
 from server.api.routes.metrics import router as metrics_router
 from server.api.routes.ollama import router as ollama_router
+from server.api.routes.systemone import router as systemone_router
 
 
 from contextlib import asynccontextmanager
@@ -44,7 +45,7 @@ def create_app(config: Optional[ServerConfig] = None) -> FastAPI:
     app = FastAPI(
         title="InferenceOS Server",
         description="Production-grade OpenAI-compatible local inference server.",
-        version="1.0.0",
+        version="1.1.0",
         docs_url="/docs",
         redoc_url="/redoc",
         lifespan=lifespan,
@@ -84,5 +85,6 @@ def create_app(config: Optional[ServerConfig] = None) -> FastAPI:
     app.include_router(sessions_router)
     app.include_router(metrics_router)
     app.include_router(ollama_router)
+    app.include_router(systemone_router)
 
     return app

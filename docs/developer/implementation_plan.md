@@ -725,6 +725,33 @@ The existing `config` CLI command gains new interactive sections for each phase,
 
 ---
 
+## Phase 12 — Native System 1 (Non-Autoregressive) Decision Engine
+
+**Target Modules**: `orchestrator/model_parser.py`, `cli/core/model_registry.py`, `layer_placement/`, `inference_runtime/system1_engine.py` (new), `inference_runtime/multiformat_engine.py`, `server/api/routes/systemone.py` (new), `server/runtime_adapter/adapter.py`, `cli/commands/run.py`, `cli/commands/decide.py` (new)
+
+**Goal**: Native execution, zero-KV memory placement, auto-detection, and high-performance serving of non-autoregressive "System 1" decision models (Laya, Kev, Jev API contract) achieving 15–40 ms decision latencies with calibrated probabilities.
+
+### Sub-System A — Format Auto-Detection & Registry Integration
+- Recognize `ModelFormat.SYSTEM1` for directories or checkpoints containing `rl_agent_config.json` (Laya) or `kev_config.json` (Kev).
+- Allow directories as registered model locations in `ModelRegistry`.
+- Auto-tag models as `["system-1", "non-autoregressive", "decision"]`.
+
+### Sub-System B — Zero-KV Cache Placement & Budgeting
+- Set `kv_cache_bytes_per_token = 0` in `ModelDescriptor`.
+- Pre-flight memory budget allocates 100% of layers to GPU VRAM for the single forward pass with 0 MB KV-cache allocation.
+
+### Sub-System C — Native `System1RuntimeEngine`
+- Single forward pass execution for typed questions (`choice`, `noul`, `score`).
+- Dynamic coarse-to-fine chunking for questions with $>60$ candidates.
+- Temperature calibration and confidence estimation.
+- Acceleration support via TileLang / FlashAttention kernels when available.
+
+### Sub-System D — Dual API Serving & OpenAI Bridge
+- Native `/v1/systemone` and `/v1/decision` endpoints matching the TypeSafe Jev contract.
+- OpenAI `/v1/chat/completions` bridge translating tool/function selection and classification prompts into fast System 1 decisions.
+
+---
+
 ## Phase Dependency Graph
 
 ```mermaid
@@ -738,9 +765,10 @@ graph LR
     P6 --> P11[Phase 11: Dashboard / Health / AutoTune]
     P8 --> P11
     P9 --> P11
+    P12[Phase 12: Native System 1 Engine] --> P11
 ```
 
-Each phase can be implemented in parallel by different contributors. Phase 6 (Prefix Cache) is the highest-value prerequisite as it unlocks Phases 8 and 11 optimally.
+Each phase can be implemented in parallel by different contributors. Phase 12 provides a dedicated non-autoregressive path distinct from the autoregressive llama.cpp runtime.
 
 ---
 
@@ -755,5 +783,7 @@ Each phase can be implemented in parallel by different contributors. Phase 6 (Pr
 | **9** | Multi-Node Cluster Mesh | XL | v0.6.0 |
 | **10** | NPU Accelerator Offloading | L | v0.5.1 |
 | **11** | Dashboard + Predictive Health + AutoTune | L | v0.5.0 |
+| **12** | Native System 1 Non-Autoregressive Engine | M | v0.5.0 |
 
 > **Effort**: S = Small (<1 week), M = Medium (1–3 weeks), L = Large (3–6 weeks), XL = Extra-Large (6–12 weeks)
+

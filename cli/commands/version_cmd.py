@@ -30,7 +30,7 @@ def handle_version_command() -> None:
 
     txt = Text()
     txt.append("⚡ InferenceOS ── The Operating System for Local AI Inference\n", style="bold cyan")
-    txt.append("Version:        1.0.0 (Production Release)\n", style="bold green")
+    txt.append("Version:        1.1.0 (Production Release)\n", style="bold green")
     txt.append(f"Python:         {sys.version.split()[0]}\n", style="yellow")
     txt.append(f"Platform:       {platform.system()} {platform.release()} ({platform.machine()})\n", style="white")
     txt.append("Engine:         llama.cpp Multi-Accelerator Engine\n", style="magenta")

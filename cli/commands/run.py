@@ -123,4 +123,7 @@ def handle_run_command(
 
     print()
     backend_str = res.backend.upper() if res.backend else "UNKNOWN"
-    console.print(f"\n[dim]Stats: {res.stats.eval_tps:.2f} tok/s | TTFT: {res.stats.prompt_eval_ms:.1f}ms | Backend: {backend_str}[/dim]")
+    if fmt == ModelFormat.SYSTEM1:
+        console.print(f"\n[dim]Stats: {res.stats.eval_tps:.1f} decisions/sec | Latency: {res.stats.eval_ms:.1f}ms | Backend: {backend_str} | KV Cache: 0 MB (Non-autoregressive)[/dim]")
+    else:
+        console.print(f"\n[dim]Stats: {res.stats.eval_tps:.2f} tok/s | TTFT: {res.stats.prompt_eval_ms:.1f}ms | Backend: {backend_str}[/dim]")

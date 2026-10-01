@@ -37,7 +37,7 @@ class HardwareFingerprintData:
     backend: str = "vulkan"
     driver_version: str = "latest"
     os_name: str = "Windows"
-    inferenceos_version: str = "1.0.0"
+    inferenceos_version: str = "1.1.0"
 
     def get_fingerprint_hash(self) -> str:
         return f"{self.gpu_name}_{int(self.vram_gb)}GB_{self.backend}"

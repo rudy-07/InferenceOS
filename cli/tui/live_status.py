@@ -102,8 +102,17 @@ class LiveStatusPanel:
         temp: float = 0.7,
         profile: str = "balanced",
         reasoning_mode: bool = False,
+        mode: str = "standard",
+        s1_model_name: Optional[str] = None,
+        s2_model_name: Optional[str] = None,
+        escalate_enabled: bool = False,
+        escalate_tau: float = 0.70,
+        last_decision: Optional[str] = None,
+        last_confidence: float = 0.0,
+        last_latency_ms: float = 0.0,
+        last_escalated: bool = False,
     ) -> Panel:
-        """Construct Rich Panel representing current runtime state."""
+        """Construct Rich Panel representing current runtime state across Standard, System 1, or Hybrid mode."""
         tm = self.theme
         elapsed_sec = int(time.time() - self.start_time)
         session_time_str = f"{elapsed_sec // 60:02d}:{elapsed_sec % 60:02d}"
@@ -126,47 +135,119 @@ class LiveStatusPanel:
         c_accent = tm.color("accent")
         c_muted = tm.color("muted")
 
-        # Top Header Banner
-        header = Text()
-        header.append("⚡ InferenceOS ", style=f"bold {c_primary}")
-        header.append("│ ", style=c_muted)
-        header.append(f"Model: {model_name} ", style=f"bold {c_secondary}")
-        header.append("│ ", style=c_muted)
-        header.append(f"Backend: {backend.upper()} ", style=f"bold {c_accent}")
-        header.append("│ ", style=c_muted)
-        header.append(f"Profile: {profile.capitalize()} ", style=c_warning)
+        if mode == "system1":
+            s1_name = s1_model_name or model_name
+            header = Text()
+            header.append("⚡ InferenceOS ", style=f"bold {c_primary}")
+            header.append("│ ", style=c_muted)
+            header.append("Mode: SYSTEM 1 (REFLEX) ", style=f"bold {c_accent}")
+            header.append("│ ", style=c_muted)
+            header.append(f"Model: {s1_name} ", style=f"bold {c_secondary}")
+            header.append("│ ", style=c_muted)
+            header.append("KV Cache: 0 MB ", style=f"bold {c_success}")
 
-        # Build 3-column table
-        table = Table(box=None, expand=True, padding=(0, 1))
-        table.add_column("HARDWARE & PLACEMENT", justify="left")
-        table.add_column("THROUGHPUT & LATENCY", justify="left")
-        table.add_column("MEMORY & CONTEXT", justify="left")
+            table = Table(box=None, expand=True, padding=(0, 1))
+            table.add_column("ARCHITECTURE & PLACEMENT", justify="left")
+            table.add_column("LATENCY & PASSES", justify="left")
+            table.add_column("LAST DECISION METRICS", justify="left")
 
-        # Col 1: Hardware & Placement
-        col1 = Text()
-        col1.append(f"CPU Util:  {cpu_util_pct:.1f}%\n", style=c_secondary)
-        col1.append(f"GPU Util:  {gpu_util_pct:.1f}%\n", style=c_success)
-        col1.append(f"Placement: {placement_str}\n", style=c_primary)
-        col1.append(f"Hardware:  {hardware_str}", style=c_muted)
+            col1 = Text()
+            col1.append(f"Model:     {s1_name}\n", style=f"bold {c_secondary}")
+            col1.append(f"Format:    System 1 Non-Autoregressive\n", style=c_primary)
+            col1.append(f"CPU Util:  {cpu_util_pct:.1f}% │ GPU: {gpu_util_pct:.1f}%\n", style=c_success)
+            col1.append(f"Hardware:  {hardware_str}", style=c_muted)
 
-        # Col 2: Throughput & Latency
-        col2 = Text()
-        col2.append(f"Gen Speed:    {gen_tps:.2f} tok/s\n", style=f"bold {c_success}")
-        col2.append(f"Prompt Speed: {prompt_tps:.1f} tok/s\n", style=c_secondary)
-        col2.append(f"TTFT:         {ttft_ms:.1f} ms\n", style=c_warning)
-        col2.append(f"Session Time: {session_time_str}", style=c_muted)
+            col2 = Text()
+            col2.append(f"Latency:   {last_latency_ms:.1f} ms\n", style=f"bold {c_warning if last_latency_ms > 100 else c_success}")
+            col2.append(f"Speed:     Single Forward Pass\n", style=c_accent)
+            col2.append(f"Passes:    1 (Zero Autoregressive Loops)\n", style=c_secondary)
+            col2.append(f"Time:      {session_time_str}", style=c_muted)
 
-        # Col 3: Memory & Context
-        ctx_pct = (context_used / max(1, context_max)) * 100.0
-        col3 = Text()
-        col3.append(f"Context: {context_used}/{context_max} ({ctx_pct:.1f}%)\n", style=c_secondary)
-        col3.append(f"VRAM:    Pred {pred_vram_mb:.0f}MB / Act {act_vram_mb:.0f}MB\n", style=c_primary)
-        col3.append(f"RAM:     Pred {pred_ram_mb:.0f}MB / Act {act_ram_mb:.0f}MB\n", style=c_muted)
-        col3.append(f"Temp:    {temp:.2f} (Reasoning: {'ON' if reasoning_mode else 'OFF'})", style=c_warning)
+            dec_str = last_decision or "None"
+            col3 = Text()
+            col3.append(f"Decision:   {dec_str}\n", style=f"bold {c_warning if 'UNCERTAIN' in dec_str else c_success}")
+            col3.append(f"Confidence: {last_confidence:.2f}\n", style=c_secondary)
+            col3.append(f"KV Memory:  0 MB (Stateless)\n", style=c_primary)
+            col3.append(f"RAM Used:   {act_ram_mb:.0f} MB", style=c_muted)
 
-        table.add_row(col1, col2, col3)
+            table.add_row(col1, col2, col3)
 
-        main_group = Columns([table], expand=True)
+        elif mode == "hybrid":
+            s1_name = s1_model_name or "laya"
+            s2_name = s2_model_name or "teacher"
+            header = Text()
+            header.append("⚡ InferenceOS ", style=f"bold {c_primary}")
+            header.append("│ ", style=c_muted)
+            header.append("Mode: HYBRID (S1 ↔ S2 SYMBIOSIS) ", style=f"bold {c_accent}")
+            header.append("│ ", style=c_muted)
+            header.append(f"S1: {s1_name} ", style=f"bold {c_secondary}")
+            header.append("│ ", style=c_muted)
+            header.append(f"S2: {s2_name} ", style=f"bold {c_primary}")
+
+            table = Table(box=None, expand=True, padding=(0, 1))
+            table.add_column("SYMBIOTIC PAIR", justify="left")
+            table.add_column("ESCALATION GATE", justify="left")
+            table.add_column("DECISION / SYNTHESIS", justify="left")
+
+            col1 = Text()
+            col1.append(f"S1 Reflex:   {s1_name}\n", style=f"bold {c_secondary}")
+            col1.append(f"S2 Teacher:  {s2_name}\n", style=f"bold {c_primary}")
+            col1.append(f"CPU: {cpu_util_pct:.1f}% │ GPU: {gpu_util_pct:.1f}%\n", style=c_success)
+            col1.append(f"Hardware:    {hardware_str}", style=c_muted)
+
+            esc_status = "ACTIVE" if escalate_enabled else "OFF"
+            status_style = f"bold {c_success}" if escalate_enabled else c_muted
+            col2 = Text()
+            col2.append(f"Escalation:  {esc_status} (tau={escalate_tau:.2f})\n", style=status_style)
+            col2.append(f"Path:        {'⚡ S2 Escalation' if last_escalated else '✔ Fast Reflex Bypass'}\n", style=f"bold {c_warning if last_escalated else c_success}")
+            col2.append(f"Latency:     {last_latency_ms:.1f} ms\n", style=c_secondary)
+            col2.append(f"Time:        {session_time_str}", style=c_muted)
+
+            dec_str = last_decision or "None"
+            col3 = Text()
+            col3.append(f"Choice:      {dec_str}\n", style=f"bold {c_warning if 'UNCERTAIN' in dec_str else c_success}")
+            col3.append(f"Confidence:  {last_confidence:.2f}\n", style=c_secondary)
+            col3.append(f"Resolved By: {'System 2 Teacher' if last_escalated else 'System 1 Reflex'}\n", style=c_accent)
+            col3.append(f"RAM Used:    {act_ram_mb:.0f} MB", style=c_muted)
+
+            table.add_row(col1, col2, col3)
+
+        else:
+            # Standard Mode (Generative Chat)
+            header = Text()
+            header.append("⚡ InferenceOS ", style=f"bold {c_primary}")
+            header.append("│ ", style=c_muted)
+            header.append(f"Model: {model_name} ", style=f"bold {c_secondary}")
+            header.append("│ ", style=c_muted)
+            header.append(f"Backend: {backend.upper()} ", style=f"bold {c_accent}")
+            header.append("│ ", style=c_muted)
+            header.append(f"Profile: {profile.capitalize()} ", style=c_warning)
+
+            table = Table(box=None, expand=True, padding=(0, 1))
+            table.add_column("HARDWARE & PLACEMENT", justify="left")
+            table.add_column("THROUGHPUT & LATENCY", justify="left")
+            table.add_column("MEMORY & CONTEXT", justify="left")
+
+            col1 = Text()
+            col1.append(f"CPU Util:  {cpu_util_pct:.1f}%\n", style=c_secondary)
+            col1.append(f"GPU Util:  {gpu_util_pct:.1f}%\n", style=c_success)
+            col1.append(f"Placement: {placement_str}\n", style=c_primary)
+            col1.append(f"Hardware:  {hardware_str}", style=c_muted)
+
+            col2 = Text()
+            col2.append(f"Gen Speed:    {gen_tps:.2f} tok/s\n", style=f"bold {c_success}")
+            col2.append(f"Prompt Speed: {prompt_tps:.1f} tok/s\n", style=c_secondary)
+            col2.append(f"TTFT:         {ttft_ms:.1f} ms\n", style=c_warning)
+            col2.append(f"Session Time: {session_time_str}", style=c_muted)
+
+            ctx_pct = (context_used / max(1, context_max)) * 100.0
+            col3 = Text()
+            col3.append(f"Context: {context_used}/{context_max} ({ctx_pct:.1f}%)\n", style=c_secondary)
+            col3.append(f"VRAM:    Pred {pred_vram_mb:.0f}MB / Act {act_vram_mb:.0f}MB\n", style=c_primary)
+            col3.append(f"RAM:     Pred {pred_ram_mb:.0f}MB / Act {act_ram_mb:.0f}MB\n", style=c_muted)
+            col3.append(f"Temp:    {temp:.2f} (Reasoning: {'ON' if reasoning_mode else 'OFF'})", style=c_warning)
+
+            table.add_row(col1, col2, col3)
 
         panel = Panel(
             table,
@@ -176,5 +257,4 @@ class LiveStatusPanel:
             box=ROUNDED,
             padding=(0, 1),
         )
-
         return panel

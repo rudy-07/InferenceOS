@@ -7,10 +7,20 @@ InferenceOS provides a 21-command terminal interface accessible via `inferenceos
 ## Command Matrix
 
 ### 1. `chat`
-Launch an interactive terminal UI chat session with live streaming.
+Launch an interactive terminal UI chat session with live streaming, modal model pickers, floating slash autocompletion, and Kahneman fast/slow hybrid symbiosis.
 ```bash
+# Standard generative chat
 inferenceos chat models/llama-3-8b.gguf --theme nord
+
+# Hybrid Symbiosis (System 1 Reflex + System 2 Deep Reasoning with auto-escalation)
+inferenceos chat --mode hybrid --system1-model laya/agent --system2-model models/qwen3-4b.gguf --tau 0.85
 ```
+**Interactive TUI Controls:**
+- `Ctrl+O` or `/model`: Open split-view interactive model picker modal.
+- `Ctrl+T` or `/mode`: Cycle cognitive mode (`system2`, `system1_reflex`, `symbiosis`).
+- `Tab`: Autocomplete slash commands and model paths.
+- `Ctrl+C`: Clear prompt buffer without exiting.
+- Slash commands: `/model`, `/mode`, `/tau <float>`, `/dagger export <path>`, `/stats`, `/clear`, `/theme`, `/help`, `/exit`.
 
 ### 2. `run`
 Execute a single prompt against a model with live token output and metrics.
@@ -132,4 +142,10 @@ inferenceos version
 Reset settings, profiles, and caches back to default state.
 ```bash
 inferenceos reset
+```
+
+### 22. `decide`
+Execute fast non-autoregressive decision & reflex inference on System 1 models (e.g. Laya, Kev) with sub-150ms latency.
+```bash
+inferenceos decide --model laya/agent --input "Route query to financial compliance department?" --confidence-threshold 0.85
 ```

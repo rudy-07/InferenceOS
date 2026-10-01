@@ -995,6 +995,29 @@ class MultiFormatRuntimeEngine:
         self.hw_profile = hw_profile or {}
         self.config = config or RuntimeConfig()
 
+    def get_runner(self, model_path: Union[str, Path]) -> Any:
+        """
+        Return the runner instance for the specified model without immediately executing.
+        """
+        p = Path(model_path).resolve()
+        fmt = detect_model_format(p)
+        if fmt == ModelFormat.SYSTEM1:
+            from .system1_engine import System1Runner
+            return System1Runner(p, hw_profile=self.hw_profile, config=self.config)
+        elif fmt in (ModelFormat.ONNX, ModelFormat.OBX):
+            return ONNXRunner(p, hw_profile=self.hw_profile)
+        elif fmt in (ModelFormat.SAFETENSORS, ModelFormat.PYTORCH, ModelFormat.TORCHSCRIPT):
+            return TorchRunner(p, hw_profile=self.hw_profile)
+        elif fmt == ModelFormat.PICKLE:
+            return PickleRunner(p, hw_profile=self.hw_profile)
+        elif fmt == ModelFormat.TFLITE:
+            return TFLiteRunner(p)
+        elif fmt == ModelFormat.OPENVINO:
+            return OpenVINORunner(p, hw_profile=self.hw_profile)
+        elif fmt == ModelFormat.KERAS:
+            return KerasRunner(p)
+        raise ValueError(f"No runner available for format: {fmt.value}")
+
     def execute(
         self,
         model_path: Union[str, Path],
@@ -1015,8 +1038,20 @@ class MultiFormatRuntimeEngine:
 
         fmt = detect_model_format(p)
 
+        # 0. System 1 Non-Autoregressive format (Laya, Kev, Jev contract)
+        if fmt == ModelFormat.SYSTEM1:
+            from .system1_engine import System1Runner
+            runner = System1Runner(p, hw_profile=self.hw_profile, config=self.config)
+            return runner.run(
+                prompt=prompt,
+                on_token=on_token,
+                max_tokens=max_tokens,
+                temp=temp,
+                **kwargs,
+            )
+
         # 1. GGUF format → standard llama.cpp InferenceSession
-        if fmt == ModelFormat.GGUF:
+        elif fmt == ModelFormat.GGUF:
             if plan is None:
                 from layer_placement import ModelDescriptor, PlacementEngine
                 from orchestrator.gguf_parser import read_gguf_metadata

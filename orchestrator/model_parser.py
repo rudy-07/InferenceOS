@@ -65,18 +65,51 @@ class ModelFormat(str, enum.Enum):
     OPENVINO = "openvino"
     COREML = "coreml"
     TENSORRT = "tensorrt"
+    SYSTEM1 = "system1"
     UNKNOWN = "unknown"
 
 
 def detect_model_format(path: Union[str, Path]) -> ModelFormat:
     """
-    Detect the model format using file extension and binary magic numbers.
+    Detect the model format using file extension, binary magic numbers, or directory checkpoints.
+    Supports GGUF, SafeTensors, ONNX, PyTorch, and System 1 (Laya/Kev) non-autoregressive models.
     """
     p = Path(path)
-    if not p.exists() or not p.is_file():
+    if not p.exists():
+        return ModelFormat.UNKNOWN
+
+    # Check for Directory-based model checkpoints (e.g. Laya, Kev, HuggingFace directory)
+    if p.is_dir():
+        if (p / "rl_agent_config.json").exists():
+            return ModelFormat.SYSTEM1
+        if (p / "kev_config.json").exists() or (p / "head.pt").exists():
+            return ModelFormat.SYSTEM1
+        cfg_file = p / "config.json"
+        if cfg_file.exists():
+            try:
+                with open(cfg_file, "r", encoding="utf-8") as f:
+                    cfg_data = json.load(f)
+                archs = [str(a).lower() for a in cfg_data.get("architectures", [])]
+                m_type = str(cfg_data.get("model_type", "")).lower()
+                if any("laya" in a or "kev" in a or "system1" in a for a in archs) or m_type in ("laya", "kev", "system1"):
+                    return ModelFormat.SYSTEM1
+            except Exception:
+                pass
+        if (p / "model.safetensors").exists():
+            return ModelFormat.SAFETENSORS
+        return ModelFormat.UNKNOWN
+
+    if not p.is_file():
         return ModelFormat.UNKNOWN
 
     ext = p.suffix.lower()
+
+    # Check if file belongs to a System 1 directory or is a System 1 config
+    if p.name in ("rl_agent_config.json", "kev_config.json", "head.pt"):
+        return ModelFormat.SYSTEM1
+    if (p.parent / "rl_agent_config.json").exists() or (p.parent / "kev_config.json").exists() or (p.parent / "head.pt").exists():
+        if ext in (".safetensors", ".bin", ".pt"):
+            return ModelFormat.SYSTEM1
 
     # Read binary header (up to 64 bytes)
     header = b""
@@ -101,6 +134,16 @@ def detect_model_format(path: Union[str, Path]) -> ModelFormat:
             if 0 < header_len < 100 * 1024 * 1024 and header[8:9] == b"{":
                 if ext == ".obx":
                     return ModelFormat.OBX
+                # If header JSON mentions choice_head, noul_head, or pointer_head, it's System 1
+                try:
+                    with open(p, "rb") as sf:
+                        sf.seek(8)
+                        h_json = json.loads(sf.read(min(header_len, 4096)).decode("utf-8", errors="ignore") + "}")
+                        keys = list(h_json.keys()) if isinstance(h_json, dict) else []
+                        if any("choice_head" in k or "noul_head" in k or "score_head" in k or "pointer_head" in k for k in keys):
+                            return ModelFormat.SYSTEM1
+                except Exception:
+                    pass
                 return ModelFormat.SAFETENSORS
         except Exception:
             pass
@@ -678,6 +721,79 @@ def _extract_keras_metadata(path: Path) -> Dict[str, Any]:
     }
 
 
+def _extract_system1_metadata(path: Path) -> Dict[str, Any]:
+    """Extract metadata from a System 1 (non-autoregressive decision model) checkpoint or directory."""
+    target_dir = path if path.is_dir() else path.parent
+    rl_cfg_file = target_dir / "rl_agent_config.json"
+    kev_cfg_file = target_dir / "kev_config.json"
+    cfg_file = target_dir / "config.json"
+
+    cfg: Dict[str, Any] = {}
+    system1_kind = "system1"
+    if rl_cfg_file.exists():
+        try:
+            with open(rl_cfg_file, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+            system1_kind = "laya"
+        except Exception:
+            pass
+    elif kev_cfg_file.exists() or (target_dir / "head.pt").exists():
+        system1_kind = "kev"
+        if kev_cfg_file.exists():
+            try:
+                with open(kev_cfg_file, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+            except Exception:
+                pass
+        head_pt = target_dir / "head.pt"
+        if head_pt.exists():
+            try:
+                import torch
+                pt_data = torch.load(head_pt, map_location="cpu")
+                if isinstance(pt_data, dict):
+                    cfg.update({k: v for k, v in pt_data.items() if isinstance(v, (str, int, float, bool, list, dict))})
+            except Exception:
+                pass
+    elif cfg_file.exists():
+        try:
+            with open(cfg_file, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+            system1_kind = "kev" if "kev" in str(cfg).lower() else "system1"
+        except Exception:
+            pass
+
+    # Total size
+    if path.is_dir():
+        total_size = sum(f.stat().st_size for f in path.glob("**/*") if f.is_file())
+    else:
+        total_size = path.stat().st_size
+
+    encoder_name = cfg.get("encoder") or cfg.get("model_name") or cfg.get("_name_or_path") or path.stem
+    max_ctx = int(cfg.get("max_len") or cfg.get("max_position_embeddings") or 1024)
+    head_max = int(cfg.get("head_max_len") or 768)
+    head_layers = int(cfg.get("head_layers", 2))
+
+    return {
+        "format": "system1",
+        "system1_kind": system1_kind,
+        "file_name": path.name,
+        "file_size_bytes": total_size,
+        "arch": str(encoder_name),
+        "num_layers": head_layers + 22,
+        "hidden_size": int(cfg.get("hidden_size", 768)),
+        "num_heads": int(cfg.get("num_attention_heads", 12)),
+        "num_kv_heads": 0,  # Zero KV cache
+        "max_context_length": max_ctx,
+        "head_max_len": head_max,
+        "total_params": 322_000_000 if ("322" in str(cfg) or "base" in str(encoder_name)) else (total_size // 2),
+        "tensor_count": 0,
+        "tensors": [],
+        "is_non_autoregressive": True,
+        "kv_cache_bytes_per_token": 0,
+        "format_details": cfg,
+    }
+
+
 def read_model_metadata(path: Union[str, Path]) -> Dict[str, Any]:
     """
     Universal model metadata extractor. Auto-detects the format and returns
@@ -689,7 +805,10 @@ def read_model_metadata(path: Union[str, Path]) -> Dict[str, Any]:
 
     fmt = detect_model_format(p)
 
-    if fmt == ModelFormat.GGUF:
+    if fmt == ModelFormat.SYSTEM1:
+        return _extract_system1_metadata(p)
+
+    elif fmt == ModelFormat.GGUF:
         from orchestrator.gguf_parser import read_gguf_metadata
         try:
             gguf_meta = read_gguf_metadata(p)

@@ -196,6 +196,75 @@ class ModelDescriptor:
             layers=layers,
         )
 
+    @classmethod
+    def from_system1_metadata(
+        cls,
+        metadata: Dict[str, Any],
+        model_size_bytes: int,
+        model_name: str = "system1",
+    ) -> "ModelDescriptor":
+        """
+        Construct a ModelDescriptor for a System 1 (non-autoregressive decision model).
+        Sets kv_cache_bytes_per_token to 0 across all layers since inference is non-autoregressive.
+        """
+        arch = metadata.get("arch", "mmBERT")
+        num_layers = int(metadata.get("num_layers", 24))
+        hidden_size = int(metadata.get("hidden_size", 768))
+        num_heads = int(metadata.get("num_heads", 12))
+        max_ctx = int(metadata.get("max_context_length", 1024))
+        vocab_size = int(metadata.get("vocab_size", 50368))
+
+        layers: List[LayerDescriptor] = []
+        # Embedding
+        emb_bytes = int(vocab_size * hidden_size * 2)
+        layers.append(LayerDescriptor(
+            layer_index=0,
+            layer_type=LAYER_TYPE_EMBEDDING,
+            size_bytes=min(emb_bytes, model_size_bytes // 4 if model_size_bytes else 100000000),
+            compute_flops=0.01,
+            is_shared=True,
+            kv_cache_bytes_per_token=0,  # Zero KV cache
+        ))
+
+        remaining_bytes = max(0, model_size_bytes - emb_bytes) if model_size_bytes else 500000000
+        bytes_per_block = max(1, remaining_bytes // max(num_layers, 1))
+
+        for idx in range(num_layers):
+            layers.append(LayerDescriptor(
+                layer_index=idx + 1,
+                layer_type=LAYER_TYPE_TRANSFORMER,
+                size_bytes=bytes_per_block,
+                compute_flops=0.05,
+                is_shared=False,
+                kv_cache_bytes_per_token=0,  # Zero KV cache
+            ))
+
+        # Readout head
+        layers.append(LayerDescriptor(
+            layer_index=num_layers + 1,
+            layer_type=LAYER_TYPE_LM_HEAD,
+            size_bytes=max(1, bytes_per_block // 2),
+            compute_flops=0.01,
+            is_shared=True,
+            kv_cache_bytes_per_token=0,  # Zero KV cache
+        ))
+
+        return cls(
+            name=model_name,
+            architecture=arch,
+            num_layers=num_layers,
+            hidden_size=hidden_size,
+            num_heads=num_heads,
+            num_kv_heads=0,
+            head_dim=hidden_size // max(num_heads, 1),
+            vocab_size=vocab_size,
+            max_context_length=max_ctx,
+            quant_type="BF16",
+            quant_bpw=16.0,
+            model_size_bytes=model_size_bytes,
+            layers=layers,
+        )
+
     # ---------------------------------------------------------------------------
     # Convenience helpers
     # ---------------------------------------------------------------------------

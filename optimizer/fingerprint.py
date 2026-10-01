@@ -82,5 +82,5 @@ class FingerprintEngine:
             backend=backend,
             driver_version="latest",
             os_name="Windows",
-            inferenceos_version="1.0.0",
+            inferenceos_version="1.1.0",
         )

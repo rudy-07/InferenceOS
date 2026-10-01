@@ -126,6 +126,7 @@ class InferenceResult:
     optimization_profile: Optional[OptimizationProfile] = None
     performance_score: Optional[PerformanceScore] = None
     spec_decision: Optional[SpecDecisionSummary] = None
+    system1_answers: Optional[Dict[str, Any]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         d = {
@@ -508,27 +509,32 @@ class InferenceSession:
         stdout_text = ""
         stderr_text = ""
 
-        if self.config.async_streaming:
-            # Async path: background threads read stdout/stderr concurrently
-            def _on_token(text: str, elapsed_ms: float) -> None:
-                collector.record_token()
-                if on_token is not None:
-                    on_token(text)
+        try:
+            if self.config.async_streaming:
+                # Async path: background threads read stdout/stderr concurrently
+                def _on_token(text: str, elapsed_ms: float) -> None:
+                    collector.record_token()
+                    if on_token is not None:
+                        on_token(text)
 
-            proc_manager.stream_async(on_token=_on_token)
-            stdout_text, stderr_text = proc_manager.wait_for_completion(
-                timeout_sec=self.config.process_timeout_sec
-            )
-        else:
-            # Synchronous path: communicate() blocks until process exits
-            stdout_text, stderr_text, _ = proc_manager.wait_sync(
-                timeout_sec=self.config.process_timeout_sec
-            )
-            # Fire on_token for each line retroactively (no real streaming)
-            if on_token is not None:
-                for line in stdout_text.splitlines():
-                    if line.strip():
-                        on_token(line)
+                proc_manager.stream_async(on_token=_on_token)
+                stdout_text, stderr_text = proc_manager.wait_for_completion(
+                    timeout_sec=self.config.process_timeout_sec
+                )
+            else:
+                # Synchronous path: communicate() blocks until process exits
+                stdout_text, stderr_text, _ = proc_manager.wait_sync(
+                    timeout_sec=self.config.process_timeout_sec
+                )
+                # Fire on_token for each line retroactively (no real streaming)
+                if on_token is not None:
+                    for line in stdout_text.splitlines():
+                        if line.strip():
+                            on_token(line)
+        except KeyboardInterrupt:
+            proc_manager.kill()
+            collector.stop_sampling()
+            raise
 
         wall_end = time.perf_counter()
         total_wall_ms = (wall_end - wall_start) * 1000.0

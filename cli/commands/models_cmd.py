@@ -72,18 +72,18 @@ def handle_models_command(
         console.print(summary_table)
 
     elif act == "add":
-        # Ergonomic support: allow passing file path directly as target
+        # Ergonomic support: allow passing file or directory path directly as target
         target_path = None
         if target:
             p = Path(target)
-            if p.exists() and p.is_file():
+            if p.exists() and (p.is_file() or p.is_dir()):
                 target_path = str(p.resolve())
 
         model_file = path or target_path
         nick = nickname or (Path(model_file).stem if model_file else target)
 
         if not nick or not model_file:
-            console.print("[red]Error: 'models add' requires a model file path (e.g. 'models add /path/to/model.gguf' or with --path/--nickname)[/red]")
+            console.print("[red]Error: 'models add' requires a model file or directory path (e.g. 'models add /path/to/checkpoint' or with --path/--nickname)[/red]")
             return
 
         # Parse tags if string

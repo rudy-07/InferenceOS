@@ -12,10 +12,27 @@ import argparse
 import sys
 from pathlib import Path
 
+# Reconfigure standard output / err to UTF-8 on Windows so emojis and box chars don't fail
+if sys.platform == "win32":
+    try:
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # Ensure project root is in sys.path for top-level module resolution
-_PROJECT_ROOT = Path(__file__).parent.parent.resolve()
+_CLI_DIR = Path(__file__).parent.resolve()
+_PROJECT_ROOT = _CLI_DIR.parent.resolve()
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
+
+# Guard against shadowing if another package named 'cli' is installed in site-packages
+if "cli" in sys.modules:
+    _cli_mod = sys.modules["cli"]
+    if hasattr(_cli_mod, "__path__") and str(_CLI_DIR) not in _cli_mod.__path__:
+        _cli_mod.__path__.insert(0, str(_CLI_DIR))
 
 from typing import List, Optional
 from rich.console import Console
@@ -44,6 +61,7 @@ from cli.commands.update_cmd import handle_update_command
 from cli.commands.version_cmd import handle_version_command
 from cli.commands.reset_cmd import handle_reset_command
 from cli.commands.speculative_cmd import handle_speculative_command
+from cli.commands.decide import handle_decide_command
 from cli.budget_cli import handle_budget_cli
 from cli.health_cli import handle_health_cli
 from cli.kv_cli import handle_kv_cli
@@ -75,6 +93,7 @@ COMMAND_DESCRIPTIONS = {
     "version": "Display InferenceOS release version banner and environment info",
     "reset": "Reset configuration, profiles, and caches back to defaults",
     "speculative": "Inspect speculative decoding configuration, history, and run self-tests",
+    "decide": "Execute fast non-autoregressive decision inference on System 1 models (Laya, Kev)",
     "budget": "Inspect and manage dynamic VRAM/RAM memory budget allocations",
     "health": "Monitor real-time system health, thermals, and memory pressure",
     "kv": "Inspect and manage intelligent KV cache quantization & eviction",
@@ -244,6 +263,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="Maximum history records to display (default: 20)",
     )
 
+    # decide (System 1)
+    p_decide = subparsers.add_parser("decide", help="Execute fast System 1 non-autoregressive decision model (Laya, Kev)")
+    p_decide.add_argument("model", help="Model nickname or path (e.g. 'laya:v14s')")
+    p_decide.add_argument("--state", nargs="*", default=None, help="State context text, DOM JSON, or path to state file")
+    p_decide.add_argument("--questions", nargs="*", default=None, help="Questions JSON string or path to questions JSON file")
+    p_decide.add_argument("--max-options", type=int, default=60, help="Option threshold before coarse-to-fine chunking")
+    p_decide.add_argument("--json", action="store_true", dest="as_json", help="Output raw JSON results")
+    p_decide.add_argument("--escalate", action="store_true", default=False, help="Enable System 2 teacher escalation on uncertainty or generation need")
+    p_decide.add_argument("--no-escalate", action="store_true", default=False, help="Force pure System 1 reflex without System 2 escalation")
+    p_decide.add_argument("--escalate-tau", type=float, default=0.70, help="Confidence threshold below which to escalate to System 2 (default: 0.70)")
+    p_decide.add_argument("--system2", type=str, default=None, help="System 2 teacher model path, nickname, or remote model name")
+    p_decide.add_argument("--system2-url", type=str, default=None, help="Remote OpenAI-compatible endpoint URL for System 2 teacher")
+    p_decide.add_argument("--dagger-log", type=str, default=None, help="File path to record escalation pairs for DAgger distillation")
+
     # budget
     p_budget = subparsers.add_parser("budget", help="Adaptive Memory Budget Manager")
     p_budget.add_argument("args", nargs="*", help="Subcommand and options for budget manager (show, history)")
@@ -299,7 +332,7 @@ def cli_main(argv: Optional[List[str]] = None) -> int:
     cmd = args.command.lower()
 
     if cmd == "chat":
-        handle_chat_command(model_query=args.model, theme=args.theme)
+        return handle_chat_command(model_query=args.model, theme=args.theme)
     elif cmd == "run":
         handle_run_command(
             model_query=args.model,
@@ -373,6 +406,23 @@ def cli_main(argv: Optional[List[str]] = None) -> int:
             action=getattr(args, "action", "status"),
             model_name=getattr(args, "model", None),
             limit=getattr(args, "limit", 20),
+        )
+    elif cmd == "decide":
+        escalate_flag = getattr(args, "escalate", False)
+        if getattr(args, "no_escalate", False):
+            escalate_flag = False
+
+        handle_decide_command(
+            model_query=args.model,
+            state=getattr(args, "state", None),
+            questions=getattr(args, "questions", None),
+            max_options=getattr(args, "max_options", 60),
+            as_json=getattr(args, "as_json", False),
+            escalate=escalate_flag,
+            escalate_tau=getattr(args, "escalate_tau", 0.70),
+            system2=getattr(args, "system2", None),
+            system2_url=getattr(args, "system2_url", None),
+            dagger_log=getattr(args, "dagger_log", None),
         )
     elif cmd in ("budget", "health", "kv", "knowledge", "learning", "performance"):
         # Resolve full arguments for subsystem commands (preserving options, flags, and subcommands)

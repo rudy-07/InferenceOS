@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "inferenceos"
-version = "1.0.0"
+version = "1.1.0"
 description = "The Hardware-Agnostic, Adaptive Operating System for Local LLM Inference"
 readme = "README.md"
 requires-python = ">=3.9"

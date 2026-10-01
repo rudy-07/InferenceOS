@@ -19,7 +19,7 @@ def get_health():
     return {
         "status": "ok",
         "timestamp": int(time.time()),
-        "version": "1.0.0",
+        "version": "1.1.0",
         "loaded_models": adapter.get_loaded_models_count(),
     }
 
@@ -28,7 +28,7 @@ def get_health():
 def get_version():
     return {
         "server": "InferenceOS Server",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "python": sys.version,
         "api_compatibility": "OpenAI v1",
     }

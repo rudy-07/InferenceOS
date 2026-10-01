@@ -84,11 +84,18 @@ class RuntimeAdapter:
             except Exception:
                 meta = {"arch": "llama", "num_layers": 32, "max_context_length": self.config.default_context_length}
 
-            model_desc = ModelDescriptor.from_gguf_metadata(
-                metadata=meta,
-                model_size_bytes=model_path.stat().st_size,
-                model_name=model_path.stem,
-            )
+            if fmt == ModelFormat.SYSTEM1:
+                model_desc = ModelDescriptor.from_system1_metadata(
+                    metadata=meta,
+                    model_size_bytes=meta.get("file_size_bytes", 0),
+                    model_name=model_path.stem,
+                )
+            else:
+                model_desc = ModelDescriptor.from_gguf_metadata(
+                    metadata=meta,
+                    model_size_bytes=model_path.stat().st_size if model_path.is_file() else meta.get("file_size_bytes", 0),
+                    model_name=model_path.stem,
+                )
 
             context_len = min(
                 getattr(model_desc, "max_context_length", 4096),
@@ -256,6 +263,76 @@ class RuntimeAdapter:
             session.update_stats(stats_dict, new_tokens=getattr(result.stats, "tokens_generated", 0))
 
         return result
+
+    def execute_systemone(
+        self,
+        model_query: str,
+        state: Union[str, Dict[str, Any]],
+        questions: Dict[str, Any],
+        max_options: int = 60,
+        escalate: bool = False,
+        escalate_tau: float = 0.70,
+        system2_model: Optional[str] = None,
+        system2_base_url: Optional[str] = None,
+        dagger_log_path: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """
+        Execute native System 1 non-autoregressive decision inference with optional System 2 escalation.
+        Returns answers, usage, passes, and latency in standard /v1/systemone format.
+        """
+        model_cache = self.load_model_if_needed(model_query)
+        model_path = model_cache["model_path"]
+        from orchestrator.hybrid_orchestrator import HybridOrchestrator
+        orchestrator = HybridOrchestrator(hw_profile=self.hw_profile)
+        return orchestrator.decide_with_escalation(
+            model_path=model_path,
+            state=state,
+            questions=questions,
+            escalate=escalate,
+            escalate_tau=escalate_tau,
+            system2_model=system2_model,
+            system2_base_url=system2_base_url,
+            dagger_log_path=dagger_log_path,
+            max_options=max_options,
+        )
+
+    def execute_systemone_tool(
+        self,
+        model_query: str,
+        state: Union[str, Dict[str, Any]],
+        options: Union[Dict[str, str], list],
+        goal: str = "Select optimal action",
+    ) -> Dict[str, Any]:
+        """Execute System 1 option decision as a fast tool for System 2 agents."""
+        model_cache = self.load_model_if_needed(model_query)
+        model_path = model_cache["model_path"]
+        from orchestrator.hybrid_orchestrator import HybridOrchestrator
+        orchestrator = HybridOrchestrator(hw_profile=self.hw_profile)
+        return orchestrator.system1_tool_decide(
+            model_path=model_path,
+            state=state,
+            options=options,
+            goal=goal,
+        )
+
+    def execute_systemone_guardrail(
+        self,
+        model_query: str,
+        proposed_action: str,
+        context: Optional[str] = None,
+        safe_threshold: float = 0.85,
+    ) -> Dict[str, Any]:
+        """Execute System 1 safety gate evaluation before executing an action."""
+        model_cache = self.load_model_if_needed(model_query)
+        model_path = model_cache["model_path"]
+        from orchestrator.hybrid_orchestrator import HybridOrchestrator
+        orchestrator = HybridOrchestrator(hw_profile=self.hw_profile)
+        return orchestrator.system1_guardrail(
+            model_path=model_path,
+            proposed_action=proposed_action,
+            context=context,
+            safe_threshold=safe_threshold,
+        )
 
 
 _adapter_instance: Optional[RuntimeAdapter] = None
